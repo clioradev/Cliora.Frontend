@@ -1,5 +1,12 @@
 <header class="shell-header">
   <span class="shell-header__brand">Cliora</span>
+
+  @if (authService.isAuthenticated()) {
+    <div class="shell-header__user">
+      <span class="shell-header__user-name">{{ authService.currentUser()?.nombre }}</span>
+      <button type="button" (click)="onLogout()">Cerrar sesión</button>
+    </div>
+  }
 </header>
 
 <main class="shell-content">

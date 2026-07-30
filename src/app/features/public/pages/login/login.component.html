@@ -1,0 +1,21 @@
+<form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <h1>Iniciar sesión</h1>
+
+  <label>
+    Email
+    <input type="email" formControlName="email" autocomplete="username" />
+  </label>
+
+  <label>
+    Contraseña
+    <input type="password" formControlName="password" autocomplete="current-password" />
+  </label>
+
+  @if (error()) {
+    <p class="login-form__error">Credenciales incorrectas.</p>
+  }
+
+  <button type="submit" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Entrando…' : 'Entrar' }}
+  </button>
+</form>

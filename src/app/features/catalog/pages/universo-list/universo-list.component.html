@@ -1,0 +1,33 @@
+@if (loading()) {
+  <p class="status">Cargando universos…</p>
+} @else if (error()) {
+  <p class="status status--error">No se ha podido contactar con el servidor.</p>
+} @else if (universos().length === 0) {
+  <p class="status">Todavía no hay universos publicados.</p>
+} @else {
+  @for (universo of universos(); track universo.idUniverso) {
+    <section class="universo">
+      <h2>{{ universo.titulo }}</h2>
+      @if (universo.descripcion) {
+        <p>{{ universo.descripcion }}</p>
+      }
+
+      @for (campana of universo.campanas; track campana.idCampana) {
+        <div class="campana">
+          <h3>{{ campana.titulo }}</h3>
+          @if (campana.descripcion) {
+            <p>{{ campana.descripcion }}</p>
+          }
+
+          @if (campana.aventuras.length > 0) {
+            <ul class="aventuras">
+              @for (aventura of campana.aventuras; track aventura.idAventura) {
+                <li>{{ aventura.titulo }}</li>
+              }
+            </ul>
+          }
+        </div>
+      }
+    </section>
+  }
+}

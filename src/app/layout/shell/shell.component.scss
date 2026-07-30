@@ -1,0 +1,15 @@
+.shell-header {
+  padding: 1rem 1.5rem;
+  border-bottom: 1px solid #e0e0e0;
+
+  &__brand {
+    font-size: 1.25rem;
+    font-weight: 600;
+  }
+}
+
+.shell-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 1.5rem;
+}

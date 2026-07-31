@@ -1,0 +1,18 @@
+:host {
+  display: block;
+  padding: 2rem;
+}
+
+.status {
+  color: #666;
+
+  &--error {
+    color: #b00020;
+  }
+}
+
+.final__texto {
+  white-space: pre-line;
+  margin-bottom: 1.5rem;
+  max-width: 480px;
+}

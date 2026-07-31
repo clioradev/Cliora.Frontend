@@ -1,0 +1,9 @@
+@if (loading()) {
+  <p class="status">Cargando…</p>
+} @else if (error()) {
+  <p class="status status--error">No se ha podido cargar el final.</p>
+} @else if (final(); as f) {
+  <p class="final__texto">{{ f.texto }}</p>
+
+  <button type="button" (click)="finalizarAventura()" [disabled]="finalizando()">Finalizar aventura</button>
+}

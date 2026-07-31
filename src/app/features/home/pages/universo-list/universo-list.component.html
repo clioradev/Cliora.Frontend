@@ -22,12 +22,34 @@
           @if (campana.aventuras.length > 0) {
             <ul class="aventuras">
               @for (aventura of campana.aventuras; track aventura.idAventura) {
-                <li>{{ aventura.titulo }}</li>
+                <li>
+                  {{ aventura.titulo }}
+
+                  @if (aventura.estadoPartida) {
+                    <span class="aventuras__estado">{{ aventura.estadoPartida }}</span>
+
+                    @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
+                      <a [routerLink]="['/partida', aventura.idNodoActual]">Continuar partida</a>
+                    }
+                  } @else if (aventura.puedeEmpezarPartida) {
+                    <button
+                      type="button"
+                      (click)="empezarPartida(aventura)"
+                      [disabled]="startingAventuraId() === aventura.idAventura"
+                    >
+                      {{ startingAventuraId() === aventura.idAventura ? 'Empezando…' : 'Empezar partida' }}
+                    </button>
+                  }
+                </li>
               }
             </ul>
           }
         </div>
       }
     </section>
+  }
+
+  @if (startError()) {
+    <p class="status status--error">{{ startError() }}</p>
   }
 }

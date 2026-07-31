@@ -4,7 +4,7 @@ import { Router } from '@angular/router';
 import { catchError, switchMap, throwError } from 'rxjs';
 import { AuthService } from '../auth/auth.service';
 
-const AUTH_ENDPOINTS = ['/Permiso/Login', '/Permiso/Refresh'];
+const AUTH_ENDPOINTS = ['/Permiso/Login', '/Permiso/Refresh', '/Permiso/Registrar'];
 
 export const authInterceptor: HttpInterceptorFn = (req, next) => {
   const authService = inject(AuthService);

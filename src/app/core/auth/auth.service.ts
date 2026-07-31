@@ -23,6 +23,10 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
+  register(nombre: string, email: string, password: string): Observable<Usuario> {
+    return this.http.post<Usuario>(`${this.baseUrl}/Permiso/Registrar`, { nombre, email, password });
+  }
+
   logout(): Observable<void> {
     return this.http
       .post<void>(`${this.baseUrl}/Permiso/Logout`, null, { withCredentials: true })

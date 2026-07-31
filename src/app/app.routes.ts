@@ -15,6 +15,12 @@ export const routes: Routes = [
           import('./features/public/pages/login/login.component').then((m) => m.LoginComponent),
       },
       {
+        path: 'registro',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
+      },
+      {
         path: '',
         canActivate: [authGuard],
         loadChildren: () => import('./features/home/home.routes').then((m) => m.HOME_ROUTES),

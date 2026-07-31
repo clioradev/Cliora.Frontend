@@ -1,0 +1,19 @@
+@if (loading()) {
+  <p class="status">Cargando…</p>
+} @else if (error()) {
+  <p class="status status--error">No se ha podido cargar el nodo.</p>
+} @else if (nodo(); as n) {
+  <p class="nodo__texto">{{ n.texto }}</p>
+
+  <div class="nodo__opciones">
+    @for (opcion of n.opciones; track opcion.idOpcion) {
+      <button type="button" (click)="elegir(opcion)" [disabled]="eligiendo()">
+        {{ opcion.texto }}
+      </button>
+    }
+  </div>
+
+  @if (eligiendoError()) {
+    <p class="status status--error">{{ eligiendoError() }}</p>
+  }
+}

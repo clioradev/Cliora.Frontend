@@ -2,7 +2,13 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
-import { ElegirOpcionResponse, EmpezarPartidaResponse, Final, Nodo } from '../models/partida.model';
+import {
+  ElegirOpcionResponse,
+  EmpezarPartidaResponse,
+  Final,
+  FinalizarAventuraResponse,
+  Nodo,
+} from '../models/partida.model';
 
 @Injectable({ providedIn: 'root' })
 export class PartidaService {
@@ -25,7 +31,7 @@ export class PartidaService {
     return this.http.get<Final>(`${this.baseUrl}/Partida/Final/${idFinal}`);
   }
 
-  finalizarAventura(idFinal: number): Observable<boolean> {
-    return this.http.post<boolean>(`${this.baseUrl}/Partida/Finalizar`, { idFinal });
+  finalizarAventura(idFinal: number): Observable<FinalizarAventuraResponse> {
+    return this.http.post<FinalizarAventuraResponse>(`${this.baseUrl}/Partida/Finalizar`, { idFinal });
   }
 }

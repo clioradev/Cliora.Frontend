@@ -1,11 +1,13 @@
 import { Component, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
 import { Final } from '../../models/partida.model';
 
 @Component({
   selector: 'app-final',
+  imports: [ValoracionModalComponent],
   templateUrl: './final.component.html',
   styleUrl: './final.component.scss',
 })
@@ -21,6 +23,7 @@ export class FinalComponent {
   protected readonly error = signal(false);
 
   protected readonly finalizando = signal(false);
+  protected readonly idAventuraFinalizada = signal<number | null>(null);
 
   constructor() {
     this.partidaService
@@ -46,15 +49,17 @@ export class FinalComponent {
     this.finalizando.set(true);
 
     this.partidaService.finalizarAventura(this.idFinal).subscribe({
-      next: (exito) => {
+      next: (respuesta) => {
         this.finalizando.set(false);
-        if (exito) {
-          void this.router.navigate(['/']);
-        }
+        this.idAventuraFinalizada.set(respuesta.idAventura);
       },
       error: () => {
         this.finalizando.set(false);
       },
     });
+  }
+
+  protected onValoracionCerrada(): void {
+    void this.router.navigate(['/']);
   }
 }

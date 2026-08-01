@@ -12,6 +12,18 @@
         <p>{{ universo.descripcion }}</p>
       }
 
+      @if (universo.puntuacionMedia !== null) {
+        <div class="valoracion-resumen">
+          <app-star-rating-display [value]="universo.puntuacionMedia" />
+          <span>{{ universo.puntuacionMedia }}</span>
+          @if (universo.ultimaValoracion) {
+            <button type="button" class="valoracion-resumen__ver" (click)="verResena(universo.ultimaValoracion)">
+              Ver última reseña
+            </button>
+          }
+        </div>
+      }
+
       @for (campana of universo.campanas; track campana.idCampana) {
         <div class="campana">
           <h3>{{ campana.titulo }}</h3>
@@ -19,26 +31,65 @@
             <p>{{ campana.descripcion }}</p>
           }
 
+          @if (campana.puntuacionMedia !== null) {
+            <div class="valoracion-resumen">
+              <app-star-rating-display [value]="campana.puntuacionMedia" />
+              <span>{{ campana.puntuacionMedia }}</span>
+              @if (campana.ultimaValoracion) {
+                <button type="button" class="valoracion-resumen__ver" (click)="verResena(campana.ultimaValoracion)">
+                  Ver última reseña
+                </button>
+              }
+            </div>
+          }
+
           @if (campana.aventuras.length > 0) {
             <ul class="aventuras">
               @for (aventura of campana.aventuras; track aventura.idAventura) {
                 <li>
-                  {{ aventura.titulo }}
+                  <div class="aventuras__cabecera">
+                    {{ aventura.titulo }}
 
-                  @if (aventura.estadoPartida) {
-                    <span class="aventuras__estado">{{ aventura.estadoPartida }}</span>
+                    @if (aventura.estadoPartida) {
+                      <span class="aventuras__estado">{{ aventura.estadoPartida }}</span>
 
-                    @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
-                      <a [routerLink]="['/partida', aventura.idNodoActual]">Continuar partida</a>
+                      @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
+                        <a
+                          [routerLink]="['/partida', aventura.idNodoActual]"
+                          [queryParams]="{ idAventura: aventura.idAventura }"
+                        >
+                          Continuar partida
+                        </a>
+                      }
+
+                      <button type="button" (click)="valorarAventura(aventura.idAventura)">
+                        Valorar esta aventura
+                      </button>
+                    } @else if (aventura.puedeEmpezarPartida) {
+                      <button
+                        type="button"
+                        (click)="empezarPartida(aventura)"
+                        [disabled]="startingAventuraId() === aventura.idAventura"
+                      >
+                        {{ startingAventuraId() === aventura.idAventura ? 'Empezando…' : 'Empezar partida' }}
+                      </button>
                     }
-                  } @else if (aventura.puedeEmpezarPartida) {
-                    <button
-                      type="button"
-                      (click)="empezarPartida(aventura)"
-                      [disabled]="startingAventuraId() === aventura.idAventura"
-                    >
-                      {{ startingAventuraId() === aventura.idAventura ? 'Empezando…' : 'Empezar partida' }}
-                    </button>
+                  </div>
+
+                  @if (aventura.puntuacionMedia !== null) {
+                    <div class="valoracion-resumen">
+                      <app-star-rating-display [value]="aventura.puntuacionMedia" />
+                      <span>{{ aventura.puntuacionMedia }} ({{ aventura.totalValoraciones }})</span>
+                      @if (aventura.ultimaValoracion) {
+                        <button
+                          type="button"
+                          class="valoracion-resumen__ver"
+                          (click)="verResena(aventura.ultimaValoracion)"
+                        >
+                          Ver última reseña
+                        </button>
+                      }
+                    </div>
                   }
                 </li>
               }
@@ -52,4 +103,12 @@
   @if (startError()) {
     <p class="status status--error">{{ startError() }}</p>
   }
+}
+
+@if (resenaAbierta(); as r) {
+  <app-resena-detalle-modal [valoracion]="r" (cerrado)="resenaAbierta.set(null)" />
+}
+
+@if (idAventuraAValorar(); as id) {
+  <app-valoracion-modal [idAventura]="id" (cerrado)="onValoracionCerrada()" />
 }

@@ -3,7 +3,21 @@
 } @else if (error()) {
   <p class="status status--error">No se ha podido cargar el nodo.</p>
 } @else if (nodo(); as n) {
-  <p class="nodo__texto">{{ n.texto }}</p>
+  <div class="nodo__contenidos">
+    @for (contenido of n.contenidos; track contenido.idContenidoNodo) {
+      @switch (contenido.tipo) {
+        @case ('Texto') {
+          <p class="nodo__texto">{{ contenido.texto }}</p>
+        }
+        @case ('Imagen') {
+          <img class="nodo__imagen" [src]="contenido.imagenUrl" alt="" />
+        }
+        @case ('Audio') {
+          <audio class="nodo__audio" [src]="contenido.audioUrl" controls></audio>
+        }
+      }
+    }
+  </div>
 
   <div class="nodo__opciones">
     @for (opcion of n.opciones; track opcion.idOpcion) {
@@ -15,5 +29,19 @@
 
   @if (eligiendoError()) {
     <p class="status status--error">{{ eligiendoError() }}</p>
+  }
+
+  @if (puedeValorar() && !bannerCerrado()) {
+    <div class="banner-valorar">
+      <span>¿Qué te está pareciendo esta aventura? Valórala.</span>
+      <button type="button" (click)="abrirValorar()">Valorar</button>
+      <button type="button" class="banner-valorar__cerrar" (click)="bannerCerrado.set(true)" aria-label="Cerrar">
+        ×
+      </button>
+    </div>
+  }
+
+  @if (valorarAbierto()) {
+    <app-valoracion-modal [idAventura]="idAventura()!" (cerrado)="onValoracionCerrada()" />
   }
 }

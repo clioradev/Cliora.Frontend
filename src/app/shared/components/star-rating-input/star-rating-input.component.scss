@@ -1,0 +1,35 @@
+.star-rating-input {
+  position: relative;
+  display: inline-block;
+  cursor: pointer;
+
+  &__clicks {
+    position: absolute;
+    inset: 0;
+    display: flex;
+  }
+
+  &__star {
+    position: relative;
+    flex: 1 1 0;
+  }
+
+  &__half {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    width: 50%;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+
+    &--left {
+      left: 0;
+    }
+
+    &--right {
+      right: 0;
+    }
+  }
+}

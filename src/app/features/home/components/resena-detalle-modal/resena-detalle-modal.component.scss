@@ -1,0 +1,18 @@
+h3 {
+  margin-top: 0;
+  margin-bottom: 0.5rem;
+}
+
+.resena-detalle {
+  &__fecha {
+    display: block;
+    color: #666;
+    font-size: 0.85em;
+    margin-top: 0.25rem;
+  }
+
+  &__comentario {
+    margin-top: 1rem;
+    white-space: pre-line;
+  }
+}

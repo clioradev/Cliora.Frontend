@@ -2,11 +2,11 @@
   position: relative;
   display: inline-block;
   line-height: 1;
-  font-size: 1.1rem;
+  font-size: var(--text-md);
   white-space: nowrap;
 
   &__base {
-    color: #ddd;
+    color: var(--color-gray);
   }
 
   &__fill {
@@ -15,6 +15,6 @@
     left: 0;
     overflow: hidden;
     white-space: nowrap;
-    color: #f5a623;
+    color: var(--color-accent);
   }
 }

@@ -1,24 +1,13 @@
-import { Component, inject } from '@angular/core';
-import { Router, RouterOutlet } from '@angular/router';
-import { AuthService } from '../../core/auth/auth.service';
+import { Component, signal } from '@angular/core';
+import { RouterOutlet } from '@angular/router';
+import { SidebarComponent } from '../sidebar/sidebar.component';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet],
+  imports: [RouterOutlet, SidebarComponent],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })
 export class ShellComponent {
-  protected readonly authService = inject(AuthService);
-  private readonly router = inject(Router);
-
-  protected onLogout(): void {
-    this.authService.logout().subscribe({
-      next: () => void this.router.navigate(['/login']),
-      error: () => {
-        this.authService.clearSession();
-        void this.router.navigate(['/login']);
-      },
-    });
-  }
+  protected readonly sidebarAbierto = signal(false);
 }

@@ -5,7 +5,9 @@
 } @else if (final(); as f) {
   <p class="final__texto">{{ f.texto }}</p>
 
-  <button type="button" (click)="finalizarAventura()" [disabled]="finalizando()">Finalizar aventura</button>
+  <button type="button" class="btn--primary" (click)="finalizarAventura()" [disabled]="finalizando()">
+    Finalizar aventura
+  </button>
 
   @if (idAventuraFinalizada(); as idAventura) {
     <app-valoracion-modal [idAventura]="idAventura" (cerrado)="onValoracionCerrada()" />

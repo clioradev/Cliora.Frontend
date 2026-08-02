@@ -15,7 +15,7 @@
     <p class="login-form__error">Credenciales incorrectas.</p>
   }
 
-  <button type="submit" [disabled]="form.invalid || submitting()">
+  <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">
     {{ submitting() ? 'Entrando…' : 'Entrar' }}
   </button>
 

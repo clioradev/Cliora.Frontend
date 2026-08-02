@@ -1,26 +1,28 @@
 :host {
   display: block;
-  padding: 2rem;
+  padding: var(--space-8);
 }
 
 .status {
-  color: #666;
+  color: var(--color-text-secondary);
 
   &--error {
-    color: #b00020;
+    color: var(--color-danger);
   }
 }
 
 .nodo {
   &__contenidos {
-    margin-bottom: 1.5rem;
+    margin-bottom: var(--space-6);
   }
 
   &__texto {
+    font-family: var(--font-reading);
+    font-size: var(--text-md);
     white-space: pre-line;
 
     &:not(:last-child) {
-      margin-bottom: 1rem;
+      margin-bottom: var(--space-4);
     }
   }
 
@@ -28,41 +30,54 @@
     display: block;
     max-width: 100%;
     height: auto;
-    margin-bottom: 1rem;
+    margin-bottom: var(--space-4);
   }
 
   &__audio {
     display: block;
     width: 100%;
-    max-width: 480px;
-    margin-bottom: 1rem;
+    max-width: var(--content-width-md);
+    margin-bottom: var(--space-4);
   }
 
   &__opciones {
     display: flex;
     flex-direction: column;
-    gap: 0.5rem;
-    max-width: 320px;
+    gap: var(--space-2);
+    max-width: var(--content-width-sm);
+
+    button {
+      text-align: left;
+      background: var(--color-surface);
+      border: 1px solid var(--color-secondary);
+      color: var(--color-text);
+
+      &:hover:not(:disabled) {
+        background: var(--color-surface-hover);
+        border-color: var(--color-primary);
+      }
+    }
   }
 }
 
 .banner-valorar {
   display: flex;
   align-items: center;
-  gap: 0.75rem;
-  margin-top: 1.5rem;
-  padding: 0.75rem 1rem;
-  max-width: 480px;
-  background: #f4f4f4;
-  border-radius: 6px;
+  gap: var(--space-3);
+  margin-top: var(--space-6);
+  padding: var(--space-3) var(--space-4);
+  max-width: var(--content-width-md);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
 
   &__cerrar {
     margin-left: auto;
+    padding: 0;
     background: none;
     border: 0;
-    font-size: 1.25rem;
+    font-size: var(--text-lg);
     line-height: 1;
     cursor: pointer;
-    color: #666;
+    color: var(--color-text-secondary);
   }
 }

@@ -1,0 +1,90 @@
+@if (loading()) {
+  <p>Cargando preferencias...</p>
+} @else if (error()) {
+  <p>No se han podido cargar las preferencias.</p>
+} @else {
+  <h1>Configuración</h1>
+
+  <div class="campo">
+    <label for="tema">Tema</label>
+    <select id="tema" [value]="tema()" (change)="onTemaChange($event)">
+      @for (opcion of temaOpciones; track opcion.valor) {
+        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="tipografia">Tipografía</label>
+    <select id="tipografia" [value]="tipografia()" (change)="onTipografiaChange($event)">
+      @for (opcion of tipografiaOpciones; track opcion.valor) {
+        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="tamanoFuente">Tamaño de letra</label>
+    <select id="tamanoFuente" [value]="tamanoFuente()" (change)="onTamanoFuenteChange($event)">
+      @for (opcion of tamanoFuenteOpciones; track opcion.valor) {
+        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="espaciadoLineas">Espaciado entre líneas</label>
+    <select id="espaciadoLineas" [value]="espaciadoLineas()" (change)="onEspaciadoLineasChange($event)">
+      @for (opcion of espaciadoLineasOpciones; track opcion.valor) {
+        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="anchoLectura">Ancho de lectura</label>
+    <select id="anchoLectura" [value]="anchoLectura()" (change)="onAnchoLecturaChange($event)">
+      @for (opcion of anchoLecturaOpciones; track opcion.valor) {
+        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+      }
+    </select>
+  </div>
+
+  <div class="campo">
+    <label for="intensidadFondo">Oscurecer fondo ({{ intensidadFondo() }}%)</label>
+    <input
+      id="intensidadFondo"
+      type="range"
+      min="0"
+      max="100"
+      [value]="intensidadFondo()"
+      (input)="onIntensidadFondoChange($event)"
+    />
+  </div>
+
+  <div class="campo campo--checkbox">
+    <label>
+      <input type="checkbox" [checked]="altoContraste()" (change)="onAltoContrasteChange($event)" />
+      Alto contraste
+    </label>
+  </div>
+
+  <div class="campo campo--checkbox">
+    <label>
+      <input type="checkbox" [checked]="reducirAnimaciones()" (change)="onReducirAnimacionesChange($event)" />
+      Reducir animaciones
+    </label>
+  </div>
+
+  <button type="button" class="btn--primary" [disabled]="guardando()" (click)="guardar()">
+    {{ guardando() ? 'Guardando...' : 'Guardar' }}
+  </button>
+
+  @if (guardadoOk()) {
+    <p class="mensaje mensaje--ok">Preferencias guardadas.</p>
+  }
+
+  @if (guardarError()) {
+    <p class="mensaje mensaje--error">{{ guardarError() }}</p>
+  }
+}

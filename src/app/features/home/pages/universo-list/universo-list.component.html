@@ -68,6 +68,7 @@
                     } @else if (aventura.puedeEmpezarPartida) {
                       <button
                         type="button"
+                        class="btn--primary"
                         (click)="empezarPartida(aventura)"
                         [disabled]="startingAventuraId() === aventura.idAventura"
                       >

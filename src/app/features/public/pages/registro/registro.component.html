@@ -33,7 +33,7 @@
     </ul>
   }
 
-  <button type="submit" [disabled]="form.invalid || submitting()">
+  <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">
     {{ submitting() ? 'Creando…' : 'Crear cuenta' }}
   </button>
 

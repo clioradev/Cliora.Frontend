@@ -1,18 +1,20 @@
 :host {
   display: block;
-  padding: 2rem;
+  padding: var(--space-8);
 }
 
 .status {
-  color: #666;
+  color: var(--color-text-secondary);
 
   &--error {
-    color: #b00020;
+    color: var(--color-danger);
   }
 }
 
 .final__texto {
+  font-family: var(--font-reading);
+  font-size: var(--text-md);
   white-space: pre-line;
-  margin-bottom: 1.5rem;
-  max-width: 480px;
+  margin-bottom: var(--space-6);
+  max-width: var(--content-width-md);
 }

@@ -1,0 +1,19 @@
+@if (abierto()) {
+  <div class="sidebar-backdrop" (click)="cerrar.emit()"></div>
+}
+
+<nav class="sidebar" [class.sidebar--abierto]="abierto()">
+  @if (authService.isAuthenticated()) {
+    <span class="sidebar__user-name">{{ authService.currentUser()?.nombre }}</span>
+
+    <hr class="sidebar__separador" />
+
+    <a class="sidebar__link" routerLink="/" (click)="onNavegar()">Universos</a>
+
+    <hr class="sidebar__separador" />
+
+    <a class="sidebar__link" routerLink="/configuracion" (click)="onNavegar()">Configuración</a>
+
+    <button type="button" class="sidebar__link sidebar__link--boton" (click)="onLogout()">Cerrar sesión</button>
+  }
+</nav>

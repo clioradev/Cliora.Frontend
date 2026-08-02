@@ -1,18 +1,18 @@
 h3 {
   margin-top: 0;
-  margin-bottom: 0.5rem;
+  margin-bottom: var(--space-2);
 }
 
 .resena-detalle {
   &__fecha {
     display: block;
-    color: #666;
-    font-size: 0.85em;
-    margin-top: 0.25rem;
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    margin-top: var(--space-1);
   }
 
   &__comentario {
-    margin-top: 1rem;
+    margin-top: var(--space-4);
     white-space: pre-line;
   }
 }

@@ -23,7 +23,7 @@
       <p class="status status--error">{{ guardarError() }}</p>
     }
 
-    <button type="button" (click)="guardar()" [disabled]="guardando() || puntuacion() <= 0">
+    <button type="button" class="btn--primary" (click)="guardar()" [disabled]="guardando() || puntuacion() <= 0">
       {{ guardando() ? 'Guardando…' : 'Guardar valoración' }}
     </button>
   }

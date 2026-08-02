@@ -1,24 +1,60 @@
+@use 'breakpoints' as *;
+
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
 .shell-header {
-  padding: 1rem 1.5rem;
-  border-bottom: 1px solid #e0e0e0;
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
   display: flex;
   align-items: center;
-  justify-content: space-between;
+  gap: var(--space-4);
 
   &__brand {
-    font-size: 1.25rem;
+    font-family: var(--font-reading);
+    font-size: var(--text-lg);
     font-weight: 600;
   }
 
-  &__user {
+  &__hamburger {
     display: flex;
-    align-items: center;
-    gap: 0.75rem;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+    width: 2rem;
+    height: 2rem;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    padding: 0;
+
+    span {
+      display: block;
+      height: 2px;
+      background: var(--color-text);
+      border-radius: 1px;
+    }
   }
 }
 
+.shell-body {
+  display: flex;
+  flex: 1;
+}
+
 .shell-content {
-  max-width: 800px;
+  flex: 1;
+  max-width: var(--content-width-lg);
   margin: 0 auto;
-  padding: 1.5rem;
+  padding: var(--space-6);
+  width: 100%;
+}
+
+@media (min-width: $bp-tablet) {
+  .shell-header__hamburger {
+    display: none;
+  }
 }

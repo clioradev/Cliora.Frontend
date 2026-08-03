@@ -11,6 +11,8 @@ export interface Aventura {
   puntuacionMedia: number | null;
   totalValoraciones: number;
   ultimaValoracion: UltimaValoracion | null;
+  /** Aún no la envía el backend; mientras tanto se usa siempre el placeholder de carátula. */
+  caratulaUrl?: string | null;
 }
 
 export interface Campana {

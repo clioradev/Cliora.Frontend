@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
-import { GuardarValoracionRequest, MiValoracion, Valoracion } from '../models/valoracion.model';
+import { GuardarValoracionRequest, MiValoracion, UltimaValoracion, Valoracion } from '../models/valoracion.model';
 
 @Injectable({ providedIn: 'root' })
 export class ValoracionService {
@@ -15,5 +15,17 @@ export class ValoracionService {
 
   getMiValoracion(idAventura: number): Observable<MiValoracion> {
     return this.http.get<MiValoracion>(`${this.baseUrl}/Valoracion/${idAventura}/Mia`);
+  }
+
+  getValoracionesAventura(idAventura: number): Observable<UltimaValoracion[]> {
+    return this.http.get<UltimaValoracion[]>(`${this.baseUrl}/Valoracion/Aventura/${idAventura}`);
+  }
+
+  getValoracionesCampana(idCampana: number): Observable<UltimaValoracion[]> {
+    return this.http.get<UltimaValoracion[]>(`${this.baseUrl}/Valoracion/Campana/${idCampana}`);
+  }
+
+  getValoracionesUniverso(idUniverso: number): Observable<UltimaValoracion[]> {
+    return this.http.get<UltimaValoracion[]>(`${this.baseUrl}/Valoracion/Universo/${idUniverso}`);
   }
 }

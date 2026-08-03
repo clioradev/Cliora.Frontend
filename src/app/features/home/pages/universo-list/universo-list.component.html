@@ -5,109 +5,272 @@
 } @else if (universos().length === 0) {
   <p class="status">Todavía no hay universos publicados.</p>
 } @else {
-  @for (universo of universos(); track universo.idUniverso) {
-    <section class="universo">
-      <h2>{{ universo.titulo }}</h2>
-      @if (universo.descripcion) {
-        <p>{{ universo.descripcion }}</p>
-      }
+  <div class="universos">
+    @for (universo of universos(); track universo.idUniverso) {
+      <section class="universo-card">
+        <header class="universo-card__header">
+          <h2>{{ universo.titulo }}</h2>
 
-      @if (universo.puntuacionMedia !== null) {
-        <div class="valoracion-resumen">
-          <app-star-rating-display [value]="universo.puntuacionMedia" />
-          <span>{{ universo.puntuacionMedia }}</span>
-          @if (universo.ultimaValoracion) {
-            <button type="button" class="valoracion-resumen__ver" (click)="verResena(universo.ultimaValoracion)">
-              Ver última reseña
-            </button>
-          }
-        </div>
-      }
-
-      @for (campana of universo.campanas; track campana.idCampana) {
-        <div class="campana">
-          <h3>{{ campana.titulo }}</h3>
-          @if (campana.descripcion) {
-            <p>{{ campana.descripcion }}</p>
-          }
-
-          @if (campana.puntuacionMedia !== null) {
+          @if (universo.puntuacionMedia !== null) {
             <div class="valoracion-resumen">
-              <app-star-rating-display [value]="campana.puntuacionMedia" />
-              <span>{{ campana.puntuacionMedia }}</span>
-              @if (campana.ultimaValoracion) {
-                <button type="button" class="valoracion-resumen__ver" (click)="verResena(campana.ultimaValoracion)">
-                  Ver última reseña
-                </button>
-              }
+              <app-star-rating-display [value]="universo.puntuacionMedia" />
+              <button
+                type="button"
+                class="valoracion-resumen__ver"
+                (click)="verOpiniones('Universo', universo.idUniverso, universo.titulo)"
+                aria-label="Ver opiniones del universo"
+              >
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <path
+                    d="M4 4h16v12H8l-4 4V4z"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="1.8"
+                    stroke-linejoin="round"
+                  />
+                </svg>
+              </button>
             </div>
           }
+        </header>
 
-          @if (campana.aventuras.length > 0) {
-            <ul class="aventuras">
-              @for (aventura of campana.aventuras; track aventura.idAventura) {
-                <li>
-                  <div class="aventuras__cabecera">
-                    {{ aventura.titulo }}
+        @if (universo.descripcion) {
+          <p class="universo-card__descripcion">{{ universo.descripcion }}</p>
+        }
 
-                    @if (aventura.estadoPartida) {
-                      <span class="aventuras__estado">{{ aventura.estadoPartida }}</span>
+        <div class="campanas">
+          @for (campana of universo.campanas; track campana.idCampana) {
+            <article class="campana-card">
+              <header class="campana-card__header">
+                <h3>{{ campana.titulo }}</h3>
 
-                      @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
-                        <a
-                          [routerLink]="['/partida', aventura.idNodoActual]"
-                          [queryParams]="{ idAventura: aventura.idAventura }"
-                        >
-                          Continuar partida
-                        </a>
-                      }
-
-                      <button type="button" (click)="valorarAventura(aventura.idAventura)">
-                        Valorar esta aventura
-                      </button>
-                    } @else if (aventura.puedeEmpezarPartida) {
-                      <button
-                        type="button"
-                        class="btn--primary"
-                        (click)="empezarPartida(aventura)"
-                        [disabled]="startingAventuraId() === aventura.idAventura"
-                      >
-                        {{ startingAventuraId() === aventura.idAventura ? 'Empezando…' : 'Empezar partida' }}
-                      </button>
-                    }
+                @if (campana.puntuacionMedia !== null) {
+                  <div class="valoracion-resumen valoracion-resumen--sm">
+                    <app-star-rating-display [value]="campana.puntuacionMedia" />
+                    <button
+                      type="button"
+                      class="valoracion-resumen__ver"
+                      (click)="verOpiniones('Campana', campana.idCampana, campana.titulo)"
+                      aria-label="Ver opiniones de la campaña"
+                    >
+                      <svg viewBox="0 0 24 24" aria-hidden="true">
+                        <path
+                          d="M4 4h16v12H8l-4 4V4z"
+                          fill="none"
+                          stroke="currentColor"
+                          stroke-width="1.8"
+                          stroke-linejoin="round"
+                        />
+                      </svg>
+                    </button>
                   </div>
+                }
+              </header>
 
-                  @if (aventura.puntuacionMedia !== null) {
-                    <div class="valoracion-resumen">
-                      <app-star-rating-display [value]="aventura.puntuacionMedia" />
-                      <span>{{ aventura.puntuacionMedia }} ({{ aventura.totalValoraciones }})</span>
-                      @if (aventura.ultimaValoracion) {
+              @if (campana.aventuras.length > 0) {
+                @let aventura = aventuraActual(campana);
+
+                <div class="aventura-carousel">
+                  <button
+                    type="button"
+                    class="aventura-carousel__nav"
+                    (click)="aventuraAnterior(campana)"
+                    [disabled]="!hayAnterior(campana)"
+                    aria-label="Aventura anterior"
+                  >
+                    ‹
+                  </button>
+
+                  <div class="aventura-card" [class.aventura-card--volteada]="estaVolteada(aventura)">
+                    <div class="aventura-card__inner">
+                      <div class="aventura-card__cara aventura-card__cara--frente">
+                        <div class="aventura-caratula" [style.--hue.deg]="hueCaratula(aventura)">
+                          @if (aventura.caratulaUrl) {
+                            <img class="aventura-caratula__img" [src]="aventura.caratulaUrl" [alt]="aventura.titulo" />
+                          } @else {
+                            <svg class="aventura-caratula__icono" viewBox="0 0 24 24" aria-hidden="true">
+                              <path
+                                d="M4 5a2 2 0 012-2h6v18H6a2 2 0 01-2-2V5zM20 5a2 2 0 00-2-2h-6v18h6a2 2 0 002-2V5z"
+                                fill="none"
+                                stroke="currentColor"
+                                stroke-width="1.5"
+                                stroke-linejoin="round"
+                              />
+                            </svg>
+                          }
+
+                          @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
+                            <a
+                              class="aventura-caratula__play"
+                              [routerLink]="['/partida', aventura.idNodoActual]"
+                              [queryParams]="{ idAventura: aventura.idAventura }"
+                              aria-label="Continuar partida"
+                            >
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8 5v14l11-7z" fill="currentColor" />
+                              </svg>
+                            </a>
+                          } @else if (aventura.puedeEmpezarPartida) {
+                            <button
+                              type="button"
+                              class="aventura-caratula__play"
+                              (click)="empezarPartida(aventura)"
+                              [disabled]="startingAventuraId() === aventura.idAventura"
+                              aria-label="Empezar partida"
+                            >
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path d="M8 5v14l11-7z" fill="currentColor" />
+                              </svg>
+                            </button>
+                          }
+
+                          @if (aventura.puntuacionMedia !== null) {
+                            <button
+                              type="button"
+                              class="aventura-caratula__opiniones"
+                              (click)="verOpiniones('Aventura', aventura.idAventura, aventura.titulo)"
+                              aria-label="Ver opiniones de la aventura"
+                            >
+                              <app-star-rating-display [value]="aventura.puntuacionMedia" />
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <path
+                                  d="M4 4h16v12H8l-4 4V4z"
+                                  fill="none"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linejoin="round"
+                                />
+                              </svg>
+                            </button>
+                          }
+
+                          @if (aventura.descripcion) {
+                            <button
+                              type="button"
+                              class="aventura-caratula__voltear"
+                              (click)="voltear(aventura)"
+                              aria-label="Ver sinopsis"
+                            >
+                              <svg viewBox="0 0 24 24" aria-hidden="true">
+                                <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+                                <line
+                                  x1="12"
+                                  y1="11"
+                                  x2="12"
+                                  y2="16"
+                                  stroke="currentColor"
+                                  stroke-width="1.8"
+                                  stroke-linecap="round"
+                                />
+                                <circle cx="12" cy="8" r="1" fill="currentColor" />
+                              </svg>
+                            </button>
+                          }
+                        </div>
+
+                        <h4 class="aventura-card__titulo">{{ aventura.titulo }}</h4>
+                      </div>
+
+                      <div class="aventura-card__cara aventura-card__cara--dorso">
                         <button
                           type="button"
-                          class="valoracion-resumen__ver"
-                          (click)="verResena(aventura.ultimaValoracion)"
+                          class="aventura-card__volver"
+                          (click)="voltear(aventura)"
+                          aria-label="Volver a la carátula"
                         >
-                          Ver última reseña
+                          <svg viewBox="0 0 24 24" aria-hidden="true">
+                            <path
+                              d="M15 5l-7 7 7 7"
+                              fill="none"
+                              stroke="currentColor"
+                              stroke-width="1.8"
+                              stroke-linecap="round"
+                              stroke-linejoin="round"
+                            />
+                          </svg>
                         </button>
-                      }
+
+                        <h4 class="aventura-card__titulo">{{ aventura.titulo }}</h4>
+                        <p class="aventura-card__descripcion">{{ aventura.descripcion }}</p>
+
+                        @if (aventura.estadoPartida) {
+                          <span class="aventura-card__estado">{{ aventura.estadoPartida }}</span>
+                          @if (aventura.estadoPartida === 'Finalizada') {
+                            <button type="button" (click)="valorarAventura(aventura.idAventura)">
+                              Valorar esta aventura
+                            </button>
+                          }
+                        } @else if (!aventura.puedeEmpezarPartida) {
+                          <span class="aventura-card__bloqueada">Completa la aventura anterior para desbloquearla</span>
+                        }
+
+                        @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
+                          <a
+                            class="aventura-card__play"
+                            [routerLink]="['/partida', aventura.idNodoActual]"
+                            [queryParams]="{ idAventura: aventura.idAventura }"
+                            aria-label="Continuar partida"
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M8 5v14l11-7z" fill="currentColor" />
+                            </svg>
+                          </a>
+                        } @else if (aventura.puedeEmpezarPartida) {
+                          <button
+                            type="button"
+                            class="aventura-card__play"
+                            (click)="empezarPartida(aventura)"
+                            [disabled]="startingAventuraId() === aventura.idAventura"
+                            aria-label="Empezar partida"
+                          >
+                            <svg viewBox="0 0 24 24" aria-hidden="true">
+                              <path d="M8 5v14l11-7z" fill="currentColor" />
+                            </svg>
+                          </button>
+                        }
+                      </div>
                     </div>
-                  }
-                </li>
+                  </div>
+
+                  <button
+                    type="button"
+                    class="aventura-carousel__nav"
+                    (click)="aventuraSiguiente(campana)"
+                    [disabled]="!haySiguiente(campana)"
+                    aria-label="Aventura siguiente"
+                  >
+                    ›
+                  </button>
+                </div>
+
+                @if (campana.aventuras.length > 1) {
+                  <div class="aventura-dots">
+                    @for (a of campana.aventuras; track a.idAventura; let i = $index) {
+                      <button
+                        type="button"
+                        class="aventura-dots__dot"
+                        [class.aventura-dots__dot--activo]="i === indiceActual(campana)"
+                        (click)="irAIndice(campana, i)"
+                        [attr.aria-label]="'Ir a ' + a.titulo"
+                      ></button>
+                    }
+                  </div>
+                }
               }
-            </ul>
+            </article>
           }
         </div>
-      }
-    </section>
-  }
+      </section>
+    }
+  </div>
 
   @if (startError()) {
     <p class="status status--error">{{ startError() }}</p>
   }
 }
 
-@if (resenaAbierta(); as r) {
-  <app-resena-detalle-modal [valoracion]="r" (cerrado)="resenaAbierta.set(null)" />
+@if (opinionesAbiertas(); as o) {
+  <app-resenas-modal [nivel]="o.nivel" [id]="o.id" [titulo]="o.titulo" (cerrado)="opinionesAbiertas.set(null)" />
 }
 
 @if (idAventuraAValorar(); as id) {

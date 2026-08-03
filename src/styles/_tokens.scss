@@ -8,6 +8,10 @@
   --color-text: #332b21;
   --color-text-secondary: #70685a;
 
+  // Color - capa "resaltada" (campaña), tono suave derivado de --color-primary
+  --color-campana-bg: #e9f1e6;
+  --color-campana-border: #c7dcc0;
+
   // Color - marca / semánticos
   --color-primary: #3f6b4a;
   --color-primary-hover: #2f5238;
@@ -69,6 +73,9 @@
     --color-border: #423c2f;
     --color-text: #ede7db;
     --color-text-secondary: #b3aa98;
+
+    --color-campana-bg: #24352a;
+    --color-campana-border: #3a5240;
 
     --color-primary: #6fae7c;
     --color-primary-hover: #8ec498;

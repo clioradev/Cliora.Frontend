@@ -13,8 +13,9 @@
 
 .final__texto {
   font-family: var(--font-reading);
-  font-size: var(--text-md);
+  font-size: var(--text-reading);
+  line-height: var(--line-height-reading);
   white-space: pre-line;
   margin-bottom: var(--space-6);
-  max-width: var(--content-width-md);
+  max-width: var(--content-width-reading);
 }

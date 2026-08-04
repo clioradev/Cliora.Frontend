@@ -5,7 +5,7 @@ import { StarRatingDisplayComponent } from '../../../../shared/components/star-r
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { UniversoService } from '../../data-access/universo.service';
-import { Aventura, Campana, Universo } from '../../models/universo.model';
+import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
 
 @Component({
   selector: 'app-universo-list',
@@ -26,6 +26,8 @@ export class UniversoListComponent {
 
   protected readonly searchTerm = signal('');
   protected readonly selectedTags = signal(new Set<string>());
+  protected readonly selectedCantidadDecision = signal<number | null>(null);
+  protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
 
   private readonly indicesAventura = signal(new Map<number, number>());
   private readonly aventurasVolteadas = signal(new Set<number>());
@@ -43,10 +45,11 @@ export class UniversoListComponent {
   protected readonly filteredUniversos = computed(() => {
     const termino = this.searchTerm().trim().toLocaleLowerCase();
     const tags = this.selectedTags();
+    const cantidadDecision = this.selectedCantidadDecision();
 
     return this.universos()
       .filter((universo) => tags.size === 0 || universo.tipos.some((tag) => tags.has(tag)))
-      .map((universo) => this.filtrarPorTexto(universo, termino))
+      .map((universo) => this.filtrarUniverso(universo, termino, cantidadDecision))
       .filter((universo): universo is Universo => universo !== null);
   });
 
@@ -118,6 +121,11 @@ export class UniversoListComponent {
     this.searchTerm.set((event.target as HTMLInputElement).value);
   }
 
+  protected onCantidadDecisionChange(event: Event): void {
+    const valor = (event.target as HTMLSelectElement).value;
+    this.selectedCantidadDecision.set(valor === '' ? null : Number(valor));
+  }
+
   protected verOpiniones(nivel: NivelValoracion, id: number, titulo: string): void {
     this.opinionesAbiertas.set({ nivel, id, titulo });
   }
@@ -141,25 +149,41 @@ export class UniversoListComponent {
     this.indicesAventura.set(mapa);
   }
 
-  private filtrarPorTexto(universo: Universo, termino: string): Universo | null {
-    if (!termino || universo.titulo.toLocaleLowerCase().includes(termino)) {
-      return universo;
-    }
-
+  private filtrarUniverso(universo: Universo, termino: string, cantidadDecision: number | null): Universo | null {
     const campanas: Campana[] = [];
     for (const campana of universo.campanas) {
-      if (campana.titulo.toLocaleLowerCase().includes(termino)) {
-        campanas.push(campana);
+      const aventuras = campana.aventuras.filter((aventura) =>
+        this.aventuraVisible(universo, campana, aventura, termino, cantidadDecision),
+      );
+      if (aventuras.length === 0) {
         continue;
       }
-
-      const aventuras = campana.aventuras.filter((a) => a.titulo.toLocaleLowerCase().includes(termino));
-      if (aventuras.length > 0) {
-        campanas.push({ ...campana, aventuras });
-      }
+      campanas.push(aventuras.length === campana.aventuras.length ? campana : { ...campana, aventuras });
     }
 
     return campanas.length > 0 ? { ...universo, campanas } : null;
+  }
+
+  private aventuraVisible(
+    universo: Universo,
+    campana: Campana,
+    aventura: Aventura,
+    termino: string,
+    cantidadDecision: number | null,
+  ): boolean {
+    if (cantidadDecision !== null && aventura.cantidadDecision !== cantidadDecision) {
+      return false;
+    }
+
+    if (!termino) {
+      return true;
+    }
+
+    return (
+      universo.titulo.toLocaleLowerCase().includes(termino) ||
+      campana.titulo.toLocaleLowerCase().includes(termino) ||
+      aventura.titulo.toLocaleLowerCase().includes(termino)
+    );
   }
 
   private indiceInicial(campana: Campana): number {

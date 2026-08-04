@@ -330,8 +330,20 @@
   gap: var(--space-3);
   margin-bottom: var(--space-6);
 
-  &__texto {
+  &__fila {
+    display: flex;
+    gap: var(--space-3);
     max-width: var(--content-width-md);
+  }
+
+  &__texto {
+    flex: 2 1 0;
+    min-width: 0;
+  }
+
+  &__cantidad-decision {
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   &__tags {
@@ -377,5 +389,13 @@ button.tag-chip:hover:not(.tag-chip--activo) {
 @media (max-width: $bp-tablet) {
   .campanas {
     grid-template-columns: 1fr;
+  }
+
+  .buscador__fila {
+    flex-direction: column;
+  }
+
+  .buscador__cantidad-decision {
+    flex: 1 1 auto;
   }
 }

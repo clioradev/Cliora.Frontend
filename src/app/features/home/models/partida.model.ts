@@ -3,9 +3,12 @@ export interface EmpezarPartidaResponse {
   idNodoActual: number;
 }
 
+export type NivelDificultad = 'Facil' | 'Normal' | 'Dificil';
+
 export interface Opcion {
   idOpcion: number;
   texto: string;
+  nivelDificultad: NivelDificultad | null;
 }
 
 export type TipoContenidoNodo = 'Texto' | 'Imagen' | 'Audio';
@@ -26,9 +29,34 @@ export interface Nodo {
   opciones: Opcion[];
 }
 
+export interface TiradaResultado {
+  exito: boolean;
+  dados: number[];
+  aciertos: number;
+  nombreCaracteristica: string;
+  valorCaracteristica: number;
+  total: number;
+  dificultad: number;
+}
+
 export interface ElegirOpcionResponse {
   idNodo: number | null;
   idFinal: number | null;
+  tirada: TiradaResultado | null;
+}
+
+export interface CaracteristicaValor {
+  nombre: string;
+  valor: number;
+}
+
+export interface GrupoCaracteristica {
+  tipo: string;
+  caracteristicas: CaracteristicaValor[];
+}
+
+export interface Personaje {
+  grupos: GrupoCaracteristica[];
 }
 
 export interface Final {

@@ -11,9 +11,20 @@ export interface Aventura {
   puntuacionMedia: number | null;
   totalValoraciones: number;
   ultimaValoracion: UltimaValoracion | null;
-  /** Aún no la envía el backend; mientras tanto se usa siempre el placeholder de carátula. */
+  cantidadDecision: number;
   caratulaUrl?: string | null;
 }
+
+export interface OpcionEnum {
+  valor: number;
+  etiqueta: string;
+}
+
+export const CANTIDAD_DECISION_OPCIONES: OpcionEnum[] = [
+  { valor: 1, etiqueta: 'Bajo' },
+  { valor: 2, etiqueta: 'Medio' },
+  { valor: 3, etiqueta: 'Alto' },
+];
 
 export interface Campana {
   idCampana: number;

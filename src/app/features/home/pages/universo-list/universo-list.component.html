@@ -1,12 +1,26 @@
 @if (!loading() && !error() && universos().length > 0) {
   <div class="buscador">
-    <input
-      type="search"
-      class="buscador__texto"
-      placeholder="Buscar por título…"
-      [value]="searchTerm()"
-      (input)="onSearchInput($event)"
-    />
+    <div class="buscador__fila">
+      <input
+        type="search"
+        class="buscador__texto"
+        placeholder="Buscar por título…"
+        [value]="searchTerm()"
+        (input)="onSearchInput($event)"
+      />
+
+      <select
+        class="buscador__cantidad-decision"
+        [value]="selectedCantidadDecision() ?? ''"
+        (change)="onCantidadDecisionChange($event)"
+        aria-label="Filtrar por cantidad de decisiones"
+      >
+        <option value="">Todas las cantidades</option>
+        @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
+          <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+    </div>
 
     @if (availableTags().length > 0) {
       <div class="buscador__tags">
@@ -229,7 +243,7 @@
 
                         @if (aventura.estadoPartida) {
                           <span class="aventura-card__estado">{{ aventura.estadoPartida }}</span>
-                          @if (aventura.estadoPartida === 'Finalizada') {
+                          @if (aventura.estadoPartida === 'Finalizada' || aventura.estadoPartida === 'En curso') {
                             <button type="button" (click)="valorarAventura(aventura.idAventura)">
                               Valorar esta aventura
                             </button>

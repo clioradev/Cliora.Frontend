@@ -1,0 +1,25 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Personaje</h3>
+
+  @if (loading()) {
+    <p class="status">Cargando…</p>
+  } @else if (error()) {
+    <p class="status status--error">No se ha podido cargar el personaje.</p>
+  } @else if (grupos().length === 0) {
+    <p class="status">Todavía no hay características que mostrar.</p>
+  } @else {
+    @for (grupo of grupos(); track grupo.tipo) {
+      <section class="ficha-personaje__grupo">
+        <h4>{{ grupo.tipo }}</h4>
+        <ul class="ficha-personaje__lista">
+          @for (caracteristica of grupo.caracteristicas; track caracteristica.nombre) {
+            <li>
+              <span>{{ caracteristica.nombre }}</span>
+              <span>{{ caracteristica.valor }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+  }
+</app-modal>

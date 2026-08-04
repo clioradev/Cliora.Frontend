@@ -34,6 +34,11 @@
   --text-lg: 1.25rem;
   --text-xl: 1.5rem;
 
+  // Lectura (ajustables desde Preferencias)
+  --text-reading: var(--text-md);
+  --line-height-reading: 1.6;
+  --content-width-reading: 42rem;
+
   // Espaciado
   --space-1: 0.25rem;
   --space-2: 0.5rem;
@@ -64,30 +69,76 @@
   --content-width-lg: 800px;
 }
 
+@mixin paleta-oscura {
+  --color-bg: #1c1a16;
+  --color-surface: #262319;
+  --color-surface-hover: #322e22;
+  --color-surface-muted: #2c2820;
+  --color-border: #423c2f;
+  --color-text: #ede7db;
+  --color-text-secondary: #b3aa98;
+
+  --color-campana-bg: #24352a;
+  --color-campana-border: #3a5240;
+
+  --color-primary: #6fae7c;
+  --color-primary-hover: #8ec498;
+  --color-secondary: #c08a54;
+  --color-secondary-hover: #d6a06c;
+  --color-gray: #9c968c;
+  --color-accent: #d9ab5c;
+  --color-danger: #d97a68;
+  --color-success: #7cbf88;
+  --color-overlay: rgba(0, 0, 0, 0.65);
+  --color-focus-ring: rgba(111, 174, 124, 0.4);
+
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+@mixin paleta-clara {
+  --color-bg: #faf8f4;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f0ece3;
+  --color-surface-muted: #efe9df;
+  --color-border: #d9d0c1;
+  --color-text: #332b21;
+  --color-text-secondary: #70685a;
+
+  --color-campana-bg: #e9f1e6;
+  --color-campana-border: #c7dcc0;
+
+  --color-primary: #3f6b4a;
+  --color-primary-hover: #2f5238;
+  --color-secondary: #8a5a34;
+  --color-secondary-hover: #6e4527;
+  --color-gray: #75726c;
+  --color-accent: #c9973f;
+  --color-danger: #9c3b2e;
+  --color-success: #4f8f5c;
+  --color-overlay: rgba(38, 32, 24, 0.55);
+  --color-focus-ring: rgba(63, 107, 74, 0.35);
+
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+// Tema "Sistema" (preferencia no forzada): sigue el SO.
 @media (prefers-color-scheme: dark) {
   :root {
-    --color-bg: #1c1a16;
-    --color-surface: #262319;
-    --color-surface-hover: #322e22;
-    --color-surface-muted: #2c2820;
-    --color-border: #423c2f;
-    --color-text: #ede7db;
-    --color-text-secondary: #b3aa98;
-
-    --color-campana-bg: #24352a;
-    --color-campana-border: #3a5240;
-
-    --color-primary: #6fae7c;
-    --color-primary-hover: #8ec498;
-    --color-secondary: #c08a54;
-    --color-secondary-hover: #d6a06c;
-    --color-gray: #9c968c;
-    --color-accent: #d9ab5c;
-    --color-danger: #d97a68;
-    --color-success: #7cbf88;
-    --color-overlay: rgba(0, 0, 0, 0.65);
-    --color-focus-ring: rgba(111, 174, 124, 0.4);
-
-    --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+    @include paleta-oscura;
   }
+}
+
+// Tema forzado explícitamente desde Preferencias — gana sobre el @media de arriba
+// porque el selector con atributo tiene más especificidad que un :root a secas.
+:root[data-theme='dark'] {
+  @include paleta-oscura;
+}
+
+:root[data-theme='light'] {
+  @include paleta-clara;
+}
+
+:root[data-alto-contraste] {
+  --color-text-secondary: var(--color-text);
+  --color-border: var(--color-text);
 }

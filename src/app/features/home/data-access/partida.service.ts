@@ -8,6 +8,7 @@ import {
   Final,
   FinalizarAventuraResponse,
   Nodo,
+  Personaje,
 } from '../models/partida.model';
 
 @Injectable({ providedIn: 'root' })
@@ -21,6 +22,10 @@ export class PartidaService {
 
   getNodo(idNodo: number): Observable<Nodo> {
     return this.http.get<Nodo>(`${this.baseUrl}/Partida/Nodo/${idNodo}`);
+  }
+
+  getPersonaje(idNodo: number): Observable<Personaje> {
+    return this.http.get<Personaje>(`${this.baseUrl}/Partida/Personaje/${idNodo}`);
   }
 
   elegirOpcion(idOpcion: number): Observable<ElegirOpcionResponse> {

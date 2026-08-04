@@ -1,12 +1,41 @@
+@if (!loading() && !error() && universos().length > 0) {
+  <div class="buscador">
+    <input
+      type="search"
+      class="buscador__texto"
+      placeholder="Buscar por título…"
+      [value]="searchTerm()"
+      (input)="onSearchInput($event)"
+    />
+
+    @if (availableTags().length > 0) {
+      <div class="buscador__tags">
+        @for (tag of availableTags(); track tag) {
+          <button
+            type="button"
+            class="tag-chip"
+            [class.tag-chip--activo]="selectedTags().has(tag)"
+            (click)="toggleTag(tag)"
+          >
+            {{ tag }}
+          </button>
+        }
+      </div>
+    }
+  </div>
+}
+
 @if (loading()) {
   <p class="status">Cargando universos…</p>
 } @else if (error()) {
   <p class="status status--error">No se ha podido contactar con el servidor.</p>
 } @else if (universos().length === 0) {
   <p class="status">Todavía no hay universos publicados.</p>
+} @else if (filteredUniversos().length === 0) {
+  <p class="status">No se han encontrado resultados.</p>
 } @else {
   <div class="universos">
-    @for (universo of universos(); track universo.idUniverso) {
+    @for (universo of filteredUniversos(); track universo.idUniverso) {
       <section class="universo-card">
         <header class="universo-card__header">
           <h2>{{ universo.titulo }}</h2>
@@ -33,6 +62,14 @@
             </div>
           }
         </header>
+
+        @if (universo.tipos.length > 0) {
+          <div class="universo-card__tags">
+            @for (tag of universo.tipos; track tag) {
+              <span class="tag-chip tag-chip--sm">{{ tag }}</span>
+            }
+          </div>
+        }
 
         @if (universo.descripcion) {
           <p class="universo-card__descripcion">{{ universo.descripcion }}</p>
@@ -102,8 +139,7 @@
                           @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
                             <a
                               class="aventura-caratula__play"
-                              [routerLink]="['/partida', aventura.idNodoActual]"
-                              [queryParams]="{ idAventura: aventura.idAventura }"
+                              [routerLink]="['/aventura', aventura.idAventura, 'portada']"
                               aria-label="Continuar partida"
                             >
                               <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -111,17 +147,15 @@
                               </svg>
                             </a>
                           } @else if (aventura.puedeEmpezarPartida) {
-                            <button
-                              type="button"
+                            <a
                               class="aventura-caratula__play"
-                              (click)="empezarPartida(aventura)"
-                              [disabled]="startingAventuraId() === aventura.idAventura"
+                              [routerLink]="['/aventura', aventura.idAventura, 'portada']"
                               aria-label="Empezar partida"
                             >
                               <svg viewBox="0 0 24 24" aria-hidden="true">
                                 <path d="M8 5v14l11-7z" fill="currentColor" />
                               </svg>
-                            </button>
+                            </a>
                           }
 
                           @if (aventura.puntuacionMedia !== null) {
@@ -207,8 +241,7 @@
                         @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
                           <a
                             class="aventura-card__play"
-                            [routerLink]="['/partida', aventura.idNodoActual]"
-                            [queryParams]="{ idAventura: aventura.idAventura }"
+                            [routerLink]="['/aventura', aventura.idAventura, 'portada']"
                             aria-label="Continuar partida"
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
@@ -216,17 +249,15 @@
                             </svg>
                           </a>
                         } @else if (aventura.puedeEmpezarPartida) {
-                          <button
-                            type="button"
+                          <a
                             class="aventura-card__play"
-                            (click)="empezarPartida(aventura)"
-                            [disabled]="startingAventuraId() === aventura.idAventura"
+                            [routerLink]="['/aventura', aventura.idAventura, 'portada']"
                             aria-label="Empezar partida"
                           >
                             <svg viewBox="0 0 24 24" aria-hidden="true">
                               <path d="M8 5v14l11-7z" fill="currentColor" />
                             </svg>
-                          </button>
+                          </a>
                         }
                       </div>
                     </div>
@@ -263,10 +294,6 @@
       </section>
     }
   </div>
-
-  @if (startError()) {
-    <p class="status status--error">{{ startError() }}</p>
-  }
 }
 
 @if (opinionesAbiertas(); as o) {

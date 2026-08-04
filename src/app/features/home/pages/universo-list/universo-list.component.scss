@@ -324,6 +324,56 @@
   }
 }
 
+.buscador {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+
+  &__texto {
+    max-width: var(--content-width-md);
+  }
+
+  &__tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+}
+
+.tag-chip {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--space-1) var(--space-3);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  background: var(--color-surface-muted);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs);
+  line-height: 1.4;
+
+  &--activo {
+    border-color: var(--color-primary);
+    background: var(--color-primary);
+    color: #fff;
+  }
+
+  &--sm {
+    padding: 0.15rem var(--space-2);
+  }
+}
+
+button.tag-chip:hover:not(.tag-chip--activo) {
+  border-color: var(--color-secondary);
+}
+
+.universo-card__tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-1);
+  margin-top: var(--space-2);
+}
+
 @media (max-width: $bp-tablet) {
   .campanas {
     grid-template-columns: 1fr;

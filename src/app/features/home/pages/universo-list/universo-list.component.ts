@@ -1,10 +1,9 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { StarRatingDisplayComponent } from '../../../../shared/components/star-rating-display/star-rating-display.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
-import { PartidaService } from '../../data-access/partida.service';
 import { UniversoService } from '../../data-access/universo.service';
 import { Aventura, Campana, Universo } from '../../models/universo.model';
 
@@ -16,22 +15,40 @@ import { Aventura, Campana, Universo } from '../../models/universo.model';
 })
 export class UniversoListComponent {
   private readonly universoService = inject(UniversoService);
-  private readonly partidaService = inject(PartidaService);
-  private readonly router = inject(Router);
   private readonly destroyRef = inject(DestroyRef);
 
   protected readonly universos = signal<Universo[]>([]);
   protected readonly loading = signal(true);
   protected readonly error = signal(false);
 
-  protected readonly startingAventuraId = signal<number | null>(null);
-  protected readonly startError = signal<string | null>(null);
-
   protected readonly opinionesAbiertas = signal<{ nivel: NivelValoracion; id: number; titulo: string } | null>(null);
   protected readonly idAventuraAValorar = signal<number | null>(null);
 
+  protected readonly searchTerm = signal('');
+  protected readonly selectedTags = signal(new Set<string>());
+
   private readonly indicesAventura = signal(new Map<number, number>());
   private readonly aventurasVolteadas = signal(new Set<number>());
+
+  protected readonly availableTags = computed(() => {
+    const tags = new Set<string>();
+    for (const universo of this.universos()) {
+      for (const tag of universo.tipos) {
+        tags.add(tag);
+      }
+    }
+    return Array.from(tags).sort();
+  });
+
+  protected readonly filteredUniversos = computed(() => {
+    const termino = this.searchTerm().trim().toLocaleLowerCase();
+    const tags = this.selectedTags();
+
+    return this.universos()
+      .filter((universo) => tags.size === 0 || universo.tipos.some((tag) => tags.has(tag)))
+      .map((universo) => this.filtrarPorTexto(universo, termino))
+      .filter((universo): universo is Universo => universo !== null);
+  });
 
   constructor() {
     this.cargarUniversos();
@@ -87,26 +104,18 @@ export class UniversoListComponent {
     return (aventura.idAventura * 47) % 360;
   }
 
-  protected empezarPartida(aventura: Aventura): void {
-    if (!aventura.idVersionAventura || this.startingAventuraId() !== null) {
-      return;
+  protected toggleTag(tag: string): void {
+    const set = new Set(this.selectedTags());
+    if (set.has(tag)) {
+      set.delete(tag);
+    } else {
+      set.add(tag);
     }
+    this.selectedTags.set(set);
+  }
 
-    this.startingAventuraId.set(aventura.idAventura);
-    this.startError.set(null);
-
-    this.partidaService.empezar(aventura.idVersionAventura).subscribe({
-      next: (respuesta) => {
-        this.startingAventuraId.set(null);
-        void this.router.navigate(['/partida', respuesta.idNodoActual], {
-          queryParams: { idAventura: aventura.idAventura },
-        });
-      },
-      error: () => {
-        this.startingAventuraId.set(null);
-        this.startError.set('No se ha podido empezar la partida.');
-      },
-    });
+  protected onSearchInput(event: Event): void {
+    this.searchTerm.set((event.target as HTMLInputElement).value);
   }
 
   protected verOpiniones(nivel: NivelValoracion, id: number, titulo: string): void {
@@ -130,6 +139,27 @@ export class UniversoListComponent {
     const mapa = new Map(this.indicesAventura());
     mapa.set(campana.idCampana, indice);
     this.indicesAventura.set(mapa);
+  }
+
+  private filtrarPorTexto(universo: Universo, termino: string): Universo | null {
+    if (!termino || universo.titulo.toLocaleLowerCase().includes(termino)) {
+      return universo;
+    }
+
+    const campanas: Campana[] = [];
+    for (const campana of universo.campanas) {
+      if (campana.titulo.toLocaleLowerCase().includes(termino)) {
+        campanas.push(campana);
+        continue;
+      }
+
+      const aventuras = campana.aventuras.filter((a) => a.titulo.toLocaleLowerCase().includes(termino));
+      if (aventuras.length > 0) {
+        campanas.push({ ...campana, aventuras });
+      }
+    }
+
+    return campanas.length > 0 ? { ...universo, campanas } : null;
   }
 
   private indiceInicial(campana: Campana): number {

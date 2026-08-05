@@ -9,6 +9,10 @@
     Finalizar aventura
   </button>
 
+  @if (finalizarError()) {
+    <p class="status status--error">{{ finalizarError() }}</p>
+  }
+
   @if (idAventuraFinalizada(); as idAventura) {
     <app-valoracion-modal [idAventura]="idAventura" (cerrado)="onValoracionCerrada()" />
   }

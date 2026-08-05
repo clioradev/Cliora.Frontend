@@ -1,5 +1,6 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
+import { asyncAction } from '../../../../core/utils/async-action';
 import { PreferenciasAplicadasService } from '../../data-access/preferencias-aplicadas.service';
 import { PreferenciasService } from '../../data-access/preferencias.service';
 import {
@@ -20,7 +21,6 @@ import {
 export class ConfiguracionComponent {
   private readonly preferenciasService = inject(PreferenciasService);
   private readonly preferenciasAplicadas = inject(PreferenciasAplicadasService);
-  private readonly destroyRef = inject(DestroyRef);
 
   protected readonly temaOpciones = TEMA_OPCIONES;
   protected readonly tipografiaOpciones = TIPOGRAFIA_OPCIONES;
@@ -28,11 +28,11 @@ export class ConfiguracionComponent {
   protected readonly espaciadoLineasOpciones = ESPACIADO_LINEAS_OPCIONES;
   protected readonly anchoLecturaOpciones = ANCHO_LECTURA_OPCIONES;
 
-  protected readonly loading = signal(true);
-  protected readonly error = signal(false);
-  protected readonly guardando = signal(false);
-  protected readonly guardadoOk = signal(false);
-  protected readonly guardarError = signal<string | null>(null);
+  private readonly preferenciasResource = rxResource({
+    stream: () => this.preferenciasService.obtenerPreferencias(),
+  });
+  protected readonly loading = this.preferenciasResource.isLoading;
+  protected readonly error = computed(() => this.preferenciasResource.error() !== undefined);
 
   protected readonly tema = signal(3);
   protected readonly tipografia = signal(1);
@@ -44,20 +44,15 @@ export class ConfiguracionComponent {
   protected readonly reducirAnimaciones = signal(false);
 
   constructor() {
-    this.preferenciasService
-      .obtenerPreferencias()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (preferencias) => {
+    effect(() => {
+      const preferencias = this.preferenciasResource.value();
+      if (preferencias) {
+        untracked(() => {
           this.actualizarFormulario(preferencias);
           this.aplicarEnVivo();
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set(true);
-          this.loading.set(false);
-        },
-      });
+        });
+      }
+    });
   }
 
   protected onTemaChange(event: Event): void {
@@ -100,38 +95,31 @@ export class ConfiguracionComponent {
     this.aplicarEnVivo();
   }
 
+  private readonly guardarAction = asyncAction(
+    (dto: Preferencias) => this.preferenciasService.actualizarPreferencias(dto),
+    {
+      onSuccess: (preferencias) => {
+        this.actualizarFormulario(preferencias);
+        this.aplicarEnVivo();
+      },
+      defaultErrorMessage: 'No se han podido guardar las preferencias.',
+    },
+  );
+  protected readonly guardando = this.guardarAction.loading;
+  protected readonly guardarError = this.guardarAction.error;
+  protected readonly guardadoOk = this.guardarAction.success;
+
   protected guardar(): void {
-    if (this.guardando()) {
-      return;
-    }
-
-    this.guardando.set(true);
-    this.guardarError.set(null);
-    this.guardadoOk.set(false);
-
-    this.preferenciasService
-      .actualizarPreferencias({
-        tema: this.tema(),
-        tipografia: this.tipografia(),
-        tamanoFuente: this.tamanoFuente(),
-        espaciadoLineas: this.espaciadoLineas(),
-        anchoLectura: this.anchoLectura(),
-        intensidadFondo: this.intensidadFondo(),
-        altoContraste: this.altoContraste(),
-        reducirAnimaciones: this.reducirAnimaciones(),
-      })
-      .subscribe({
-        next: (preferencias) => {
-          this.actualizarFormulario(preferencias);
-          this.aplicarEnVivo();
-          this.guardando.set(false);
-          this.guardadoOk.set(true);
-        },
-        error: () => {
-          this.guardando.set(false);
-          this.guardarError.set('No se han podido guardar las preferencias.');
-        },
-      });
+    this.guardarAction.run({
+      tema: this.tema(),
+      tipografia: this.tipografia(),
+      tamanoFuente: this.tamanoFuente(),
+      espaciadoLineas: this.espaciadoLineas(),
+      anchoLectura: this.anchoLectura(),
+      intensidadFondo: this.intensidadFondo(),
+      altoContraste: this.altoContraste(),
+      reducirAnimaciones: this.reducirAnimaciones(),
+    });
   }
 
   private aplicarEnVivo(): void {

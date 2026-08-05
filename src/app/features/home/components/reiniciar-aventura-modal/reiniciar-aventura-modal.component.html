@@ -1,0 +1,20 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Reiniciar aventura</h3>
+
+  <p>
+    Vas a empezar esta aventura desde el principio. Se perderán todos los eventos y decisiones registrados en ella, y
+    también el avance de cualquier aventura posterior de la misma campaña que ya hayas jugado.
+  </p>
+  <p><strong>Esta acción no se puede deshacer.</strong></p>
+
+  @if (error()) {
+    <p class="status status--error">{{ error() }}</p>
+  }
+
+  <div class="reiniciar-modal__acciones">
+    <button type="button" (click)="cerrado.emit()">Cancelar</button>
+    <button type="button" class="btn--primary" [disabled]="reiniciando()" (click)="confirmar()">
+      {{ reiniciando() ? 'Reiniciando…' : 'Sí, reiniciar' }}
+    </button>
+  </div>
+</app-modal>

@@ -1,10 +1,11 @@
-import { Component, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, signal } from '@angular/core';
+import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { asyncAction } from '../../../../core/utils/async-action';
 import { FichaPersonajeModalComponent } from '../../components/ficha-personaje-modal/ficha-personaje-modal.component';
 import { ResultadoTiradaModalComponent } from '../../components/resultado-tirada-modal/resultado-tirada-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
-import { Nodo, Opcion, TiradaResultado } from '../../models/partida.model';
+import { Opcion, TiradaResultado } from '../../models/partida.model';
 
 @Component({
   selector: 'app-partida',
@@ -16,55 +17,47 @@ export class PartidaComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly partidaService = inject(PartidaService);
-  private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly nodo = signal<Nodo | null>(null);
-  protected readonly loading = signal(true);
-  protected readonly error = signal(false);
+  private readonly paramMap = toSignal(this.route.paramMap, { requireSync: true });
+  private readonly queryParamMap = toSignal(this.route.queryParamMap, { requireSync: true });
 
-  protected readonly eligiendo = signal(false);
-  protected readonly eligiendoError = signal<string | null>(null);
+  protected readonly idAventura = computed(() => {
+    const idAventuraParam = this.queryParamMap().get('idAventura');
+    return idAventuraParam ? Number(idAventuraParam) : null;
+  });
 
-  protected readonly idAventura = signal<number | null>(null);
+  private readonly nodoResource = rxResource({
+    params: () => Number(this.paramMap().get('idNodo')),
+    stream: ({ params }) => this.partidaService.getNodo(params),
+  });
+  protected readonly nodo = this.nodoResource.value;
+  protected readonly loading = this.nodoResource.isLoading;
+  protected readonly error = computed(() => this.nodoResource.error() !== undefined);
 
   protected readonly resultadoTirada = signal<TiradaResultado | null>(null);
   private destinoPendiente: { idNodo: number | null; idFinal: number | null } | null = null;
 
   protected readonly personajeAbierto = signal(false);
 
-  constructor() {
-    this.route.paramMap.pipe(takeUntilDestroyed()).subscribe((params) => {
-      const idAventuraParam = this.route.snapshot.queryParamMap.get('idAventura');
-      this.idAventura.set(idAventuraParam ? Number(idAventuraParam) : null);
-      this.cargarNodo(Number(params.get('idNodo')));
-    });
-  }
-
-  protected elegir(opcion: Opcion): void {
-    if (this.eligiendo()) {
-      return;
-    }
-
-    this.eligiendo.set(true);
-    this.eligiendoError.set(null);
-
-    this.partidaService.elegirOpcion(opcion.idOpcion).subscribe({
-      next: (respuesta) => {
-        this.eligiendo.set(false);
-
+  private readonly elegirAction = asyncAction(
+    (opcion: Opcion) => this.partidaService.elegirOpcion(opcion.idOpcion),
+    {
+      onSuccess: (respuesta) => {
         if (respuesta.tirada) {
           this.destinoPendiente = { idNodo: respuesta.idNodo, idFinal: respuesta.idFinal };
           this.resultadoTirada.set(respuesta.tirada);
           return;
         }
-
         this.navegarA(respuesta.idNodo, respuesta.idFinal);
       },
-      error: () => {
-        this.eligiendo.set(false);
-        this.eligiendoError.set('No se ha podido procesar la elección.');
-      },
-    });
+      defaultErrorMessage: 'No se ha podido procesar la elección.',
+    },
+  );
+  protected readonly eligiendo = this.elegirAction.loading;
+  protected readonly eligiendoError = this.elegirAction.error;
+
+  protected elegir(opcion: Opcion): void {
+    this.elegirAction.run(opcion);
   }
 
   protected abrirPersonaje(): void {
@@ -90,25 +83,5 @@ export class PartidaComponent {
     } else if (idNodo !== null) {
       void this.router.navigate(['/partida', idNodo], { queryParams });
     }
-  }
-
-  private cargarNodo(idNodo: number): void {
-    this.loading.set(true);
-    this.error.set(false);
-    this.nodo.set(null);
-
-    this.partidaService
-      .getNodo(idNodo)
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (nodo) => {
-          this.nodo.set(nodo);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set(true);
-          this.loading.set(false);
-        },
-      });
   }
 }

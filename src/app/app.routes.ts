@@ -21,12 +21,52 @@ export const routes: Routes = [
           import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
       },
       {
+        path: 'olvido-contrasena',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/public/pages/olvido-contrasena/olvido-contrasena.component').then(
+            (m) => m.OlvidoContrasenaComponent,
+          ),
+      },
+      {
+        path: 'restablecer-contrasena',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/public/pages/restablecer-contrasena/restablecer-contrasena.component').then(
+            (m) => m.RestablecerContrasenaComponent,
+          ),
+      },
+      {
         path: 'configuracion',
         canActivate: [authGuard],
         loadComponent: () =>
-          import('./features/configuracion/pages/configuracion/configuracion.component').then(
-            (m) => m.ConfiguracionComponent,
+          import('./features/configuracion/pages/configuracion-shell/configuracion-shell.component').then(
+            (m) => m.ConfiguracionShellComponent,
           ),
+        children: [
+          { path: '', redirectTo: 'preferencias', pathMatch: 'full' },
+          {
+            path: 'preferencias',
+            loadComponent: () =>
+              import('./features/configuracion/pages/configuracion/configuracion.component').then(
+                (m) => m.ConfiguracionComponent,
+              ),
+          },
+          {
+            path: 'contrasena',
+            loadComponent: () =>
+              import('./features/configuracion/pages/cambiar-password/cambiar-password.component').then(
+                (m) => m.CambiarPasswordComponent,
+              ),
+          },
+          {
+            path: 'sesion',
+            loadComponent: () =>
+              import('./features/configuracion/pages/cerrar-sesion/cerrar-sesion.component').then(
+                (m) => m.CerrarSesionComponent,
+              ),
+          },
+        ],
       },
       {
         path: '',

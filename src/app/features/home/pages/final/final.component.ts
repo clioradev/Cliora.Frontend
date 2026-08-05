@@ -1,9 +1,9 @@
-import { Component, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { asyncAction } from '../../../../core/utils/async-action';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
-import { Final } from '../../models/partida.model';
 
 @Component({
   selector: 'app-final',
@@ -18,45 +18,24 @@ export class FinalComponent {
 
   private readonly idFinal = Number(this.route.snapshot.paramMap.get('idFinal'));
 
-  protected readonly final = signal<Final | null>(null);
-  protected readonly loading = signal(true);
-  protected readonly error = signal(false);
+  private readonly finalResource = rxResource({
+    stream: () => this.partidaService.getFinal(this.idFinal),
+  });
+  protected readonly final = this.finalResource.value;
+  protected readonly loading = this.finalResource.isLoading;
+  protected readonly error = computed(() => this.finalResource.error() !== undefined);
 
-  protected readonly finalizando = signal(false);
   protected readonly idAventuraFinalizada = signal<number | null>(null);
 
-  constructor() {
-    this.partidaService
-      .getFinal(this.idFinal)
-      .pipe(takeUntilDestroyed())
-      .subscribe({
-        next: (final) => {
-          this.final.set(final);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set(true);
-          this.loading.set(false);
-        },
-      });
-  }
+  private readonly finalizarAction = asyncAction(() => this.partidaService.finalizarAventura(this.idFinal), {
+    onSuccess: (respuesta) => this.idAventuraFinalizada.set(respuesta.idAventura),
+    defaultErrorMessage: 'No se ha podido finalizar la aventura.',
+  });
+  protected readonly finalizando = this.finalizarAction.loading;
+  protected readonly finalizarError = this.finalizarAction.error;
 
   protected finalizarAventura(): void {
-    if (this.finalizando()) {
-      return;
-    }
-
-    this.finalizando.set(true);
-
-    this.partidaService.finalizarAventura(this.idFinal).subscribe({
-      next: (respuesta) => {
-        this.finalizando.set(false);
-        this.idAventuraFinalizada.set(respuesta.idAventura);
-      },
-      error: () => {
-        this.finalizando.set(false);
-      },
-    });
+    this.finalizarAction.run();
   }
 
   protected onValoracionCerrada(): void {

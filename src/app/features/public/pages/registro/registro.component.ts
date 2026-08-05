@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { asyncAction } from '../../../../core/utils/async-action';
 
 function passwordsIgualesValidator(control: AbstractControl): ValidationErrors | null {
   const password = control.get('password')?.value;
@@ -20,9 +21,6 @@ export class RegistroComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  protected readonly submitting = signal(false);
-  protected readonly errors = signal<string[]>([]);
-
   protected readonly form = this.fb.nonNullable.group(
     {
       nombre: ['', [Validators.required]],
@@ -33,25 +31,22 @@ export class RegistroComponent {
     { validators: passwordsIgualesValidator },
   );
 
+  private readonly registroAction = asyncAction(
+    (nombre: string, email: string, password: string) => this.authService.register(nombre, email, password),
+    {
+      onSuccess: () => void this.router.navigate(['/login']),
+      defaultErrorMessage: 'No se ha podido completar el registro.',
+    },
+  );
+  protected readonly submitting = this.registroAction.loading;
+  protected readonly error = this.registroAction.error;
+
   protected onSubmit(): void {
-    if (this.form.invalid || this.submitting()) {
+    if (this.form.invalid) {
       return;
     }
 
-    this.submitting.set(true);
-    this.errors.set([]);
-
     const { nombre, email, password } = this.form.getRawValue();
-
-    this.authService.register(nombre, email, password).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        void this.router.navigate(['/login']);
-      },
-      error: (err: { error?: string[] }) => {
-        this.submitting.set(false);
-        this.errors.set(err.error ?? ['No se ha podido completar el registro.']);
-      },
-    });
+    this.registroAction.run(nombre, email, password);
   }
 }

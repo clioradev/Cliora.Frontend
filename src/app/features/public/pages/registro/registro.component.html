@@ -25,12 +25,8 @@
     <p class="registro-form__error">Las contraseñas no coinciden.</p>
   }
 
-  @if (errors().length) {
-    <ul class="registro-form__error">
-      @for (mensaje of errors(); track mensaje) {
-        <li>{{ mensaje }}</li>
-      }
-    </ul>
+  @if (error()) {
+    <p class="registro-form__error">{{ error() }}</p>
   }
 
   <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">

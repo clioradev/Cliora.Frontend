@@ -27,6 +27,18 @@ export class AuthService {
     return this.http.post<Usuario>(`${this.baseUrl}/Permiso/Registrar`, { nombre, email, password });
   }
 
+  olvidoContrasena(email: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Permiso/OlvidoContrasena`, { email });
+  }
+
+  restablecerContrasena(token: string, nuevaPassword: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Permiso/RestablecerContrasena`, { token, nuevaPassword });
+  }
+
+  cambiarContrasena(passwordActual: string, passwordNueva: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Permiso/CambiarContrasena`, { passwordActual, passwordNueva });
+  }
+
   logout(): Observable<void> {
     return this.http
       .post<void>(`${this.baseUrl}/Permiso/Logout`, null, { withCredentials: true })

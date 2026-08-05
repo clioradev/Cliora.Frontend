@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import {
+  ContinuarInfo,
   ElegirOpcionResponse,
   EmpezarPartidaResponse,
   Final,
@@ -38,5 +39,13 @@ export class PartidaService {
 
   finalizarAventura(idFinal: number): Observable<FinalizarAventuraResponse> {
     return this.http.post<FinalizarAventuraResponse>(`${this.baseUrl}/Partida/Finalizar`, { idFinal });
+  }
+
+  obtenerContinuar(): Observable<ContinuarInfo | null> {
+    return this.http.get<ContinuarInfo | null>(`${this.baseUrl}/Partida/Continuar`);
+  }
+
+  reiniciarAventura(idAventura: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Partida/Reiniciar`, { idAventura });
   }
 }

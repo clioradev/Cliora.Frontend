@@ -67,3 +67,8 @@ export interface Final {
 export interface FinalizarAventuraResponse {
   idAventura: number;
 }
+
+export interface ContinuarInfo {
+  idNodo: number;
+  idAventura: number;
+}

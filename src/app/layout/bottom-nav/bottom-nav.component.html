@@ -1,0 +1,38 @@
+<nav class="bottom-nav">
+  <div class="bottom-nav__inner">
+    <button type="button" class="bottom-nav__item" [disabled]="!continuarDestino()" (click)="onContinuar()">
+      <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
+      <span class="bottom-nav__label">Continuar</span>
+    </button>
+
+    <a
+      class="bottom-nav__item"
+      routerLink="/"
+      routerLinkActive="bottom-nav__item--active"
+      [routerLinkActiveOptions]="{ exact: true }"
+    >
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.8" />
+        <path d="M3 12h18M12 3c3 3 3 15 0 18M12 3c-3 3-3 15 0 18" fill="none" stroke="currentColor" stroke-width="1.8" />
+      </svg>
+      <span class="bottom-nav__label">Universos</span>
+    </a>
+
+    <a class="bottom-nav__item" routerLink="/configuracion" routerLinkActive="bottom-nav__item--active">
+      <svg viewBox="0 0 24 24" aria-hidden="true">
+        <circle
+          cx="12"
+          cy="12"
+          r="8"
+          pathLength="100"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="3"
+          stroke-dasharray="6.25 6.25"
+        />
+        <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8" />
+      </svg>
+      <span class="bottom-nav__label">Configuración</span>
+    </a>
+  </div>
+</nav>

@@ -1,7 +1,8 @@
-import { Component, inject, signal } from '@angular/core';
+import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { asyncAction } from '../../../../core/utils/async-action';
 
 @Component({
   selector: 'app-login',
@@ -14,33 +15,24 @@ export class LoginComponent {
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
 
-  protected readonly submitting = signal(false);
-  protected readonly error = signal(false);
-
   protected readonly form = this.fb.nonNullable.group({
     email: ['', [Validators.required, Validators.email]],
     password: ['', [Validators.required]],
   });
 
+  private readonly loginAction = asyncAction((email: string, password: string) => this.authService.login(email, password), {
+    onSuccess: () => void this.router.navigate(['/']),
+    defaultErrorMessage: 'Credenciales incorrectas.',
+  });
+  protected readonly submitting = this.loginAction.loading;
+  protected readonly error = this.loginAction.error;
+
   protected onSubmit(): void {
-    if (this.form.invalid || this.submitting()) {
+    if (this.form.invalid) {
       return;
     }
 
-    this.submitting.set(true);
-    this.error.set(false);
-
     const { email, password } = this.form.getRawValue();
-
-    this.authService.login(email, password).subscribe({
-      next: () => {
-        this.submitting.set(false);
-        void this.router.navigate(['/']);
-      },
-      error: () => {
-        this.submitting.set(false);
-        this.error.set(true);
-      },
-    });
+    this.loginAction.run(email, password);
   }
 }

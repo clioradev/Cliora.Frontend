@@ -100,6 +100,7 @@
     position: relative;
     width: 100%;
     min-height: 21rem;
+    display: grid;
     transition: transform 0.5s;
     transform-style: preserve-3d;
   }
@@ -111,6 +112,7 @@
   }
 
   &__cara {
+    grid-area: 1 / 1;
     backface-visibility: hidden;
     display: flex;
     flex-direction: column;
@@ -127,10 +129,8 @@
   }
 
   &__cara--dorso {
-    position: absolute;
-    inset: 0;
+    position: relative;
     transform: rotateY(180deg);
-    overflow-y: auto;
     align-items: center;
     padding-top: var(--space-8);
     padding-bottom: 6rem;

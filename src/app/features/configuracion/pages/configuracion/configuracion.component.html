@@ -7,45 +7,45 @@
 
   <div class="campo">
     <label for="tema">Tema</label>
-    <select id="tema" [value]="tema()" (change)="onTemaChange($event)">
+    <select id="tema" (change)="onTemaChange($event)">
       @for (opcion of temaOpciones; track opcion.valor) {
-        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        <option [value]="opcion.valor" [selected]="opcion.valor === tema()">{{ opcion.etiqueta }}</option>
       }
     </select>
   </div>
 
   <div class="campo">
     <label for="tipografia">Tipografía</label>
-    <select id="tipografia" [value]="tipografia()" (change)="onTipografiaChange($event)">
+    <select id="tipografia" (change)="onTipografiaChange($event)">
       @for (opcion of tipografiaOpciones; track opcion.valor) {
-        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        <option [value]="opcion.valor" [selected]="opcion.valor === tipografia()">{{ opcion.etiqueta }}</option>
       }
     </select>
   </div>
 
   <div class="campo">
     <label for="tamanoFuente">Tamaño de letra</label>
-    <select id="tamanoFuente" [value]="tamanoFuente()" (change)="onTamanoFuenteChange($event)">
+    <select id="tamanoFuente" (change)="onTamanoFuenteChange($event)">
       @for (opcion of tamanoFuenteOpciones; track opcion.valor) {
-        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        <option [value]="opcion.valor" [selected]="opcion.valor === tamanoFuente()">{{ opcion.etiqueta }}</option>
       }
     </select>
   </div>
 
   <div class="campo">
     <label for="espaciadoLineas">Espaciado entre líneas</label>
-    <select id="espaciadoLineas" [value]="espaciadoLineas()" (change)="onEspaciadoLineasChange($event)">
+    <select id="espaciadoLineas" (change)="onEspaciadoLineasChange($event)">
       @for (opcion of espaciadoLineasOpciones; track opcion.valor) {
-        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        <option [value]="opcion.valor" [selected]="opcion.valor === espaciadoLineas()">{{ opcion.etiqueta }}</option>
       }
     </select>
   </div>
 
   <div class="campo">
     <label for="anchoLectura">Ancho de lectura</label>
-    <select id="anchoLectura" [value]="anchoLectura()" (change)="onAnchoLecturaChange($event)">
+    <select id="anchoLectura" (change)="onAnchoLecturaChange($event)">
       @for (opcion of anchoLecturaOpciones; track opcion.valor) {
-        <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        <option [value]="opcion.valor" [selected]="opcion.valor === anchoLectura()">{{ opcion.etiqueta }}</option>
       }
     </select>
   </div>

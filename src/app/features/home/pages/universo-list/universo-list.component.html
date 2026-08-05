@@ -247,6 +247,13 @@
                             <button type="button" (click)="valorarAventura(aventura.idAventura)">
                               Valorar esta aventura
                             </button>
+                            <button
+                              type="button"
+                              class="aventura-card__reiniciar"
+                              (click)="reiniciarAventura(aventura.idAventura)"
+                            >
+                              Reiniciar aventura
+                            </button>
                           }
                         } @else if (!aventura.puedeEmpezarPartida) {
                           <span class="aventura-card__bloqueada">Completa la aventura anterior para desbloquearla</span>
@@ -316,4 +323,8 @@
 
 @if (idAventuraAValorar(); as id) {
   <app-valoracion-modal [idAventura]="id" (cerrado)="onValoracionCerrada()" />
+}
+
+@if (idAventuraAReiniciar(); as id) {
+  <app-reiniciar-aventura-modal [idAventura]="id" (cerrado)="onReiniciarCerrado()" (reiniciada)="onAventuraReiniciada()" />
 }

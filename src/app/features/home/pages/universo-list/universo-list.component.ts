@@ -1,28 +1,39 @@
-import { Component, computed, DestroyRef, inject, signal } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { Component, computed, inject, signal } from '@angular/core';
+import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { StarRatingDisplayComponent } from '../../../../shared/components/star-rating-display/star-rating-display.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
+import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { UniversoService } from '../../data-access/universo.service';
 import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
 
 @Component({
   selector: 'app-universo-list',
-  imports: [RouterLink, StarRatingDisplayComponent, ResenasModalComponent, ValoracionModalComponent],
+  imports: [
+    RouterLink,
+    StarRatingDisplayComponent,
+    ResenasModalComponent,
+    ValoracionModalComponent,
+    ReiniciarAventuraModalComponent,
+  ],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
 })
 export class UniversoListComponent {
   private readonly universoService = inject(UniversoService);
-  private readonly destroyRef = inject(DestroyRef);
 
-  protected readonly universos = signal<Universo[]>([]);
-  protected readonly loading = signal(true);
-  protected readonly error = signal(false);
+  private readonly universosResource = rxResource({
+    stream: () => this.universoService.getUniversos(),
+    defaultValue: [] as Universo[],
+  });
+  protected readonly universos = this.universosResource.value;
+  protected readonly loading = this.universosResource.isLoading;
+  protected readonly error = computed(() => this.universosResource.error() !== undefined);
 
   protected readonly opinionesAbiertas = signal<{ nivel: NivelValoracion; id: number; titulo: string } | null>(null);
   protected readonly idAventuraAValorar = signal<number | null>(null);
+  protected readonly idAventuraAReiniciar = signal<number | null>(null);
 
   protected readonly searchTerm = signal('');
   protected readonly selectedTags = signal(new Set<string>());
@@ -52,10 +63,6 @@ export class UniversoListComponent {
       .map((universo) => this.filtrarUniverso(universo, termino, cantidadDecision))
       .filter((universo): universo is Universo => universo !== null);
   });
-
-  constructor() {
-    this.cargarUniversos();
-  }
 
   protected aventuraActual(campana: Campana): Aventura {
     return campana.aventuras[this.indiceActual(campana)];
@@ -136,7 +143,20 @@ export class UniversoListComponent {
 
   protected onValoracionCerrada(): void {
     this.idAventuraAValorar.set(null);
-    this.cargarUniversos();
+    this.universosResource.reload();
+  }
+
+  protected reiniciarAventura(idAventura: number): void {
+    this.idAventuraAReiniciar.set(idAventura);
+  }
+
+  protected onReiniciarCerrado(): void {
+    this.idAventuraAReiniciar.set(null);
+  }
+
+  protected onAventuraReiniciada(): void {
+    this.idAventuraAReiniciar.set(null);
+    this.universosResource.reload();
   }
 
   private establecerIndice(campana: Campana, indice: number): void {
@@ -198,21 +218,5 @@ export class UniversoListComponent {
     }
 
     return Math.max(campana.aventuras.length - 1, 0);
-  }
-
-  private cargarUniversos(): void {
-    this.universoService
-      .getUniversos()
-      .pipe(takeUntilDestroyed(this.destroyRef))
-      .subscribe({
-        next: (universos) => {
-          this.universos.set(universos);
-          this.loading.set(false);
-        },
-        error: () => {
-          this.error.set(true);
-          this.loading.set(false);
-        },
-      });
   }
 }

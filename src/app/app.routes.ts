@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { ShellComponent } from './layout/shell/shell.component';
 import { authGuard } from './core/guards/auth.guard';
 import { guestGuard } from './core/guards/guest.guard';
+import { rolGuard } from './core/guards/rol.guard';
 
 export const routes: Routes = [
   {
@@ -67,6 +68,11 @@ export const routes: Routes = [
               ),
           },
         ],
+      },
+      {
+        path: 'autor',
+        canActivate: [authGuard, rolGuard('Autor')],
+        loadChildren: () => import('./features/autor/autor.routes').then((m) => m.AUTOR_ROUTES),
       },
       {
         path: '',

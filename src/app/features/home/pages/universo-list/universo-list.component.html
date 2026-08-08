@@ -139,15 +139,7 @@
                           @if (aventura.caratulaUrl) {
                             <img class="aventura-caratula__img" [src]="aventura.caratulaUrl" [alt]="aventura.titulo" />
                           } @else {
-                            <svg class="aventura-caratula__icono" viewBox="0 0 24 24" aria-hidden="true">
-                              <path
-                                d="M4 5a2 2 0 012-2h6v18H6a2 2 0 01-2-2V5zM20 5a2 2 0 00-2-2h-6v18h6a2 2 0 002-2V5z"
-                                fill="none"
-                                stroke="currentColor"
-                                stroke-width="1.5"
-                                stroke-linejoin="round"
-                              />
-                            </svg>
+                            <img class="aventura-caratula__icono" src="/media/logos/Cliora-icono-reducido.png" alt="" />
                           }
 
                           @if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {

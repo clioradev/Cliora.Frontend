@@ -30,6 +30,7 @@ export class BottomNavComponent {
   });
 
   protected readonly continuarDestino = computed(() => this.continuarResource.value() ?? null);
+  protected readonly mostrarAutor = computed(() => this.authService.tieneRol('Autor'));
 
   protected onContinuar(): void {
     const destino = this.continuarDestino();

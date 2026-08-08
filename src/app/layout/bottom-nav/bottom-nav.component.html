@@ -18,6 +18,18 @@
       <span class="bottom-nav__label">Universos</span>
     </a>
 
+    @if (mostrarAutor()) {
+      <a class="bottom-nav__item" routerLink="/autor" routerLinkActive="bottom-nav__item--active">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M3 21v-3.75L14.81 5.44a1 1 0 0 1 1.41 0l1.34 1.34a1 1 0 0 1 0 1.41L5.75 21H3z"
+            fill="currentColor"
+          />
+        </svg>
+        <span class="bottom-nav__label">Autor</span>
+      </a>
+    }
+
     <a class="bottom-nav__item" routerLink="/configuracion" routerLinkActive="bottom-nav__item--active">
       <svg viewBox="0 0 24 24" aria-hidden="true">
         <circle

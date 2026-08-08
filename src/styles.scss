@@ -154,3 +154,45 @@ input[type='range'] {
   animation-duration: 0.001ms !important;
   animation-iteration-count: 1 !important;
 }
+
+// Marca: alterna entre el logo claro/oscuro según el tema activo
+// (mismo criterio de especificidad que _tokens.scss para dark/light/sistema).
+.marca-claro,
+.marca-oscuro {
+  display: block;
+  width: auto;
+}
+
+.marca-oscuro {
+  display: none;
+}
+
+@media (prefers-color-scheme: dark) {
+  .marca-claro {
+    display: none;
+  }
+
+  .marca-oscuro {
+    display: block;
+  }
+}
+
+:root[data-theme='dark'] {
+  .marca-claro {
+    display: none;
+  }
+
+  .marca-oscuro {
+    display: block;
+  }
+}
+
+:root[data-theme='light'] {
+  .marca-claro {
+    display: block;
+  }
+
+  .marca-oscuro {
+    display: none;
+  }
+}

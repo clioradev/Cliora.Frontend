@@ -5,6 +5,12 @@
   flex-direction: column;
   gap: var(--space-4);
 
+  &__marca {
+    height: 7rem;
+    max-width: 90%;
+    margin: 0 auto;
+  }
+
   label {
     display: flex;
     flex-direction: column;

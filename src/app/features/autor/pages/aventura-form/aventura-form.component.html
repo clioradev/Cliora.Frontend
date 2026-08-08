@@ -1,0 +1,64 @@
+<div class="aventura-form">
+  <h1>{{ idAventura() ? 'Editar aventura' : 'Añadir nueva aventura' }}</h1>
+
+  <nav class="aventura-form__tabs">
+    <button type="button" [class.aventura-form__tab--activa]="tabActiva() === 'datos'" (click)="tabActiva.set('datos')">
+      Datos
+    </button>
+    <button
+      type="button"
+      [class.aventura-form__tab--activa]="tabActiva() === 'contenido'"
+      (click)="tabActiva.set('contenido')"
+    >
+      Actos y escenas
+    </button>
+  </nav>
+
+  @if (cargando()) {
+    <p>Cargando…</p>
+  } @else if (tabActiva() === 'datos') {
+    <form [formGroup]="form" (ngSubmit)="guardar()">
+      <label>
+        Título
+        <input type="text" formControlName="titulo" />
+      </label>
+
+      <label>
+        Descripción
+        <textarea formControlName="descripcion" rows="4"></textarea>
+      </label>
+
+      <label>
+        Orden
+        <input type="number" formControlName="orden" min="1" />
+      </label>
+
+      <label>
+        Cantidad de decisión
+        <select formControlName="cantidadDecision">
+          @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
+            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+      </label>
+
+      <label>
+        Imagen (ruta)
+        <input type="text" formControlName="rutaImagen" placeholder="aventuras/mi-aventura/caratula.jpg" />
+      </label>
+
+      @if (error()) {
+        <p class="status status--error">{{ error() }}</p>
+      }
+
+      <div class="aventura-form__acciones">
+        <a routerLink="/autor">Cancelar</a>
+        <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </form>
+  } @else {
+    <p class="aventura-form__placeholder">Próximamente: edición de actos y escenas.</p>
+  }
+</div>

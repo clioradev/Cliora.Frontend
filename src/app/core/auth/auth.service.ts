@@ -16,6 +16,11 @@ export class AuthService {
   readonly accessToken = this._accessToken.asReadonly();
   readonly currentUser = this._currentUser.asReadonly();
   readonly isAuthenticated = computed(() => this._accessToken() !== null);
+  readonly roles = computed(() => this._currentUser()?.roles ?? []);
+
+  tieneRol(rol: string): boolean {
+    return this.roles().includes(rol);
+  }
 
   login(email: string, password: string): Observable<LoginResponse> {
     return this.http

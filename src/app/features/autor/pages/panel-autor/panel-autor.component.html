@@ -1,0 +1,78 @@
+<div class="panel-autor">
+  <header class="panel-autor__header">
+    <h1>Panel de autor</h1>
+    <button type="button" class="btn--primary" (click)="nuevoUniverso()">Añadir nuevo universo</button>
+  </header>
+
+  @if (loading()) {
+    <p>Cargando tu contenido…</p>
+  } @else if (error()) {
+    <p class="status status--error">No se ha podido cargar tu contenido.</p>
+  } @else if (universos().length === 0) {
+    <p>Todavía no tienes ningún universo. Empieza añadiendo uno.</p>
+  } @else {
+    @for (universo of universos(); track universo.idUniverso) {
+      <section class="universo-card">
+        <div class="universo-card__header">
+          <h2>{{ universo.titulo }}</h2>
+          <button type="button" (click)="editarUniverso(universo)">Editar</button>
+        </div>
+        @if (universo.descripcion) {
+          <p>{{ universo.descripcion }}</p>
+        }
+
+        @for (campana of universo.campanas; track campana.idCampana) {
+          <article class="campana-card">
+            <div class="campana-card__header">
+              <h3>{{ campana.titulo }}</h3>
+              <button type="button" (click)="editarCampana(universo.idUniverso, campana)">Editar</button>
+            </div>
+            @if (campana.descripcion) {
+              <p>{{ campana.descripcion }}</p>
+            }
+
+            @if (campana.aventuras.length > 0) {
+              <ul class="aventura-list">
+                @for (aventura of campana.aventuras; track aventura.idAventura) {
+                  <li class="aventura-list__item">
+                    <span class="aventura-list__orden">#{{ aventura.orden }}</span>
+                    <span class="aventura-list__titulo">{{ aventura.titulo }}</span>
+                    <span class="aventura-list__visible" [class.aventura-list__visible--si]="aventura.visible">
+                      {{ aventura.visible ? 'Visible' : 'Oculta' }}
+                    </span>
+                    <a [routerLink]="['/autor/aventura', aventura.idAventura]">Editar</a>
+                  </li>
+                }
+              </ul>
+            }
+
+            <a [routerLink]="['/autor/aventura/nueva']" [queryParams]="{ idCampana: campana.idCampana }">
+              Añadir nueva aventura
+            </a>
+          </article>
+        }
+
+        <button type="button" (click)="nuevaCampana(universo.idUniverso)">
+          Añadir nueva campaña
+        </button>
+      </section>
+    }
+  }
+</div>
+
+@if (universoModal(); as modal) {
+  <app-universo-form-modal
+    [universo]="modal === 'nuevo' ? null : modal"
+    (cerrado)="cerrarUniversoModal()"
+    (guardado)="onUniversoGuardado()"
+  />
+}
+
+@if (campanaModal(); as modal) {
+  <app-campana-form-modal
+    [idUniverso]="modal.idUniverso"
+    [campana]="modal.campana"
+    (cerrado)="cerrarCampanaModal()"
+    (guardado)="onCampanaGuardada()"
+  />
+}

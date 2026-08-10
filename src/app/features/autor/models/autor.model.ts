@@ -97,6 +97,7 @@ export interface CrearNodoRequest {
 export interface ContenidoNodoAutor {
   orden: number;
   texto: string;
+  gruposCondicion: GrupoCondicionAutor[];
 }
 
 export interface CondicionAutor {
@@ -185,6 +186,7 @@ export interface GuardarEventoRequest {
 export interface GuardarContenidoNodoRequest {
   orden: number;
   texto: string;
+  gruposCondicion: GuardarGrupoCondicionRequest[];
 }
 
 export interface GuardarCondicionRequest {

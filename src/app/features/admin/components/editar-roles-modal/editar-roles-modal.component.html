@@ -1,0 +1,30 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Editar roles de {{ usuarioActual().email }}</h3>
+
+  @if (error()) {
+    <p class="status status--error">{{ error() }}</p>
+  }
+
+  <ul class="editar-roles-modal__lista">
+    @for (rol of roles(); track rol.idRol) {
+      <li class="editar-roles-modal__item">
+        <label>
+          <input
+            type="checkbox"
+            [checked]="tieneRol(rol)"
+            [disabled]="guardando() || esPropioRolAdministrador(rol)"
+            (change)="toggleRol(rol, $event)"
+          />
+          {{ rol.nombre }}
+        </label>
+        @if (esPropioRolAdministrador(rol)) {
+          <span class="editar-roles-modal__aviso">No puedes quitarte tu propio rol de Administrador.</span>
+        }
+      </li>
+    }
+  </ul>
+
+  <div class="editar-roles-modal__acciones">
+    <button type="button" (click)="cerrado.emit()">Cerrar</button>
+  </div>
+</app-modal>

@@ -19,11 +19,60 @@
         <input type="text" formControlName="titulo" />
       </label>
 
+      <ng-template #condicionesTpl let-grupos="grupos">
+        <fieldset class="nodo-form__seccion">
+          <legend>Condiciones (se cumple si algún grupo se cumple entero)</legend>
+          @for (grupo of grupos.controls; track $index; let grupoIndex = $index) {
+            <div class="grupo-condicion" [formGroup]="grupo">
+              <div class="grupo-condicion__cabecera">
+                <span>Grupo {{ grupoIndex + 1 }}</span>
+                <button type="button" (click)="quitarGrupoCondicion(grupos, grupoIndex)">
+                  Quitar grupo
+                </button>
+              </div>
+
+              <div formArrayName="condiciones">
+                @for (
+                  condicion of condicionesDe(grupos, grupoIndex).controls;
+                  track $index;
+                  let condicionIndex = $index
+                ) {
+                  <div class="condicion-row" [formGroupName]="condicionIndex">
+                    <select formControlName="idCaracteristica">
+                      <option [value]="null">Característica…</option>
+                      @for (car of caracteristicas(); track car.idCaracteristica) {
+                        <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
+                      }
+                    </select>
+                    <select formControlName="operacion">
+                      @for (op of operacionCondicionOpciones; track op.valor) {
+                        <option [value]="op.valor">{{ op.etiqueta }}</option>
+                      }
+                    </select>
+                    <input type="number" formControlName="valor" />
+                    <button type="button" (click)="quitarCondicion(grupos, grupoIndex, condicionIndex)">
+                      Quitar
+                    </button>
+                  </div>
+                }
+              </div>
+              <button type="button" (click)="agregarCondicion(grupos, grupoIndex)">Añadir condición</button>
+            </div>
+          }
+          <button type="button" (click)="agregarGrupoCondicion(grupos)">Añadir grupo de condiciones</button>
+        </fieldset>
+      </ng-template>
+
       <fieldset class="nodo-form__seccion" formArrayName="contenidos">
         <legend>Textos</legend>
         @for (contenido of contenidos.controls; track $index; let index = $index) {
           <div class="nodo-form__contenido" [formGroupName]="index">
             <textarea formControlName="texto" rows="3"></textarea>
+
+            <ng-container
+              *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(contenido) }"
+            ></ng-container>
+
             <button type="button" (click)="quitarContenido(index)" [disabled]="contenidos.length === 1">
               Quitar
             </button>
@@ -150,47 +199,9 @@
               <button type="button" (click)="quitarOpcion(opcionIndex)">Eliminar opción</button>
             </div>
 
-            <fieldset class="nodo-form__seccion" formArrayName="gruposCondicion">
-              <legend>Condiciones (se cumple si algún grupo se cumple entero)</legend>
-              @for (grupo of gruposCondicionDe(opcionIndex).controls; track $index; let grupoIndex = $index) {
-                <div class="grupo-condicion" [formGroupName]="grupoIndex">
-                  <div class="grupo-condicion__cabecera">
-                    <span>Grupo {{ grupoIndex + 1 }}</span>
-                    <button type="button" (click)="quitarGrupoCondicion(opcionIndex, grupoIndex)">
-                      Quitar grupo
-                    </button>
-                  </div>
-
-                  <div formArrayName="condiciones">
-                    @for (
-                      condicion of condicionesDe(opcionIndex, grupoIndex).controls;
-                      track $index;
-                      let condicionIndex = $index
-                    ) {
-                      <div class="condicion-row" [formGroupName]="condicionIndex">
-                        <select formControlName="idCaracteristica">
-                          <option [value]="null">Característica…</option>
-                          @for (car of caracteristicas(); track car.idCaracteristica) {
-                            <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
-                          }
-                        </select>
-                        <select formControlName="operacion">
-                          @for (op of operacionCondicionOpciones; track op.valor) {
-                            <option [value]="op.valor">{{ op.etiqueta }}</option>
-                          }
-                        </select>
-                        <input type="number" formControlName="valor" />
-                        <button type="button" (click)="quitarCondicion(opcionIndex, grupoIndex, condicionIndex)">
-                          Quitar
-                        </button>
-                      </div>
-                    }
-                  </div>
-                  <button type="button" (click)="agregarCondicion(opcionIndex, grupoIndex)">Añadir condición</button>
-                </div>
-              }
-              <button type="button" (click)="agregarGrupoCondicion(opcionIndex)">Añadir grupo de condiciones</button>
-            </fieldset>
+            <ng-container
+              *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(opcion) }"
+            ></ng-container>
 
             <fieldset class="nodo-form__seccion">
               <legend>Tirada</legend>

@@ -15,7 +15,10 @@
       <section class="universo-card">
         <div class="universo-card__header">
           <h2>{{ universo.titulo }}</h2>
-          <button type="button" (click)="editarUniverso(universo)">Editar</button>
+          <div class="universo-card__acciones">
+            <button type="button" (click)="editarUniverso(universo)">Editar</button>
+            <button type="button" (click)="eliminarUniverso(universo)">Eliminar</button>
+          </div>
         </div>
         @if (universo.descripcion) {
           <p>{{ universo.descripcion }}</p>
@@ -25,7 +28,10 @@
           <article class="campana-card">
             <div class="campana-card__header">
               <h3>{{ campana.titulo }}</h3>
-              <button type="button" (click)="editarCampana(universo.idUniverso, campana)">Editar</button>
+              <div class="campana-card__acciones">
+                <button type="button" (click)="editarCampana(universo.idUniverso, campana)">Editar</button>
+                <button type="button" (click)="eliminarCampana(campana)">Eliminar</button>
+              </div>
             </div>
             @if (campana.descripcion) {
               <p>{{ campana.descripcion }}</p>
@@ -41,6 +47,7 @@
                       {{ aventura.visible ? 'Visible' : 'Oculta' }}
                     </span>
                     <a [routerLink]="['/autor/aventura', aventura.idAventura]">Editar</a>
+                    <button type="button" (click)="eliminarAventura(aventura)">Eliminar</button>
                   </li>
                 }
               </ul>
@@ -74,5 +81,15 @@
     [campana]="modal.campana"
     (cerrado)="cerrarCampanaModal()"
     (guardado)="onCampanaGuardada()"
+  />
+}
+
+@if (eliminarModal(); as modal) {
+  <app-confirmar-eliminar-modal
+    [titulo]="modal.titulo"
+    [mensaje]="modal.mensaje"
+    [accion]="modal.accion"
+    (cerrado)="cerrarEliminarModal()"
+    (eliminado)="onEliminado()"
   />
 }

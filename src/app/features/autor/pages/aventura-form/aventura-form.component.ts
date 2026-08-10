@@ -5,12 +5,14 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { of } from 'rxjs';
 import { CANTIDAD_DECISION_OPCIONES } from '../../../home/models/universo.model';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
+import { CaracteristicasComponent } from '../../components/caracteristicas/caracteristicas.component';
 import { AutorService } from '../../data-access/autor.service';
 import { AventuraAutor } from '../../models/autor.model';
 
 @Component({
   selector: 'app-aventura-form',
-  imports: [ReactiveFormsModule, RouterLink],
+  imports: [ReactiveFormsModule, RouterLink, ActosEscenasComponent, CaracteristicasComponent],
   templateUrl: './aventura-form.component.html',
   styleUrl: './aventura-form.component.scss',
 })
@@ -21,7 +23,9 @@ export class AventuraFormComponent {
   private readonly fb = inject(FormBuilder);
 
   protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
-  protected readonly tabActiva = signal<'datos' | 'contenido'>('datos');
+  protected readonly tabActiva = signal<'datos' | 'contenido' | 'caracteristicas'>(
+    this.route.snapshot.queryParamMap.get('tab') === 'contenido' ? 'contenido' : 'datos',
+  );
 
   protected readonly idAventura = computed(() => {
     const param = this.route.snapshot.paramMap.get('id');
@@ -43,6 +47,11 @@ export class AventuraFormComponent {
     stream: ({ params }) => (params ? this.autorService.getAventura(params) : of(null)),
   });
   protected readonly cargando = this.aventuraResource.isLoading;
+  protected readonly aventura = this.aventuraResource.value;
+
+  protected recargarContenido(): void {
+    this.aventuraResource.reload();
+  }
 
   constructor() {
     effect(() => {

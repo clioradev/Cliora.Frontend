@@ -16,4 +16,8 @@ export const AUTOR_ROUTES: Routes = [
     loadComponent: () =>
       import('./pages/aventura-form/aventura-form.component').then((m) => m.AventuraFormComponent),
   },
+  {
+    path: 'aventura/:idAventura/nodo/:idNodo',
+    loadComponent: () => import('./pages/nodo-form/nodo-form.component').then((m) => m.NodoFormComponent),
+  },
 ];

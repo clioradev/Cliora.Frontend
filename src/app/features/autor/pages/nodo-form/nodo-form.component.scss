@@ -1,0 +1,169 @@
+:host {
+  display: block;
+  max-width: var(--content-width-lg, 800px);
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.nodo-form__volver {
+  display: inline-block;
+  margin-bottom: var(--space-4);
+  color: var(--color-text-secondary);
+  cursor: pointer;
+}
+
+.nodo-form__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.nodo-form__badge {
+  padding: var(--space-1) var(--space-2);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-campana-bg, #e9f1e6);
+  border: 1px solid var(--color-campana-border, #c7dcc0);
+  font-size: var(--text-sm);
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.nodo-form__seccion {
+  border: 1px solid var(--color-border, currentColor);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.nodo-form__seccion > legend {
+  padding: 0 var(--space-1);
+  opacity: 0.8;
+}
+
+.nodo-form__contenido {
+  display: flex;
+  gap: var(--space-2);
+  align-items: flex-start;
+}
+
+.nodo-form__contenido textarea {
+  flex: 1;
+}
+
+.nodo-form__placeholder {
+  opacity: 0.7;
+}
+
+.opcion-card {
+  border: 1px solid var(--color-border, currentColor);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.opcion-card__cabecera {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.opcion-card__texto {
+  flex: 1;
+}
+
+.grupo-condicion {
+  border-left: 3px solid var(--color-border, currentColor);
+  padding-left: var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.grupo-condicion__cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  opacity: 0.8;
+}
+
+.condicion-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.condicion-row select {
+  flex: 1;
+}
+
+.condicion-row input {
+  width: 6rem;
+}
+
+.efectos-lista {
+  display: grid;
+  grid-template-columns: 1fr 2fr 1fr 6rem auto;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.efecto-row {
+  display: contents;
+}
+
+.efecto-row select,
+.efecto-row input {
+  width: 100%;
+  min-width: 0;
+}
+
+.efecto-row__select-evento {
+  grid-column: span 2;
+}
+
+.efecto-row__checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-1);
+}
+
+.efecto-row__checkbox input {
+  width: auto;
+}
+
+.tirada-row {
+  display: flex;
+  gap: var(--space-2);
+  align-items: center;
+}
+
+.tirada-row select {
+  flex: 2;
+}
+
+.tirada-row input {
+  width: 6rem;
+}
+
+.nodo-form__acciones {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}

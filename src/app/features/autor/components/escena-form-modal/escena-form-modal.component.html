@@ -1,0 +1,26 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>{{ escena() ? 'Editar escena' : 'Añadir nueva escena' }}</h3>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <label>
+      Título
+      <input type="text" formControlName="titulo" />
+    </label>
+
+    <label>
+      Descripción
+      <textarea formControlName="descripcion" rows="4"></textarea>
+    </label>
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <div class="escena-form-modal__acciones">
+      <button type="button" (click)="cerrado.emit()">Cancelar</button>
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

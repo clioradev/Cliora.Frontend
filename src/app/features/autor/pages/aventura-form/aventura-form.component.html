@@ -12,6 +12,13 @@
     >
       Actos y escenas
     </button>
+    <button
+      type="button"
+      [class.aventura-form__tab--activa]="tabActiva() === 'caracteristicas'"
+      (click)="tabActiva.set('caracteristicas')"
+    >
+      Características
+    </button>
   </nav>
 
   @if (cargando()) {
@@ -58,7 +65,13 @@
         </button>
       </div>
     </form>
+  } @else if (idAventura(); as id) {
+    @if (tabActiva() === 'contenido') {
+      <app-actos-escenas [idAventura]="id" [actos]="aventura()?.actos ?? []" (cambiado)="recargarContenido()" />
+    } @else {
+      <app-caracteristicas [idAventura]="id" />
+    }
   } @else {
-    <p class="aventura-form__placeholder">Próximamente: edición de actos y escenas.</p>
+    <p class="aventura-form__placeholder">Guarda la aventura primero para añadir actos, escenas y características.</p>
   }
 </div>

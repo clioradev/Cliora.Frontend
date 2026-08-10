@@ -1,0 +1,108 @@
+<div class="actos-escenas">
+  <div class="actos-escenas__header">
+    <button type="button" class="btn--primary" (click)="nuevoActo()">Añadir acto</button>
+  </div>
+
+  @if (actos().length === 0) {
+    <p>Todavía no hay ningún acto. Empieza añadiendo uno.</p>
+  } @else {
+    @for (acto of actos(); track acto.idActo; let first = $first, last = $last) {
+      <section class="acto-card">
+        <div class="acto-card__header">
+          <span class="acto-card__orden">#{{ acto.orden }}</span>
+          <h3 class="acto-card__titulo">{{ acto.titulo }}</h3>
+          <div class="acto-card__acciones">
+            <button type="button" [disabled]="first" (click)="moverActo(acto, -1)" aria-label="Subir acto">↑</button>
+            <button type="button" [disabled]="last" (click)="moverActo(acto, 1)" aria-label="Bajar acto">↓</button>
+            <button type="button" (click)="editarActo(acto)">Editar</button>
+            <button type="button" (click)="eliminarActo(acto)">Eliminar</button>
+          </div>
+        </div>
+        @if (acto.descripcion) {
+          <p>{{ acto.descripcion }}</p>
+        }
+
+        @if (acto.escenas.length > 0) {
+          <ul class="escena-list">
+            @for (escena of acto.escenas; track escena.idEscena; let eFirst = $first, eLast = $last) {
+              <li class="escena-list__item">
+                <div class="escena-list__header">
+                  <span class="escena-list__orden">#{{ escena.orden }}</span>
+                  <span class="escena-list__titulo">{{ escena.titulo }}</span>
+                  <div class="escena-list__acciones">
+                    <button
+                      type="button"
+                      [disabled]="eFirst"
+                      (click)="moverEscena(acto.idActo, acto.escenas, escena, -1)"
+                      aria-label="Subir escena"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      [disabled]="eLast"
+                      (click)="moverEscena(acto.idActo, acto.escenas, escena, 1)"
+                      aria-label="Bajar escena"
+                    >
+                      ↓
+                    </button>
+                    <button type="button" (click)="editarEscena(acto.idActo, escena)">Editar</button>
+                    <button type="button" (click)="eliminarEscena(escena)">Eliminar</button>
+                  </div>
+                </div>
+
+                @if (escena.nodos.length > 0) {
+                  <ul class="nodo-list">
+                    @for (nodo of escena.nodos; track nodo.idNodo) {
+                      <li class="nodo-list__item">
+                        <span class="nodo-list__titulo">{{ nodo.titulo }}</span>
+                        <span class="nodo-list__opciones">{{ nodo.cantidadOpciones }} opción(es)</span>
+                        <div class="nodo-list__acciones">
+                          <button type="button" (click)="editarNodo(nodo)">Editar</button>
+                          <button type="button" (click)="eliminarNodo(nodo)">Eliminar</button>
+                        </div>
+                      </li>
+                    }
+                  </ul>
+                }
+                <button type="button" class="nodo-list__anadir" (click)="nuevoNodo(escena.idEscena)">
+                  Añadir nodo
+                </button>
+              </li>
+            }
+          </ul>
+        }
+
+        <button type="button" (click)="nuevaEscena(acto.idActo)">Añadir escena</button>
+      </section>
+    }
+  }
+</div>
+
+@if (actoModal(); as modal) {
+  <app-acto-form-modal
+    [idAventura]="idAventura()"
+    [acto]="modal === 'nuevo' ? null : modal"
+    (cerrado)="cerrarActoModal()"
+    (guardado)="onActoGuardado()"
+  />
+}
+
+@if (escenaModal(); as modal) {
+  <app-escena-form-modal
+    [idActo]="modal.idActo"
+    [escena]="modal.escena"
+    (cerrado)="cerrarEscenaModal()"
+    (guardado)="onEscenaGuardada()"
+  />
+}
+
+@if (eliminarModal(); as modal) {
+  <app-confirmar-eliminar-modal
+    [titulo]="modal.titulo"
+    [mensaje]="modal.mensaje"
+    [accion]="modal.accion"
+    (cerrado)="cerrarEliminarModal()"
+    (eliminado)="onEliminado()"
+  />
+}

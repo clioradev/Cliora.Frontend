@@ -35,9 +35,9 @@ jobs:
           action: "upload"
           ###### Repository/Build Configurations - These values can be configured to match your app requirements. ######
           # For more information regarding Static Web App workflow configurations, please visit: https://aka.ms/swaworkflowconfig
-          app_location: "/" # App source code path
+          app_location: "dist/cliora-frontend/browser" # Ya compilado por nosotros — con skip_app_build, esta ruta se usa tal cual, no se combina con output_location
           api_location: "" # Api source code path - optional
-          output_location: "dist/cliora-frontend/browser" # Built app content directory - optional
+          output_location: "" # No aplica con skip_app_build: true
           skip_app_build: true # Building ourselves above via actions/setup-node — Oryx's Node catalog doesn't yet include a version satisfying Angular CLI 22's engine requirement (needs >=22.22.3, Oryx tops out at 22.22.0)
           ###### End of Repository/Build Configurations ######
 

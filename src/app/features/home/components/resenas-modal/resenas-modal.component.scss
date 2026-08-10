@@ -1,0 +1,51 @@
+h3 {
+  margin-top: 0;
+  margin-bottom: var(--space-4);
+}
+
+.resenas-modal {
+  &__status {
+    color: var(--color-text-secondary);
+
+    &--error {
+      color: var(--color-danger);
+    }
+  }
+
+  &__lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  &__item {
+    padding-bottom: var(--space-4);
+    border-bottom: 1px solid var(--color-border);
+
+    &:last-child {
+      padding-bottom: 0;
+      border-bottom: 0;
+    }
+  }
+
+  &__usuario {
+    display: block;
+    font-weight: 600;
+    margin-bottom: var(--space-1);
+  }
+
+  &__fecha {
+    display: block;
+    color: var(--color-text-secondary);
+    font-size: var(--text-xs);
+    margin-top: var(--space-1);
+  }
+
+  &__comentario {
+    margin-top: var(--space-2);
+    white-space: pre-line;
+  }
+}

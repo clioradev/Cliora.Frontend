@@ -1,0 +1,29 @@
+@if (!token()) {
+  <p class="reset-form__error">El enlace no es válido.</p>
+} @else {
+  <form class="reset-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h1>Restablecer contraseña</h1>
+
+    <label>
+      Nueva contraseña
+      <input type="password" formControlName="password" autocomplete="new-password" />
+    </label>
+
+    <label>
+      Confirmar contraseña
+      <input type="password" formControlName="confirmarPassword" autocomplete="new-password" />
+    </label>
+
+    @if (form.errors?.['passwordsDistintas'] && form.controls.confirmarPassword.touched) {
+      <p class="reset-form__error">Las contraseñas no coinciden.</p>
+    }
+
+    @if (error()) {
+      <p class="reset-form__error">{{ error() }}</p>
+    }
+
+    <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">
+      {{ submitting() ? 'Guardando…' : 'Restablecer contraseña' }}
+    </button>
+  </form>
+}

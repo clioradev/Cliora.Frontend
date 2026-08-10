@@ -1,0 +1,45 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>{{ caracteristica() ? 'Editar característica' : 'Añadir nueva característica' }}</h3>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <label>
+      Nombre
+      <input type="text" formControlName="nombre" />
+    </label>
+
+    <label>
+      Descripción
+      <textarea formControlName="descripcion" rows="3"></textarea>
+    </label>
+
+    <label>
+      Tipo
+      <select formControlName="idCatTipoCaracteristica">
+        @for (tipo of tipos(); track tipo.idCatTipoCaracteristica) {
+          <option [value]="tipo.idCatTipoCaracteristica">{{ tipo.nombre }}</option>
+        }
+      </select>
+    </label>
+
+    <label>
+      Valor inicial
+      <input type="number" formControlName="valorInicial" />
+    </label>
+
+    <label class="caracteristica-form-modal__checkbox">
+      <input type="checkbox" formControlName="visible" />
+      Visible para el jugador
+    </label>
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <div class="caracteristica-form-modal__acciones">
+      <button type="button" (click)="cerrado.emit()">Cancelar</button>
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

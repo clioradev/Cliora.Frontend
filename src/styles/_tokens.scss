@@ -1,0 +1,144 @@
+:root {
+  // Color - neutros
+  --color-bg: #faf8f4;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f0ece3;
+  --color-surface-muted: #efe9df;
+  --color-border: #d9d0c1;
+  --color-text: #332b21;
+  --color-text-secondary: #70685a;
+
+  // Color - capa "resaltada" (campaña), tono suave derivado de --color-primary
+  --color-campana-bg: #e9f1e6;
+  --color-campana-border: #c7dcc0;
+
+  // Color - marca / semánticos
+  --color-primary: #3f6b4a;
+  --color-primary-hover: #2f5238;
+  --color-secondary: #8a5a34;
+  --color-secondary-hover: #6e4527;
+  --color-gray: #75726c;
+  --color-accent: #c9973f;
+  --color-danger: #9c3b2e;
+  --color-success: #4f8f5c;
+  --color-overlay: rgba(38, 32, 24, 0.55);
+  --color-focus-ring: rgba(63, 107, 74, 0.35);
+
+  // Tipografía
+  --font-ui: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  --font-reading: 'Literata', Georgia, 'Times New Roman', serif;
+  --text-xs: 0.85rem;
+  --text-sm: 0.9rem;
+  --text-base: 1rem;
+  --text-md: 1.1rem;
+  --text-lg: 1.25rem;
+  --text-xl: 1.5rem;
+
+  // Lectura (ajustables desde Preferencias)
+  --text-reading: var(--text-md);
+  --line-height-reading: 1.6;
+  --content-width-reading: 42rem;
+
+  // Espaciado
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-10: 2.5rem;
+  --space-16: 4rem;
+
+  // Radios
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 8px;
+
+  // Elevación
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+
+  // Z-index
+  --z-overlay: 900;
+  --z-bottom-nav: 950;
+  --z-modal: 1000;
+
+  // Anchos de contenido
+  --content-width-sm: 320px;
+  --content-width-md: 480px;
+  --content-width-lg: 1100px;
+}
+
+@mixin paleta-oscura {
+  --color-bg: #1c1a16;
+  --color-surface: #262319;
+  --color-surface-hover: #322e22;
+  --color-surface-muted: #2c2820;
+  --color-border: #423c2f;
+  --color-text: #ede7db;
+  --color-text-secondary: #b3aa98;
+
+  --color-campana-bg: #24352a;
+  --color-campana-border: #3a5240;
+
+  --color-primary: #6fae7c;
+  --color-primary-hover: #8ec498;
+  --color-secondary: #c08a54;
+  --color-secondary-hover: #d6a06c;
+  --color-gray: #9c968c;
+  --color-accent: #d9ab5c;
+  --color-danger: #d97a68;
+  --color-success: #7cbf88;
+  --color-overlay: rgba(0, 0, 0, 0.65);
+  --color-focus-ring: rgba(111, 174, 124, 0.4);
+
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+@mixin paleta-clara {
+  --color-bg: #faf8f4;
+  --color-surface: #ffffff;
+  --color-surface-hover: #f0ece3;
+  --color-surface-muted: #efe9df;
+  --color-border: #d9d0c1;
+  --color-text: #332b21;
+  --color-text-secondary: #70685a;
+
+  --color-campana-bg: #e9f1e6;
+  --color-campana-border: #c7dcc0;
+
+  --color-primary: #3f6b4a;
+  --color-primary-hover: #2f5238;
+  --color-secondary: #8a5a34;
+  --color-secondary-hover: #6e4527;
+  --color-gray: #75726c;
+  --color-accent: #c9973f;
+  --color-danger: #9c3b2e;
+  --color-success: #4f8f5c;
+  --color-overlay: rgba(38, 32, 24, 0.55);
+  --color-focus-ring: rgba(63, 107, 74, 0.35);
+
+  --shadow-md: 0 2px 8px rgba(0, 0, 0, 0.12);
+}
+
+// Tema "Sistema" (preferencia no forzada): sigue el SO.
+@media (prefers-color-scheme: dark) {
+  :root {
+    @include paleta-oscura;
+  }
+}
+
+// Tema forzado explícitamente desde Preferencias — gana sobre el @media de arriba
+// porque el selector con atributo tiene más especificidad que un :root a secas.
+:root[data-theme='dark'] {
+  @include paleta-oscura;
+}
+
+:root[data-theme='light'] {
+  @include paleta-clara;
+}
+
+:root[data-alto-contraste] {
+  --color-text-secondary: var(--color-text);
+  --color-border: var(--color-text);
+}

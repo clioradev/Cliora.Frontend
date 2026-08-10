@@ -1,0 +1,31 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.shell-header {
+  padding: var(--space-4) var(--space-6);
+  border-bottom: 1px solid var(--color-border);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
+  &__brand {
+    height: 2rem;
+  }
+}
+
+.shell-body {
+  display: flex;
+  flex: 1;
+}
+
+.shell-content {
+  flex: 1;
+  max-width: var(--content-width-lg);
+  margin: 0 auto;
+  padding: var(--space-6);
+  padding-bottom: calc(var(--space-6) + 4.5rem);
+  width: 100%;
+}

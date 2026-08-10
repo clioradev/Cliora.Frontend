@@ -1,0 +1,55 @@
+@if (loading()) {
+  <p class="status">Cargando…</p>
+} @else if (error()) {
+  <p class="status status--error">No se ha podido cargar el nodo.</p>
+} @else if (nodo(); as n) {
+  <div class="nodo__cabecera">
+    <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
+  </div>
+
+  <div class="nodo__contenidos">
+    @for (contenido of n.contenidos; track contenido.idContenidoNodo) {
+      @switch (contenido.tipo) {
+        @case ('Texto') {
+          <p class="nodo__texto">{{ contenido.texto }}</p>
+        }
+        @case ('Imagen') {
+          <img class="nodo__imagen" [src]="contenido.imagenUrl" alt="" />
+        }
+        @case ('Audio') {
+          <audio class="nodo__audio" [src]="contenido.audioUrl" controls></audio>
+        }
+      }
+    }
+  </div>
+
+  <div class="nodo__opciones">
+    @for (opcion of n.opciones; track opcion.idOpcion) {
+      <button type="button" (click)="elegir(opcion)" [disabled]="eligiendo()">
+        @if (opcion.nivelDificultad) {
+          <span
+            class="opcion__dificultad"
+            [class.opcion__dificultad--facil]="opcion.nivelDificultad === 'Facil'"
+            [class.opcion__dificultad--normal]="opcion.nivelDificultad === 'Normal'"
+            [class.opcion__dificultad--dificil]="opcion.nivelDificultad === 'Dificil'"
+          >
+            {{ opcion.nivelDificultad === 'Facil' ? 'Fácil' : opcion.nivelDificultad === 'Normal' ? 'Normal' : 'Difícil' }}
+          </span>
+        }
+        {{ opcion.texto }}
+      </button>
+    }
+  </div>
+
+  @if (eligiendoError()) {
+    <p class="status status--error">{{ eligiendoError() }}</p>
+  }
+
+  @if (resultadoTirada(); as t) {
+    <app-resultado-tirada-modal [resultado]="t" (aceptar)="continuarTrasTirada()" />
+  }
+
+  @if (personajeAbierto()) {
+    <app-ficha-personaje-modal [idNodo]="n.idNodo" (cerrado)="personajeAbierto.set(false)" />
+  }
+}

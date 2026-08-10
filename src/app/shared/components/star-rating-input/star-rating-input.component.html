@@ -1,0 +1,22 @@
+<span class="star-rating-input">
+  <app-star-rating-display [value]="value()" />
+
+  <span class="star-rating-input__clicks">
+    @for (estrella of estrellas; track estrella) {
+      <span class="star-rating-input__star">
+        <button
+          type="button"
+          class="star-rating-input__half star-rating-input__half--left"
+          (click)="setValue(estrella - 0.5)"
+          [attr.aria-label]="(estrella - 0.5) + ' estrellas'"
+        ></button>
+        <button
+          type="button"
+          class="star-rating-input__half star-rating-input__half--right"
+          (click)="setValue(estrella)"
+          [attr.aria-label]="estrella + ' estrellas'"
+        ></button>
+      </span>
+    }
+  </span>
+</span>

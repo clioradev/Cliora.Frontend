@@ -1,0 +1,21 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Crear nodo destino</h3>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <label>
+      Título
+      <input type="text" formControlName="titulo" />
+    </label>
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <div class="crear-nodo-destino-modal__acciones">
+      <button type="button" (click)="cerrado.emit()">Cancelar</button>
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+        {{ guardando() ? 'Creando…' : 'Crear' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

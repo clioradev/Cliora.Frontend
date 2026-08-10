@@ -1,0 +1,21 @@
+:host {
+  display: block;
+}
+
+form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+label {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.acto-form-modal__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}

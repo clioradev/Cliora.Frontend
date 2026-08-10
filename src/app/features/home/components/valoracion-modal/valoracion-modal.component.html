@@ -1,0 +1,30 @@
+<app-modal (cerrar)="cerrado.emit()">
+  @if (loading()) {
+    <p class="status">Cargando…</p>
+  } @else if (error()) {
+    <p class="status status--error">No se ha podido comprobar tu valoración.</p>
+  } @else if (guardadoOk()) {
+    <p class="status">¡Gracias por tu valoración!</p>
+  } @else if (!puedeValorar()) {
+    <p class="status">Todavía no puedes valorar esta aventura. Completa al menos 5 nodos para poder hacerlo.</p>
+  } @else {
+    <h3>Valora esta aventura</h3>
+
+    <app-star-rating-input [value]="puntuacion()" (valueChange)="puntuacion.set($event)" />
+
+    <textarea
+      class="valoracion-modal__comentario"
+      placeholder="Comentario (opcional)"
+      [value]="comentario()"
+      (input)="onComentarioInput($event)"
+    ></textarea>
+
+    @if (guardarError()) {
+      <p class="status status--error">{{ guardarError() }}</p>
+    }
+
+    <button type="button" class="btn--primary" (click)="guardar()" [disabled]="guardando() || puntuacion() <= 0">
+      {{ guardando() ? 'Guardando…' : 'Guardar valoración' }}
+    </button>
+  }
+</app-modal>

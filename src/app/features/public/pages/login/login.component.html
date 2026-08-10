@@ -1,0 +1,27 @@
+<form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+  <img class="login-form__marca marca-claro" src="/media/logos/Cliora-fondo-claro-reducido.png" alt="Cliora" />
+  <img class="login-form__marca marca-oscuro" src="/media/logos/Cliora-fondo-oscuro-reducido.png" alt="Cliora" />
+
+  <h1>Iniciar sesión</h1>
+
+  <label>
+    Email
+    <input type="email" formControlName="email" autocomplete="username" />
+  </label>
+
+  <label>
+    Contraseña
+    <input type="password" formControlName="password" autocomplete="current-password" />
+  </label>
+
+  @if (error()) {
+    <p class="login-form__error">Credenciales incorrectas.</p>
+  }
+
+  <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">
+    {{ submitting() ? 'Entrando…' : 'Entrar' }}
+  </button>
+
+  <a routerLink="/registro">Crear cuenta</a>
+  <a routerLink="/olvido-contrasena">¿Has olvidado tu contraseña?</a>
+</form>

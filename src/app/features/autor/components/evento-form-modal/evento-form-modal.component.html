@@ -1,0 +1,26 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Añadir nuevo evento</h3>
+
+  <form [formGroup]="form" (ngSubmit)="guardar()">
+    <label>
+      Nombre
+      <input type="text" formControlName="nombre" />
+    </label>
+
+    <label>
+      Descripción
+      <textarea formControlName="descripcion" rows="3"></textarea>
+    </label>
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <div class="evento-form-modal__acciones">
+      <button type="button" (click)="cerrado.emit()">Cancelar</button>
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  </form>
+</app-modal>

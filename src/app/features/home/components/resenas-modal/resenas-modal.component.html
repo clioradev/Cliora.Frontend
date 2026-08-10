@@ -1,0 +1,25 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>{{ titulo() ? 'Opiniones de ' + titulo() : 'Opiniones' }}</h3>
+
+  @if (loading()) {
+    <p class="resenas-modal__status">Cargando opiniones…</p>
+  } @else if (error()) {
+    <p class="resenas-modal__status resenas-modal__status--error">No se han podido cargar las opiniones.</p>
+  } @else if (valoraciones().length === 0) {
+    <p class="resenas-modal__status">Todavía no hay opiniones.</p>
+  } @else {
+    <ul class="resenas-modal__lista">
+      @for (valoracion of valoraciones(); track valoracion.idUsuario + '-' + valoracion.fecha) {
+        <li class="resenas-modal__item">
+          <span class="resenas-modal__usuario">{{ valoracion.nombreUsuario }}</span>
+          <app-star-rating-display [value]="valoracion.puntuacion" />
+          <span class="resenas-modal__fecha">{{ valoracion.fecha | date: 'dd/MM/yyyy' }}</span>
+
+          @if (valoracion.comentario) {
+            <p class="resenas-modal__comentario">{{ valoracion.comentario }}</p>
+          }
+        </li>
+      }
+    </ul>
+  }
+</app-modal>

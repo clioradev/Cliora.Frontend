@@ -1,0 +1,78 @@
+@if (loading()) {
+  <p class="status">Cargando aventura…</p>
+} @else if (error()) {
+  <p class="status status--error">No se ha podido cargar la aventura.</p>
+} @else if (notFound()) {
+  <p class="status status--error">No se ha encontrado la aventura.</p>
+  <a routerLink="/">← Volver</a>
+} @else if (aventura(); as a) {
+  <a class="portada__volver" routerLink="/">← Volver</a>
+
+  <div class="portada">
+    <section class="portada__caratula">
+      <div class="portada-caratula" [style.--hue.deg]="hueCaratula(a)">
+        @if (a.caratulaUrl) {
+          <img class="portada-caratula__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
+        } @else {
+          <svg class="portada-caratula__icono" viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M4 5a2 2 0 012-2h6v18H6a2 2 0 01-2-2V5zM20 5a2 2 0 00-2-2h-6v18h6a2 2 0 002-2V5z"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linejoin="round"
+            />
+          </svg>
+        }
+      </div>
+    </section>
+
+    <div class="portada__contenido">
+      <section class="portada__info">
+        <h1>{{ a.titulo }}</h1>
+
+        @if (a.puntuacionMedia !== null) {
+          <div class="valoracion-resumen">
+            <app-star-rating-display [value]="a.puntuacionMedia" />
+            <span>({{ a.totalValoraciones }} valoraciones)</span>
+          </div>
+        }
+
+        @if (a.estadoPartida) {
+          <span class="portada__estado">{{ a.estadoPartida }}</span>
+        }
+
+        @if (a.descripcion) {
+          <p class="portada__descripcion">{{ a.descripcion }}</p>
+        }
+      </section>
+
+      <section class="portada__acciones">
+        @if (a.estadoPartida === 'En curso' && a.idNodoActual) {
+          <a
+            class="btn--primary"
+            [routerLink]="['/partida', a.idNodoActual]"
+            [queryParams]="{ idAventura: a.idAventura }"
+          >
+            Continuar partida
+          </a>
+        } @else if (a.puedeEmpezarPartida) {
+          <button
+            type="button"
+            class="btn--primary"
+            (click)="empezarPartida()"
+            [disabled]="starting() || !a.idVersionAventura"
+          >
+            {{ starting() ? 'Empezando…' : 'Empezar partida' }}
+          </button>
+        } @else {
+          <span class="portada__bloqueada">Completa la aventura anterior para desbloquearla</span>
+        }
+
+        @if (startError()) {
+          <p class="status status--error">{{ startError() }}</p>
+        }
+      </section>
+    </div>
+  </div>
+}

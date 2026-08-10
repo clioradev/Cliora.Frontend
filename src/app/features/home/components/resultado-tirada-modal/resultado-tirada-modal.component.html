@@ -1,0 +1,12 @@
+<app-modal (cerrar)="aceptar.emit()">
+  <h3 class="resultado-tirada__titulo" [class.resultado-tirada__titulo--exito]="resultado().exito" [class.resultado-tirada__titulo--fracaso]="!resultado().exito">
+    {{ resultado().exito ? '¡Conseguido!' : 'Fracaso' }}
+  </h3>
+
+  <p class="resultado-tirada__desglose">
+    Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos + {{ resultado().nombreCaracteristica }}
+    {{ resultado().valorCaracteristica }} = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+  </p>
+
+  <button type="button" class="btn--primary" (click)="aceptar.emit()">Aceptar</button>
+</app-modal>

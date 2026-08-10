@@ -1,0 +1,20 @@
+.star-rating {
+  position: relative;
+  display: inline-block;
+  line-height: 1;
+  font-size: var(--text-md);
+  white-space: nowrap;
+
+  &__base {
+    color: var(--color-gray);
+  }
+
+  &__fill {
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow: hidden;
+    white-space: nowrap;
+    color: var(--color-accent);
+  }
+}

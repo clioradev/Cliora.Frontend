@@ -1,0 +1,16 @@
+.resultado-tirada__titulo {
+  margin-top: 0;
+
+  &--exito {
+    color: var(--color-success);
+  }
+
+  &--fracaso {
+    color: var(--color-danger);
+  }
+}
+
+.resultado-tirada__desglose {
+  color: var(--color-text-secondary);
+  margin-bottom: var(--space-4);
+}

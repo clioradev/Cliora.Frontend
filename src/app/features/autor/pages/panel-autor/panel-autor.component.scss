@@ -1,0 +1,75 @@
+:host {
+  display: block;
+  max-width: var(--content-width-md, 800px);
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.panel-autor__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.universo-card {
+  border: 1px solid var(--border-color, currentColor);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.universo-card__header,
+.campana-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.universo-card__acciones,
+.campana-card__acciones {
+  display: flex;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+.campana-card {
+  border-left: 3px solid var(--border-color, currentColor);
+  padding-left: var(--space-3);
+  margin: var(--space-3) 0;
+}
+
+.aventura-list {
+  list-style: none;
+  padding: 0;
+  margin: var(--space-2) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.aventura-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.aventura-list__orden {
+  opacity: 0.7;
+}
+
+.aventura-list__titulo {
+  flex: 1;
+}
+
+.aventura-list__visible {
+  font-size: 0.85em;
+  opacity: 0.7;
+}
+
+.aventura-list__visible--si {
+  opacity: 1;
+  color: var(--color-success, seagreen);
+}

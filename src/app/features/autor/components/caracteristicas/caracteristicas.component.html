@@ -1,0 +1,80 @@
+<div class="caracteristicas">
+  <section class="caracteristicas__seccion">
+    <div class="caracteristicas__header">
+      <h3>Características</h3>
+      <button type="button" class="btn--primary" (click)="nuevaCaracteristica()">Añadir característica</button>
+    </div>
+
+    @if (caracteristicas(); as lista) {
+      @if (lista.length === 0) {
+        <p>Todavía no hay ninguna característica.</p>
+      } @else {
+        <ul class="caracteristica-list">
+          @for (caracteristica of lista; track caracteristica.idCaracteristica) {
+            <li class="caracteristica-list__item">
+              <span class="caracteristica-list__nombre">{{ caracteristica.nombre }}</span>
+              <span class="caracteristica-list__valor">Inicial: {{ caracteristica.valorInicial }}</span>
+              <div class="caracteristica-list__acciones">
+                <button type="button" (click)="editarCaracteristica(caracteristica)">Editar</button>
+                <button type="button" (click)="eliminarCaracteristica(caracteristica)">Eliminar</button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    }
+  </section>
+
+  <section class="caracteristicas__seccion">
+    <div class="caracteristicas__header">
+      <h3>Finales</h3>
+      <button type="button" class="btn--primary" (click)="nuevoFinal()">Añadir final</button>
+    </div>
+
+    @if (finales(); as lista) {
+      @if (lista.length === 0) {
+        <p>Todavía no hay ningún final.</p>
+      } @else {
+        <ul class="caracteristica-list">
+          @for (final of lista; track final.idFinal) {
+            <li class="caracteristica-list__item">
+              <span class="caracteristica-list__nombre">{{ final.titulo }}</span>
+              <div class="caracteristica-list__acciones">
+                <button type="button" (click)="editarFinal(final)">Editar</button>
+                <button type="button" (click)="eliminarFinal(final)">Eliminar</button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    }
+  </section>
+</div>
+
+@if (caracteristicaModal(); as modal) {
+  <app-caracteristica-form-modal
+    [idAventura]="idAventura()"
+    [caracteristica]="modal === 'nuevo' ? null : modal"
+    (cerrado)="cerrarCaracteristicaModal()"
+    (guardado)="onCaracteristicaGuardada()"
+  />
+}
+
+@if (finalModal(); as modal) {
+  <app-final-form-modal
+    [idAventura]="idAventura()"
+    [final]="modal === 'nuevo' ? null : modal"
+    (cerrado)="cerrarFinalModal()"
+    (guardado)="onFinalGuardado()"
+  />
+}
+
+@if (eliminarModal(); as modal) {
+  <app-confirmar-eliminar-modal
+    [titulo]="modal.titulo"
+    [mensaje]="modal.mensaje"
+    [accion]="modal.accion"
+    (cerrado)="cerrarEliminarModal()"
+    (eliminado)="onEliminado()"
+  />
+}

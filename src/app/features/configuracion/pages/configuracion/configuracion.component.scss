@@ -1,0 +1,39 @@
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+
+  label {
+    font-weight: 600;
+  }
+
+  select,
+  input[type='range'] {
+    max-width: var(--content-width-sm);
+  }
+
+  &--checkbox {
+    flex-direction: row;
+    align-items: center;
+
+    label {
+      display: flex;
+      align-items: center;
+      gap: var(--space-2);
+      font-weight: normal;
+    }
+  }
+}
+
+.mensaje {
+  margin-top: var(--space-2);
+
+  &--ok {
+    color: var(--color-success);
+  }
+
+  &--error {
+    color: var(--color-danger);
+  }
+}

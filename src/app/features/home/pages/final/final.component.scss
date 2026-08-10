@@ -1,0 +1,21 @@
+:host {
+  display: block;
+  padding: var(--space-8);
+}
+
+.status {
+  color: var(--color-text-secondary);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+.final__texto {
+  font-family: var(--font-reading);
+  font-size: var(--text-reading);
+  line-height: var(--line-height-reading);
+  white-space: pre-line;
+  margin-bottom: var(--space-6);
+  max-width: var(--content-width-reading);
+}

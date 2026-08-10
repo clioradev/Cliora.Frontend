@@ -1,0 +1,17 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>{{ titulo() }}</h3>
+
+  <p>{{ mensaje() }}</p>
+  <p><strong>Esta acción no se puede deshacer.</strong></p>
+
+  @if (error()) {
+    <p class="status status--error">{{ error() }}</p>
+  }
+
+  <div class="confirmar-eliminar-modal__acciones">
+    <button type="button" (click)="cerrado.emit()">Cancelar</button>
+    <button type="button" class="btn--danger" [disabled]="eliminando()" (click)="confirmar()">
+      {{ eliminando() ? 'Eliminando…' : 'Sí, eliminar' }}
+    </button>
+  </div>
+</app-modal>

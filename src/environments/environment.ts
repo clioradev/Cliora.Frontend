@@ -1,4 +1,3 @@
 export const environment = {
-  // Pendiente de URL real hasta que Cliora.Api tenga despliegue (Azure Container Apps, fase 5 del roadmap).
-  apiUrl: '/api',
+  apiUrl: 'https://clioraapi.gentlesand-63cc41a6.spaincentral.azurecontainerapps.io/api',
 };

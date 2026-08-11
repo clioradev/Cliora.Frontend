@@ -1,8 +1,21 @@
+@use 'breakpoints' as *;
+
 :host {
   display: block;
-  max-width: var(--content-width-lg, 800px);
+  max-width: var(--content-width-lg);
   margin: 0 auto;
   padding: var(--space-4);
+}
+
+.aventura-form__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-2);
+
+  h1 {
+    margin: 0;
+  }
 }
 
 .aventura-form__tabs {
@@ -29,12 +42,65 @@ form {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
 }
 
 label {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+}
+
+.aventura-form__fila-principal {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: var(--space-3);
+}
+
+.campo-titulo {
+  grid-column: span 2;
+}
+
+.campo-orden,
+.campo-cantidad,
+.campo-duracion {
+  grid-column: span 1;
+  min-width: 0;
+}
+
+.campo-calcular {
+  grid-column: span 1;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.campo-calcular__etiqueta {
+  font-size: var(--text-sm);
+}
+
+.aventura-form__fila-imagen {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  gap: var(--space-3);
+}
+
+.campo-ruta-imagen {
+  min-width: 0;
+}
+
+.campo-subir-imagen {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.campo-subir-imagen__etiqueta {
+  font-size: var(--text-sm);
 }
 
 .aventura-form__acciones {
@@ -46,4 +112,19 @@ label {
 
 .aventura-form__placeholder {
   opacity: 0.7;
+}
+
+@media (max-width: $bp-tablet) {
+  .aventura-form__fila-principal,
+  .aventura-form__fila-imagen {
+    grid-template-columns: 1fr;
+  }
+
+  .campo-titulo,
+  .campo-orden,
+  .campo-cantidad,
+  .campo-duracion,
+  .campo-calcular {
+    grid-column: auto;
+  }
 }

@@ -2,7 +2,9 @@
   <section class="caracteristicas__seccion">
     <div class="caracteristicas__header">
       <h3>Características</h3>
-      <button type="button" class="btn--primary" (click)="nuevaCaracteristica()">Añadir característica</button>
+      <button type="button" class="btn-icono btn-icono--primary" (click)="nuevaCaracteristica()" aria-label="Añadir característica" title="Añadir característica">
+        <app-icono nombre="añadir" />
+      </button>
     </div>
 
     @if (caracteristicas(); as lista) {
@@ -15,8 +17,43 @@
               <span class="caracteristica-list__nombre">{{ caracteristica.nombre }}</span>
               <span class="caracteristica-list__valor">Inicial: {{ caracteristica.valorInicial }}</span>
               <div class="caracteristica-list__acciones">
-                <button type="button" (click)="editarCaracteristica(caracteristica)">Editar</button>
-                <button type="button" (click)="eliminarCaracteristica(caracteristica)">Eliminar</button>
+                <button type="button" class="btn-icono" (click)="editarCaracteristica(caracteristica)" [attr.aria-label]="'Editar característica ' + caracteristica.nombre" title="Editar">
+                  <app-icono nombre="editar" />
+                </button>
+                <button type="button" class="btn-icono btn-icono--peligro" (click)="eliminarCaracteristica(caracteristica)" [attr.aria-label]="'Eliminar característica ' + caracteristica.nombre" title="Eliminar">
+                  <app-icono nombre="eliminar" />
+                </button>
+              </div>
+            </li>
+          }
+        </ul>
+      }
+    }
+  </section>
+
+  <section class="caracteristicas__seccion">
+    <div class="caracteristicas__header">
+      <h3>Eventos</h3>
+      <button type="button" class="btn-icono btn-icono--primary" (click)="nuevoEvento()" aria-label="Añadir evento" title="Añadir evento">
+        <app-icono nombre="añadir" />
+      </button>
+    </div>
+
+    @if (eventos(); as lista) {
+      @if (lista.length === 0) {
+        <p>Todavía no hay ningún evento.</p>
+      } @else {
+        <ul class="caracteristica-list">
+          @for (evento of lista; track evento.idEvento) {
+            <li class="caracteristica-list__item">
+              <span class="caracteristica-list__nombre">{{ evento.nombre }}</span>
+              <div class="caracteristica-list__acciones">
+                <button type="button" class="btn-icono" (click)="editarEvento(evento)" [attr.aria-label]="'Editar evento ' + evento.nombre" title="Editar">
+                  <app-icono nombre="editar" />
+                </button>
+                <button type="button" class="btn-icono btn-icono--peligro" (click)="eliminarEvento(evento)" [attr.aria-label]="'Eliminar evento ' + evento.nombre" title="Eliminar">
+                  <app-icono nombre="eliminar" />
+                </button>
               </div>
             </li>
           }
@@ -28,7 +65,9 @@
   <section class="caracteristicas__seccion">
     <div class="caracteristicas__header">
       <h3>Finales</h3>
-      <button type="button" class="btn--primary" (click)="nuevoFinal()">Añadir final</button>
+      <button type="button" class="btn-icono btn-icono--primary" (click)="nuevoFinal()" aria-label="Añadir final" title="Añadir final">
+        <app-icono nombre="añadir" />
+      </button>
     </div>
 
     @if (finales(); as lista) {
@@ -40,8 +79,12 @@
             <li class="caracteristica-list__item">
               <span class="caracteristica-list__nombre">{{ final.titulo }}</span>
               <div class="caracteristica-list__acciones">
-                <button type="button" (click)="editarFinal(final)">Editar</button>
-                <button type="button" (click)="eliminarFinal(final)">Eliminar</button>
+                <button type="button" class="btn-icono" (click)="editarFinal(final)" [attr.aria-label]="'Editar final ' + final.titulo" title="Editar">
+                  <app-icono nombre="editar" />
+                </button>
+                <button type="button" class="btn-icono btn-icono--peligro" (click)="eliminarFinal(final)" [attr.aria-label]="'Eliminar final ' + final.titulo" title="Eliminar">
+                  <app-icono nombre="eliminar" />
+                </button>
               </div>
             </li>
           }
@@ -57,6 +100,15 @@
     [caracteristica]="modal === 'nuevo' ? null : modal"
     (cerrado)="cerrarCaracteristicaModal()"
     (guardado)="onCaracteristicaGuardada()"
+  />
+}
+
+@if (eventoModal(); as modal) {
+  <app-evento-form-modal
+    [idAventura]="idAventura()"
+    [evento]="modal === 'nuevo' ? null : modal"
+    (cerrado)="cerrarEventoModal()"
+    (guardado)="onEventoGuardado()"
   />
 }
 

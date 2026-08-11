@@ -2,9 +2,11 @@ import { Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Observable } from 'rxjs';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { AutorService } from '../../data-access/autor.service';
-import { CaracteristicaAutor, FinalAutor } from '../../models/autor.model';
+import { CaracteristicaAutor, EventoAutor, FinalAutor } from '../../models/autor.model';
 import { CaracteristicaFormModalComponent } from '../caracteristica-form-modal/caracteristica-form-modal.component';
+import { EventoFormModalComponent } from '../evento-form-modal/evento-form-modal.component';
 import { FinalFormModalComponent } from '../final-form-modal/final-form-modal.component';
 
 interface EliminarModalState {
@@ -15,7 +17,13 @@ interface EliminarModalState {
 
 @Component({
   selector: 'app-caracteristicas',
-  imports: [CaracteristicaFormModalComponent, FinalFormModalComponent, ConfirmarEliminarModalComponent],
+  imports: [
+    IconoComponent,
+    CaracteristicaFormModalComponent,
+    FinalFormModalComponent,
+    EventoFormModalComponent,
+    ConfirmarEliminarModalComponent,
+  ],
   templateUrl: './caracteristicas.component.html',
   styleUrl: './caracteristicas.component.scss',
 })
@@ -36,8 +44,15 @@ export class CaracteristicasComponent {
   });
   protected readonly finales = this.finalesResource.value;
 
+  private readonly eventosResource = rxResource({
+    params: () => this.idAventura(),
+    stream: ({ params }) => this.autorService.getEventos(params),
+  });
+  protected readonly eventos = this.eventosResource.value;
+
   protected readonly caracteristicaModal = signal<CaracteristicaAutor | 'nuevo' | null>(null);
   protected readonly finalModal = signal<FinalAutor | 'nuevo' | null>(null);
+  protected readonly eventoModal = signal<EventoAutor | 'nuevo' | null>(null);
   protected readonly eliminarModal = signal<EliminarModalState | null>(null);
 
   protected nuevaCaracteristica(): void {
@@ -90,6 +105,31 @@ export class CaracteristicasComponent {
     });
   }
 
+  protected nuevoEvento(): void {
+    this.eventoModal.set('nuevo');
+  }
+
+  protected editarEvento(evento: EventoAutor): void {
+    this.eventoModal.set(evento);
+  }
+
+  protected cerrarEventoModal(): void {
+    this.eventoModal.set(null);
+  }
+
+  protected onEventoGuardado(): void {
+    this.eventoModal.set(null);
+    this.eventosResource.reload();
+  }
+
+  protected eliminarEvento(evento: EventoAutor): void {
+    this.eliminarModal.set({
+      titulo: `Eliminar evento "${evento.nombre}"`,
+      mensaje: `¿Seguro que quieres eliminar el evento "${evento.nombre}"?`,
+      accion: () => this.autorService.eliminarEvento(evento.idEvento),
+    });
+  }
+
   protected cerrarEliminarModal(): void {
     this.eliminarModal.set(null);
   }
@@ -98,5 +138,6 @@ export class CaracteristicasComponent {
     this.eliminarModal.set(null);
     this.caracteristicasResource.reload();
     this.finalesResource.reload();
+    this.eventosResource.reload();
   }
 }

@@ -1,0 +1,103 @@
+@let a = aventura();
+
+<div class="detalle">
+  <section class="detalle__caratula">
+    <div class="detalle-caratula" [style.--hue.deg]="hueCaratula(a)">
+      @if (a.caratulaUrl) {
+        <img class="detalle-caratula__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
+      } @else {
+        <svg class="detalle-caratula__icono" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M4 5a2 2 0 012-2h6v18H6a2 2 0 01-2-2V5zM20 5a2 2 0 00-2-2h-6v18h6a2 2 0 002-2V5z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          />
+        </svg>
+      }
+    </div>
+  </section>
+
+  <div class="detalle__contenido">
+    <section class="detalle__info">
+      <h2>{{ a.titulo }}</h2>
+
+      <p class="detalle__subtitulo">{{ campana().titulo }} · {{ universo().titulo }}</p>
+
+      @if (a.autor) {
+        <p class="detalle__autor">por {{ a.autor }}</p>
+      }
+
+      <div class="detalle__meta">
+        @if (a.puntuacionMedia !== null) {
+          <span class="detalle__meta-item">
+            <button type="button" class="detalle__meta-boton" (click)="verValoraciones()">
+              <app-star-rating-display [value]="a.puntuacionMedia" />
+              {{ a.puntuacionMedia.toFixed(1) }} ({{ a.totalValoraciones }})
+            </button>
+          </span>
+        }
+
+        @if (a.duracion !== null) {
+          <span class="detalle__meta-item">{{ duracionTexto(a.duracion) }}</span>
+        }
+
+        <span class="detalle__meta-item">Español</span>
+
+        @if (categorias()) {
+          <span class="detalle__meta-item detalle__meta-item--categorias">{{ categorias() }}</span>
+        }
+      </div>
+
+      @if (a.estadoPartida) {
+        <span class="detalle__estado">{{ a.estadoPartida }}</span>
+      }
+
+      @if (a.descripcion) {
+        <p class="detalle__descripcion">{{ a.descripcion }}</p>
+      }
+    </section>
+
+    <section class="detalle__acciones">
+      <div class="detalle__acciones-fila">
+        @if (a.estadoPartida === 'En curso' && a.idNodoActual) {
+          <a class="btn--primary" [routerLink]="['/partida', a.idNodoActual]" [queryParams]="{ idAventura: a.idAventura }">
+            Continuar partida
+          </a>
+        } @else if (a.puedeEmpezarPartida) {
+          <button type="button" class="btn--primary" (click)="empezarPartida()" [disabled]="starting() || !a.idVersionAventura">
+            {{ starting() ? 'Empezando…' : 'Empezar partida' }}
+          </button>
+        } @else {
+          <span class="detalle__bloqueada">Completa la aventura anterior para desbloquearla</span>
+        }
+
+        @if (a.estadoPartida === 'Finalizada' || a.estadoPartida === 'En curso') {
+          <button type="button" (click)="valorarAventura()">Valorar esta aventura</button>
+          <button type="button" (click)="reiniciarAventura()">Reiniciar aventura</button>
+        }
+      </div>
+
+      @if (startError()) {
+        <p class="status status--error">{{ startError() }}</p>
+      }
+    </section>
+  </div>
+</div>
+
+@if (opinionesAbiertas()) {
+  <app-resenas-modal [nivel]="'Aventura'" [id]="a.idAventura" [titulo]="a.titulo" (cerrado)="opinionesAbiertas.set(false)" />
+}
+
+@if (valorando()) {
+  <app-valoracion-modal [idAventura]="a.idAventura" (cerrado)="onValoracionCerrada()" />
+}
+
+@if (reiniciando()) {
+  <app-reiniciar-aventura-modal
+    [idAventura]="a.idAventura"
+    (cerrado)="onReiniciarCerrado()"
+    (reiniciada)="onAventuraReiniciada()"
+  />
+}

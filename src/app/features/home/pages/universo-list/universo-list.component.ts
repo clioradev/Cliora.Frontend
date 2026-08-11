@@ -2,21 +2,21 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { StarRatingDisplayComponent } from '../../../../shared/components/star-rating-display/star-rating-display.component';
-import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
+import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
-import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
+import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
 import { UniversoService } from '../../data-access/universo.service';
 import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
 
+interface ContextoAventura {
+  universo: Universo;
+  campana: Campana;
+  aventura: Aventura;
+}
+
 @Component({
   selector: 'app-universo-list',
-  imports: [
-    RouterLink,
-    StarRatingDisplayComponent,
-    ResenasModalComponent,
-    ValoracionModalComponent,
-    ReiniciarAventuraModalComponent,
-  ],
+  imports: [RouterLink, StarRatingDisplayComponent, ResenasModalComponent, AventuraDetalleComponent, ReiniciarAventuraModalComponent],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
 })
@@ -32,8 +32,19 @@ export class UniversoListComponent {
   protected readonly error = computed(() => this.universosResource.error() !== undefined);
 
   protected readonly opinionesAbiertas = signal<{ nivel: NivelValoracion; id: number; titulo: string } | null>(null);
-  protected readonly idAventuraAValorar = signal<number | null>(null);
   protected readonly idAventuraAReiniciar = signal<number | null>(null);
+
+  protected readonly aventuraEnCurso = computed<ContextoAventura | null>(() => {
+    for (const universo of this.universos()) {
+      for (const campana of universo.campanas) {
+        const aventura = campana.aventuras.find((a) => a.estadoPartida === 'En curso');
+        if (aventura) {
+          return { universo, campana, aventura };
+        }
+      }
+    }
+    return null;
+  });
 
   protected readonly searchTerm = signal('');
   protected readonly selectedTags = signal(new Set<string>());
@@ -41,7 +52,6 @@ export class UniversoListComponent {
   protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
 
   private readonly indicesAventura = signal(new Map<number, number>());
-  private readonly aventurasVolteadas = signal(new Set<number>());
 
   protected readonly availableTags = computed(() => {
     const tags = new Set<string>();
@@ -68,24 +78,25 @@ export class UniversoListComponent {
     return campana.aventuras[this.indiceActual(campana)];
   }
 
-  protected hayAnterior(campana: Campana): boolean {
-    return this.indiceActual(campana) > 0;
-  }
-
-  protected haySiguiente(campana: Campana): boolean {
-    return this.indiceActual(campana) < campana.aventuras.length - 1;
-  }
-
-  protected aventuraAnterior(campana: Campana): void {
-    this.establecerIndice(campana, this.indiceActual(campana) - 1);
-  }
-
-  protected aventuraSiguiente(campana: Campana): void {
-    this.establecerIndice(campana, this.indiceActual(campana) + 1);
-  }
-
   protected irAIndice(campana: Campana, indice: number): void {
     this.establecerIndice(campana, indice);
+  }
+
+  protected irAAventura(campana: Campana, aventura: Aventura): void {
+    const indice = campana.aventuras.findIndex((a) => a.idAventura === aventura.idAventura);
+    if (indice !== -1) {
+      this.irAIndice(campana, indice);
+    }
+  }
+
+  protected aventurasAnteriores(campana: Campana): Aventura[] {
+    const indice = this.indiceActual(campana);
+    return campana.aventuras.slice(Math.max(0, indice - 2), indice);
+  }
+
+  protected aventurasSiguientes(campana: Campana): Aventura[] {
+    const indice = this.indiceActual(campana);
+    return campana.aventuras.slice(indice + 1, indice + 3);
   }
 
   protected indiceActual(campana: Campana): number {
@@ -94,20 +105,6 @@ export class UniversoListComponent {
       return guardado;
     }
     return this.indiceInicial(campana);
-  }
-
-  protected estaVolteada(aventura: Aventura): boolean {
-    return this.aventurasVolteadas().has(aventura.idAventura);
-  }
-
-  protected voltear(aventura: Aventura): void {
-    const set = new Set(this.aventurasVolteadas());
-    if (set.has(aventura.idAventura)) {
-      set.delete(aventura.idAventura);
-    } else {
-      set.add(aventura.idAventura);
-    }
-    this.aventurasVolteadas.set(set);
   }
 
   protected hueCaratula(aventura: Aventura): number {
@@ -137,12 +134,7 @@ export class UniversoListComponent {
     this.opinionesAbiertas.set({ nivel, id, titulo });
   }
 
-  protected valorarAventura(idAventura: number): void {
-    this.idAventuraAValorar.set(idAventura);
-  }
-
-  protected onValoracionCerrada(): void {
-    this.idAventuraAValorar.set(null);
+  protected recargarUniversos(): void {
     this.universosResource.reload();
   }
 
@@ -156,7 +148,7 @@ export class UniversoListComponent {
 
   protected onAventuraReiniciada(): void {
     this.idAventuraAReiniciar.set(null);
-    this.universosResource.reload();
+    this.recargarUniversos();
   }
 
   private establecerIndice(campana: Campana, indice: number): void {

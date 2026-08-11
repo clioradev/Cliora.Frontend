@@ -1,5 +1,5 @@
 <app-modal (cerrar)="cerrado.emit()">
-  <h3>Añadir nuevo evento</h3>
+  <h3>{{ evento() ? 'Editar evento' : 'Añadir nuevo evento' }}</h3>
 
   <form [formGroup]="form" (ngSubmit)="guardar()">
     <label>

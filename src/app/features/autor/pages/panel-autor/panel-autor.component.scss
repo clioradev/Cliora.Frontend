@@ -1,6 +1,8 @@
+@use 'breakpoints' as *;
+
 :host {
   display: block;
-  max-width: var(--content-width-md, 800px);
+  max-width: var(--content-width-lg);
   margin: 0 auto;
   padding: var(--space-4);
 }
@@ -10,22 +12,40 @@
   align-items: center;
   justify-content: space-between;
   gap: var(--space-3);
-  margin-bottom: var(--space-4);
+  margin-bottom: var(--space-6);
 }
 
 .universo-card {
-  border: 1px solid var(--border-color, currentColor);
-  border-radius: var(--radius-md, 8px);
-  padding: var(--space-3);
-  margin-bottom: var(--space-4);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  margin-bottom: var(--space-6);
 }
 
-.universo-card__header,
-.campana-card__header {
+.universo-card__header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: var(--space-2);
+}
+
+.universo-card__titulo {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.universo-card__descripcion {
+  margin: var(--space-1) 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
 }
 
 .universo-card__acciones,
@@ -35,25 +55,83 @@
   flex-shrink: 0;
 }
 
+.universo-card__anadir-campana {
+  margin-top: var(--space-4);
+}
+
+.campanas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(calc(50% - var(--space-2)), 1fr));
+  gap: var(--space-4);
+  margin-top: var(--space-4);
+}
+
 .campana-card {
-  border-left: 3px solid var(--border-color, currentColor);
-  padding-left: var(--space-3);
-  margin: var(--space-3) 0;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  padding: var(--space-3);
+  border: 2px solid var(--color-campana-border);
+  border-radius: var(--radius-md);
+  background: var(--color-campana-bg);
+}
+
+.campana-card__header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+}
+
+.campana-card__titulo {
+  margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: var(--text-md);
+}
+
+.campana-card__descripcion {
+  margin: var(--space-1) 0 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.campana-card__anadir-aventura {
+  align-self: flex-start;
+  margin-top: var(--space-2);
 }
 
 .aventura-list {
   list-style: none;
   padding: 0;
-  margin: var(--space-2) 0;
+  margin: var(--space-3) 0 0;
   display: flex;
   flex-direction: column;
-  gap: var(--space-1);
 }
 
 .aventura-list__item {
   display: flex;
   align-items: center;
   gap: var(--space-2);
+  padding: var(--space-1) 0;
+  font-size: var(--text-xs);
+  border-bottom: 1px solid var(--color-campana-border);
+
+  &:last-child {
+    border-bottom: none;
+  }
+
+  .btn-icono {
+    width: 1.5rem;
+    height: 1.5rem;
+    border-color: transparent;
+    background: none;
+  }
 }
 
 .aventura-list__orden {
@@ -62,14 +140,23 @@
 
 .aventura-list__titulo {
   flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .aventura-list__visible {
-  font-size: 0.85em;
   opacity: 0.7;
 }
 
 .aventura-list__visible--si {
   opacity: 1;
-  color: var(--color-success, seagreen);
+  color: var(--color-success);
+}
+
+@media (max-width: $bp-tablet) {
+  .campanas {
+    grid-template-columns: 1fr;
+  }
 }

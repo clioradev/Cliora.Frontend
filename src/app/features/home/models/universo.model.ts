@@ -13,6 +13,8 @@ export interface Aventura {
   ultimaValoracion: UltimaValoracion | null;
   cantidadDecision: number;
   caratulaUrl?: string | null;
+  autor: string | null;
+  duracion: number | null;
 }
 
 export interface OpcionEnum {

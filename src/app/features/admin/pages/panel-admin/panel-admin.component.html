@@ -1,0 +1,35 @@
+<div class="panel-admin">
+  <header class="panel-admin__header">
+    <h1>Panel de administrador</h1>
+  </header>
+
+  <label class="panel-admin__buscador">
+    Buscar usuario por email
+    <input type="text" placeholder="Escribe al menos 2 caracteres…" [value]="query()" (input)="onQueryInput($event)" />
+  </label>
+
+  @if (loading()) {
+    <p>Buscando…</p>
+  } @else if (busquedaDemasiadoCorta()) {
+    <p>Escribe al menos 2 caracteres para buscar.</p>
+  } @else if (query().trim().length >= 2 && usuarios().length === 0) {
+    <p>No se han encontrado usuarios con ese email.</p>
+  } @else if (usuarios().length > 0) {
+    <ul class="usuario-list">
+      @for (usuario of usuarios(); track usuario.idUsuario) {
+        <li class="usuario-list__item">
+          <div class="usuario-list__info">
+            <span class="usuario-list__email">{{ usuario.email }}</span>
+            <span class="usuario-list__nombre">{{ usuario.nombre }}</span>
+            <span class="usuario-list__roles">{{ usuario.roles.length > 0 ? usuario.roles.join(', ') : 'Lector' }}</span>
+          </div>
+          <button type="button" (click)="editarRoles(usuario)">Editar roles</button>
+        </li>
+      }
+    </ul>
+  }
+</div>
+
+@if (rolesModal(); as usuario) {
+  <app-editar-roles-modal [usuario]="usuario" (cerrado)="cerrarRolesModal()" (guardado)="onRolesActualizados()" />
+}

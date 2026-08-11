@@ -1,7 +1,9 @@
 <div class="panel-autor">
   <header class="panel-autor__header">
     <h1>Panel de autor</h1>
-    <button type="button" class="btn--primary" (click)="nuevoUniverso()">Añadir nuevo universo</button>
+    <button type="button" class="btn-icono btn-icono--primary" (click)="nuevoUniverso()" aria-label="Añadir nuevo universo" title="Añadir nuevo universo">
+      <app-icono nombre="añadir" />
+    </button>
   </header>
 
   @if (loading()) {
@@ -14,53 +16,75 @@
     @for (universo of universos(); track universo.idUniverso) {
       <section class="universo-card">
         <div class="universo-card__header">
-          <h2>{{ universo.titulo }}</h2>
+          <h2 class="universo-card__titulo">{{ universo.titulo }}</h2>
           <div class="universo-card__acciones">
-            <button type="button" (click)="editarUniverso(universo)">Editar</button>
-            <button type="button" (click)="eliminarUniverso(universo)">Eliminar</button>
+            <button type="button" class="btn-icono" (click)="editarUniverso(universo)" [attr.aria-label]="'Editar universo ' + universo.titulo" title="Editar universo">
+              <app-icono nombre="editar" />
+            </button>
+            <button type="button" class="btn-icono btn-icono--peligro" (click)="eliminarUniverso(universo)" [attr.aria-label]="'Eliminar universo ' + universo.titulo" title="Eliminar universo">
+              <app-icono nombre="eliminar" />
+            </button>
           </div>
         </div>
         @if (universo.descripcion) {
-          <p>{{ universo.descripcion }}</p>
+          <p class="universo-card__descripcion">{{ universo.descripcion }}</p>
         }
 
-        @for (campana of universo.campanas; track campana.idCampana) {
-          <article class="campana-card">
-            <div class="campana-card__header">
-              <h3>{{ campana.titulo }}</h3>
-              <div class="campana-card__acciones">
-                <button type="button" (click)="editarCampana(universo.idUniverso, campana)">Editar</button>
-                <button type="button" (click)="eliminarCampana(campana)">Eliminar</button>
-              </div>
-            </div>
-            @if (campana.descripcion) {
-              <p>{{ campana.descripcion }}</p>
-            }
-
-            @if (campana.aventuras.length > 0) {
-              <ul class="aventura-list">
-                @for (aventura of campana.aventuras; track aventura.idAventura) {
-                  <li class="aventura-list__item">
-                    <span class="aventura-list__orden">#{{ aventura.orden }}</span>
-                    <span class="aventura-list__titulo">{{ aventura.titulo }}</span>
-                    <span class="aventura-list__visible" [class.aventura-list__visible--si]="aventura.visible">
-                      {{ aventura.visible ? 'Visible' : 'Oculta' }}
-                    </span>
-                    <a [routerLink]="['/autor/aventura', aventura.idAventura]">Editar</a>
-                    <button type="button" (click)="eliminarAventura(aventura)">Eliminar</button>
-                  </li>
+        @if (universo.campanas.length > 0) {
+          <div class="campanas">
+            @for (campana of universo.campanas; track campana.idCampana) {
+              <article class="campana-card">
+                <div class="campana-card__header">
+                  <h3 class="campana-card__titulo">{{ campana.titulo }}</h3>
+                  <div class="campana-card__acciones">
+                    <button type="button" class="btn-icono" (click)="editarCampana(universo.idUniverso, campana)" [attr.aria-label]="'Editar campaña ' + campana.titulo" title="Editar campaña">
+                      <app-icono nombre="editar" />
+                    </button>
+                    <button type="button" class="btn-icono btn-icono--peligro" (click)="eliminarCampana(campana)" [attr.aria-label]="'Eliminar campaña ' + campana.titulo" title="Eliminar campaña">
+                      <app-icono nombre="eliminar" />
+                    </button>
+                  </div>
+                </div>
+                @if (campana.descripcion) {
+                  <p class="campana-card__descripcion">{{ campana.descripcion }}</p>
                 }
-              </ul>
-            }
 
-            <a [routerLink]="['/autor/aventura/nueva']" [queryParams]="{ idCampana: campana.idCampana }">
-              Añadir nueva aventura
-            </a>
-          </article>
+                @if (campana.aventuras.length > 0) {
+                  <ul class="aventura-list">
+                    @for (aventura of campana.aventuras; track aventura.idAventura) {
+                      <li class="aventura-list__item">
+                        <span class="aventura-list__orden">#{{ aventura.orden }}</span>
+                        <span class="aventura-list__titulo">{{ aventura.titulo }}</span>
+                        <span class="aventura-list__visible" [class.aventura-list__visible--si]="aventura.visible">
+                          {{ aventura.visible ? 'Visible' : 'Oculta' }}
+                        </span>
+                        <a class="btn-icono" [routerLink]="['/autor/aventura', aventura.idAventura]" [attr.aria-label]="'Editar aventura ' + aventura.titulo" title="Editar aventura">
+                          <app-icono nombre="editar" />
+                        </a>
+                        <button type="button" class="btn-icono btn-icono--peligro" (click)="eliminarAventura(aventura)" [attr.aria-label]="'Eliminar aventura ' + aventura.titulo" title="Eliminar aventura">
+                          <app-icono nombre="eliminar" />
+                        </button>
+                      </li>
+                    }
+                  </ul>
+                }
+
+                <a
+                  class="btn-icono btn-icono--primary campana-card__anadir-aventura"
+                  [routerLink]="['/autor/aventura/nueva']"
+                  [queryParams]="{ idCampana: campana.idCampana }"
+                  aria-label="Añadir nueva aventura"
+                  title="Añadir nueva aventura"
+                >
+                  <app-icono nombre="añadir" />
+                </a>
+              </article>
+            }
+          </div>
         }
 
-        <button type="button" (click)="nuevaCampana(universo.idUniverso)">
-          Añadir nueva campaña
+        <button type="button" class="btn-icono btn-icono--primary universo-card__anadir-campana" (click)="nuevaCampana(universo.idUniverso)" aria-label="Añadir nueva campaña" title="Añadir nueva campaña">
+          <app-icono nombre="añadir" />
         </button>
       </section>
     }

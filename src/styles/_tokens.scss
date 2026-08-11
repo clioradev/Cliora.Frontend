@@ -4,13 +4,14 @@
   --color-surface: #ffffff;
   --color-surface-hover: #f0ece3;
   --color-surface-muted: #efe9df;
+  --color-libro-bg: #e4ddce;
   --color-border: #d9d0c1;
   --color-text: #332b21;
   --color-text-secondary: #70685a;
 
-  // Color - capa "resaltada" (campaña), tono suave derivado de --color-primary
-  --color-campana-bg: #e9f1e6;
-  --color-campana-border: #c7dcc0;
+  // Color - capa "resaltada" (campaña): gris neutro, más oscuro que la superficie
+  --color-campana-bg: #dcdcd9;
+  --color-campana-border: #adada8;
 
   // Color - marca / semánticos
   --color-primary: #3f6b4a;
@@ -74,12 +75,13 @@
   --color-surface: #262319;
   --color-surface-hover: #322e22;
   --color-surface-muted: #2c2820;
+  --color-libro-bg: #2c2820;
   --color-border: #423c2f;
   --color-text: #ede7db;
   --color-text-secondary: #b3aa98;
 
-  --color-campana-bg: #24352a;
-  --color-campana-border: #3a5240;
+  --color-campana-bg: #3d3d3a;
+  --color-campana-border: #625f57;
 
   --color-primary: #6fae7c;
   --color-primary-hover: #8ec498;
@@ -100,12 +102,13 @@
   --color-surface: #ffffff;
   --color-surface-hover: #f0ece3;
   --color-surface-muted: #efe9df;
+  --color-libro-bg: #e4ddce;
   --color-border: #d9d0c1;
   --color-text: #332b21;
   --color-text-secondary: #70685a;
 
-  --color-campana-bg: #e9f1e6;
-  --color-campana-border: #c7dcc0;
+  --color-campana-bg: #dcdcd9;
+  --color-campana-border: #adada8;
 
   --color-primary: #3f6b4a;
   --color-primary-hover: #2f5238;

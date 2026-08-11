@@ -45,6 +45,7 @@ export interface AventuraAutor {
   cantidadDecision: number;
   rutaImagen: string | null;
   visible: boolean;
+  duracion: number | null;
   actos: ActoAutor[];
 }
 
@@ -78,6 +79,7 @@ export interface GuardarAventuraRequest {
   orden: number;
   cantidadDecision: number;
   rutaImagen: string | null;
+  duracion: number | null;
 }
 
 export interface GuardarActoRequest {
@@ -97,6 +99,7 @@ export interface CrearNodoRequest {
 export interface ContenidoNodoAutor {
   orden: number;
   texto: string;
+  gruposCondicion: GrupoCondicionAutor[];
 }
 
 export interface CondicionAutor {
@@ -185,6 +188,7 @@ export interface GuardarEventoRequest {
 export interface GuardarContenidoNodoRequest {
   orden: number;
   texto: string;
+  gruposCondicion: GuardarGrupoCondicionRequest[];
 }
 
 export interface GuardarCondicionRequest {

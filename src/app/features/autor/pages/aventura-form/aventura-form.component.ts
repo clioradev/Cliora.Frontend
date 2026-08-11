@@ -5,6 +5,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { of } from 'rxjs';
 import { CANTIDAD_DECISION_OPCIONES } from '../../../home/models/universo.model';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
 import { CaracteristicasComponent } from '../../components/caracteristicas/caracteristicas.component';
 import { AutorService } from '../../data-access/autor.service';
@@ -12,7 +13,7 @@ import { AventuraAutor } from '../../models/autor.model';
 
 @Component({
   selector: 'app-aventura-form',
-  imports: [ReactiveFormsModule, RouterLink, ActosEscenasComponent, CaracteristicasComponent],
+  imports: [ReactiveFormsModule, RouterLink, IconoComponent, ActosEscenasComponent, CaracteristicasComponent],
   templateUrl: './aventura-form.component.html',
   styleUrl: './aventura-form.component.scss',
 })
@@ -40,6 +41,7 @@ export class AventuraFormComponent {
     orden: [1, [Validators.required, Validators.min(1)]],
     cantidadDecision: [2, [Validators.required]],
     rutaImagen: [''],
+    duracion: this.fb.control<number | null>(null, [Validators.min(0)]),
   });
 
   private readonly aventuraResource = rxResource({
@@ -66,20 +68,27 @@ export class AventuraFormComponent {
 
   private readonly guardarAction = asyncAction(
     () => {
-      const { titulo, descripcion, orden, cantidadDecision, rutaImagen } = this.form.getRawValue();
+      const { titulo, descripcion, orden, cantidadDecision, rutaImagen, duracion } = this.form.getRawValue();
       const dto = {
         titulo,
         descripcion: descripcion.trim() || null,
         orden,
         cantidadDecision,
         rutaImagen: rutaImagen.trim() || null,
+        duracion: duracion ?? null,
       };
 
       const id = this.idAventura();
       return id ? this.autorService.actualizarAventura(id, dto) : this.autorService.crearAventura(this.idCampana, dto);
     },
     {
-      onSuccess: () => void this.router.navigate(['/autor']),
+      onSuccess: (aventura) => {
+        if (this.idAventura()) {
+          this.precargarFormulario(aventura);
+        } else {
+          void this.router.navigate(['/autor/aventura', aventura.idAventura], { replaceUrl: true });
+        }
+      },
       defaultErrorMessage: 'No se ha podido guardar la aventura.',
     },
   );
@@ -93,6 +102,20 @@ export class AventuraFormComponent {
     this.guardarAction.run();
   }
 
+  private readonly calcularDuracionAction = asyncAction(
+    () => this.autorService.calcularDuracionAventura(this.idAventura()!),
+    {
+      onSuccess: () => this.aventuraResource.reload(),
+      defaultErrorMessage: 'No se ha podido calcular la duración.',
+    },
+  );
+  protected readonly calculandoDuracion = this.calcularDuracionAction.loading;
+  protected readonly errorDuracion = this.calcularDuracionAction.error;
+
+  protected calcularDuracion(): void {
+    this.calcularDuracionAction.run();
+  }
+
   private precargarFormulario(aventura: AventuraAutor): void {
     this.form.patchValue({
       titulo: aventura.titulo,
@@ -100,6 +123,7 @@ export class AventuraFormComponent {
       orden: aventura.orden,
       cantidadDecision: aventura.cantidadDecision,
       rutaImagen: aventura.rutaImagen ?? '',
+      duracion: aventura.duracion,
     });
   }
 }

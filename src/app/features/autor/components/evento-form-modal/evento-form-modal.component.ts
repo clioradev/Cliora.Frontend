@@ -1,4 +1,4 @@
-import { Component, inject, input, output } from '@angular/core';
+import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
@@ -16,6 +16,7 @@ export class EventoFormModalComponent {
   private readonly autorService = inject(AutorService);
 
   readonly idAventura = input.required<number>();
+  readonly evento = input<EventoAutor | null>(null);
   readonly cerrado = output<void>();
   readonly guardado = output<EventoAutor>();
 
@@ -24,12 +25,31 @@ export class EventoFormModalComponent {
     descripcion: [''],
   });
 
+  constructor() {
+    effect(() => {
+      const evento = this.evento();
+      if (evento) {
+        this.form.patchValue({
+          nombre: evento.nombre,
+          descripcion: evento.descripcion ?? '',
+        });
+      }
+    });
+  }
+
   private readonly guardarAction = asyncAction(
-    (nombre: string, descripcion: string | null) =>
-      this.autorService.crearEvento(this.idAventura(), { nombre, descripcion }),
+    () => {
+      const { nombre, descripcion } = this.form.getRawValue();
+      const dto = { nombre, descripcion: descripcion.trim() || null };
+
+      const actual = this.evento();
+      return actual
+        ? this.autorService.actualizarEvento(actual.idEvento, dto)
+        : this.autorService.crearEvento(this.idAventura(), dto);
+    },
     {
       onSuccess: (evento) => this.guardado.emit(evento),
-      defaultErrorMessage: 'No se ha podido crear el evento.',
+      defaultErrorMessage: 'No se ha podido guardar el evento.',
     },
   );
   protected readonly guardando = this.guardarAction.loading;
@@ -39,8 +59,6 @@ export class EventoFormModalComponent {
     if (this.form.invalid) {
       return;
     }
-
-    const { nombre, descripcion } = this.form.getRawValue();
-    this.guardarAction.run(nombre, descripcion.trim() || null);
+    this.guardarAction.run();
   }
 }

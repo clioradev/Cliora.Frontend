@@ -63,6 +63,10 @@ export class AutorService {
     return this.http.get<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}`);
   }
 
+  calcularDuracionAventura(idAventura: number): Observable<AventuraAutor> {
+    return this.http.post<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/CalcularDuracion`, {});
+  }
+
   getSiguienteOrden(idCampana: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/Autor/Campana/${idCampana}/SiguienteOrden`);
   }
@@ -177,5 +181,13 @@ export class AutorService {
 
   crearEvento(idAventura: number, dto: GuardarEventoRequest): Observable<EventoAutor> {
     return this.http.post<EventoAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Evento`, dto);
+  }
+
+  actualizarEvento(idEvento: number, dto: GuardarEventoRequest): Observable<EventoAutor> {
+    return this.http.put<EventoAutor>(`${this.baseUrl}/Autor/Evento/${idEvento}`, dto);
+  }
+
+  eliminarEvento(idEvento: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Autor/Evento/${idEvento}`);
   }
 }

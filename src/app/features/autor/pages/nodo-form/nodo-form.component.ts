@@ -1,9 +1,12 @@
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
+import { Observable, of } from 'rxjs';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { CaracteristicaFormModalComponent } from '../../components/caracteristica-form-modal/caracteristica-form-modal.component';
 import { CrearNodoDestinoModalComponent } from '../../components/crear-nodo-destino-modal/crear-nodo-destino-modal.component';
 import { EventoFormModalComponent } from '../../components/evento-form-modal/evento-form-modal.component';
@@ -11,6 +14,7 @@ import { AutorService } from '../../data-access/autor.service';
 import {
   CaracteristicaAutor,
   CondicionAutor,
+  ContenidoNodoAutor,
   EfectoAutor,
   EnumOperacionCondicion,
   EnumOperacionEfecto,
@@ -30,6 +34,8 @@ type Rama = 'resultado' | 'resultadoFracaso';
   imports: [
     ReactiveFormsModule,
     NgTemplateOutlet,
+    IconoComponent,
+    ConfirmarEliminarModalComponent,
     CrearNodoDestinoModalComponent,
     CaracteristicaFormModalComponent,
     EventoFormModalComponent,
@@ -101,9 +107,13 @@ export class NodoFormComponent {
 
   protected readonly opcionIndexCreandoCaracteristicaTirada = signal<number | null>(null);
 
-  private crearContenidoGroup(texto = '') {
-    return this.fb.nonNullable.group({
-      texto: [texto, [Validators.required]],
+  protected readonly eliminarContenidoIndex = signal<number | null>(null);
+  protected readonly eliminarOpcionIndex = signal<number | null>(null);
+
+  private crearContenidoGroup(contenido?: ContenidoNodoAutor) {
+    return this.fb.group({
+      texto: this.fb.nonNullable.control(contenido?.texto ?? '', [Validators.required]),
+      gruposCondicion: this.fb.array((contenido?.gruposCondicion ?? []).map((g) => this.crearGrupoCondicionGroup(g))),
     });
   }
 
@@ -203,28 +213,58 @@ export class NodoFormComponent {
     this.finalesDisponibles.set(nodo.finalesDisponibles);
 
     this.contenidos.clear();
-    const contenidos = nodo.contenidos.length > 0 ? nodo.contenidos : [{ orden: 1, texto: '' }];
-    contenidos.forEach((c) => this.contenidos.push(this.crearContenidoGroup(c.texto)));
+    const contenidos: ContenidoNodoAutor[] =
+      nodo.contenidos.length > 0 ? nodo.contenidos : [{ orden: 1, texto: '', gruposCondicion: [] }];
+    contenidos.forEach((c) => this.contenidos.push(this.crearContenidoGroup(c)));
 
     this.opciones.clear();
     nodo.opciones.forEach((o) => this.opciones.push(this.crearOpcionGroup(o)));
   }
 
-  protected agregarContenido(): void {
-    this.contenidos.push(this.crearContenidoGroup());
+  protected agregarContenido(despuesDeIndex?: number): void {
+    const nuevo = this.crearContenidoGroup();
+    if (despuesDeIndex === undefined) {
+      this.contenidos.push(nuevo);
+    } else {
+      this.contenidos.insert(despuesDeIndex + 1, nuevo);
+    }
   }
 
-  protected quitarContenido(index: number): void {
-    this.contenidos.removeAt(index);
+  protected pedirEliminarContenido(index: number): void {
+    this.eliminarContenidoIndex.set(index);
   }
+
+  protected cerrarEliminarContenido(): void {
+    this.eliminarContenidoIndex.set(null);
+  }
+
+  protected readonly confirmarEliminarContenido = (): Observable<void> => {
+    const index = this.eliminarContenidoIndex();
+    if (index !== null) {
+      this.contenidos.removeAt(index);
+    }
+    return of(undefined);
+  };
 
   protected agregarOpcion(): void {
     this.opciones.push(this.crearOpcionGroup());
   }
 
-  protected quitarOpcion(index: number): void {
-    this.opciones.removeAt(index);
+  protected pedirEliminarOpcion(index: number): void {
+    this.eliminarOpcionIndex.set(index);
   }
+
+  protected cerrarEliminarOpcion(): void {
+    this.eliminarOpcionIndex.set(null);
+  }
+
+  protected readonly confirmarEliminarOpcion = (): Observable<void> => {
+    const index = this.eliminarOpcionIndex();
+    if (index !== null) {
+      this.opciones.removeAt(index);
+    }
+    return of(undefined);
+  };
 
   protected resultadoGroupDe(opcionIndex: number, rama: Rama): FormGroup {
     return this.opciones.at(opcionIndex).get(rama) as FormGroup;
@@ -328,28 +368,28 @@ export class NodoFormComponent {
     this.opcionIndexCreandoCaracteristicaTirada.set(null);
   }
 
-  protected gruposCondicionDe(opcionIndex: number): FormArray {
-    return this.opciones.at(opcionIndex).get('gruposCondicion') as FormArray;
+  protected gruposCondicionDe(control: AbstractControl): FormArray {
+    return control.get('gruposCondicion') as FormArray;
   }
 
-  protected agregarGrupoCondicion(opcionIndex: number): void {
-    this.gruposCondicionDe(opcionIndex).push(this.crearGrupoCondicionGroup());
+  protected agregarGrupoCondicion(grupos: FormArray): void {
+    grupos.push(this.crearGrupoCondicionGroup());
   }
 
-  protected quitarGrupoCondicion(opcionIndex: number, grupoIndex: number): void {
-    this.gruposCondicionDe(opcionIndex).removeAt(grupoIndex);
+  protected quitarGrupoCondicion(grupos: FormArray, grupoIndex: number): void {
+    grupos.removeAt(grupoIndex);
   }
 
-  protected condicionesDe(opcionIndex: number, grupoIndex: number): FormArray {
-    return (this.gruposCondicionDe(opcionIndex).at(grupoIndex) as FormGroup).get('condiciones') as FormArray;
+  protected condicionesDe(grupos: FormArray, grupoIndex: number): FormArray {
+    return (grupos.at(grupoIndex) as FormGroup).get('condiciones') as FormArray;
   }
 
-  protected agregarCondicion(opcionIndex: number, grupoIndex: number): void {
-    this.condicionesDe(opcionIndex, grupoIndex).push(this.crearCondicionGroup());
+  protected agregarCondicion(grupos: FormArray, grupoIndex: number): void {
+    this.condicionesDe(grupos, grupoIndex).push(this.crearCondicionGroup());
   }
 
-  protected quitarCondicion(opcionIndex: number, grupoIndex: number, condicionIndex: number): void {
-    this.condicionesDe(opcionIndex, grupoIndex).removeAt(condicionIndex);
+  protected quitarCondicion(grupos: FormArray, grupoIndex: number, condicionIndex: number): void {
+    this.condicionesDe(grupos, grupoIndex).removeAt(condicionIndex);
   }
 
   protected efectosDe(opcionIndex: number, rama: Rama): FormArray {
@@ -394,7 +434,17 @@ export class NodoFormComponent {
 
       const dto = {
         titulo: raw.titulo,
-        contenidos: raw.contenidos.map((c, index) => ({ orden: index + 1, texto: c.texto })),
+        contenidos: raw.contenidos.map((c, index) => ({
+          orden: index + 1,
+          texto: c.texto,
+          gruposCondicion: c.gruposCondicion.map((g) => ({
+            condiciones: g.condiciones.map((cond) => ({
+              idCaracteristica: cond.idCaracteristica!,
+              operacion: cond.operacion,
+              valor: cond.valor,
+            })),
+          })),
+        })),
         opciones: raw.opciones.map((o) => ({
           texto: o.texto,
           gruposCondicion: o.gruposCondicion.map((g) => ({
@@ -436,11 +486,9 @@ export class NodoFormComponent {
 
     const raw = this.form.getRawValue();
 
-    const faltaTirada = raw.opciones.some(
-      (o) => o.tieneTirada && (o.idCaracteristicaTirada == null || o.dificultad == null),
-    );
+    const faltaTirada = raw.opciones.some((o) => o.tieneTirada && o.dificultad == null);
     if (faltaTirada) {
-      this.errorValidacion.set('Cada opción con tirada debe tener característica y dificultad.');
+      this.errorValidacion.set('Cada opción con tirada debe tener una dificultad.');
       return;
     }
 

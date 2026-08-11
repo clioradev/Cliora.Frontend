@@ -182,4 +182,12 @@ export class AutorService {
   crearEvento(idAventura: number, dto: GuardarEventoRequest): Observable<EventoAutor> {
     return this.http.post<EventoAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Evento`, dto);
   }
+
+  actualizarEvento(idEvento: number, dto: GuardarEventoRequest): Observable<EventoAutor> {
+    return this.http.put<EventoAutor>(`${this.baseUrl}/Autor/Evento/${idEvento}`, dto);
+  }
+
+  eliminarEvento(idEvento: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Autor/Evento/${idEvento}`);
+  }
 }

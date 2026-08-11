@@ -1,10 +1,17 @@
 <div class="nodo-form">
-  <a class="nodo-form__volver" (click)="volver()">← Volver a actos y escenas</a>
-
   @if (cargando()) {
     <p>Cargando…</p>
   } @else if (nodo(); as nodoActual) {
     <div class="nodo-form__cabecera">
+      <button
+        type="button"
+        class="btn-icono"
+        (click)="volver()"
+        aria-label="Volver a actos y escenas"
+        title="Volver a actos y escenas"
+      >
+        <app-icono nombre="volver" />
+      </button>
       <h1>Editar nodo</h1>
       @if (nodoActual.esNodoInicial) {
         <span class="nodo-form__badge">Nodo inicial</span>
@@ -67,18 +74,48 @@
         <legend>Textos</legend>
         @for (contenido of contenidos.controls; track $index; let index = $index) {
           <div class="nodo-form__contenido" [formGroupName]="index">
-            <textarea formControlName="texto" rows="3"></textarea>
+            <textarea formControlName="texto" rows="8"></textarea>
 
-            <ng-container
-              *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(contenido) }"
-            ></ng-container>
+            @if (gruposCondicionDe(contenido).length > 0) {
+              <ng-container
+                *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(contenido) }"
+              ></ng-container>
+            }
 
-            <button type="button" (click)="quitarContenido(index)" [disabled]="contenidos.length === 1">
-              Quitar
-            </button>
+            <div class="nodo-form__contenido-acciones">
+              @if (gruposCondicionDe(contenido).length === 0) {
+                <button
+                  type="button"
+                  class="btn-icono btn-icono--primary"
+                  (click)="agregarGrupoCondicion(gruposCondicionDe(contenido))"
+                  aria-label="Añadir grupo de condiciones"
+                  title="Añadir grupo de condiciones"
+                >
+                  <app-icono nombre="condicion" />
+                </button>
+              }
+              <button
+                type="button"
+                class="btn-icono btn-icono--peligro"
+                (click)="pedirEliminarContenido(index)"
+                [disabled]="contenidos.length === 1"
+                aria-label="Eliminar texto"
+                title="Eliminar texto"
+              >
+                <app-icono nombre="eliminar" />
+              </button>
+              <button
+                type="button"
+                class="btn-icono btn-icono--primary"
+                (click)="agregarContenido(index)"
+                aria-label="Añadir nuevo texto"
+                title="Añadir nuevo texto"
+              >
+                <app-icono nombre="añadir" />
+              </button>
+            </div>
           </div>
         }
-        <button type="button" (click)="agregarContenido()">Añadir texto</button>
       </fieldset>
 
       <ng-template
@@ -91,94 +128,113 @@
         <fieldset class="nodo-form__seccion" [formGroup]="resultado">
           <legend>{{ titulo }}</legend>
 
-          <label>
-            Lleva a
-            <select formControlName="tipoDestino">
-              <option value="nodo">Otro nodo</option>
-              <option value="final">Un final</option>
-            </select>
-          </label>
-
-          @if (resultado.get('tipoDestino')?.value === 'nodo') {
+          <div class="resultado-fila" [class.resultado-fila--sin-efectos-boton]="efectosDe(opcionIndex, rama).length > 0">
             <label>
-              Nodo de destino
-              <select
-                formControlName="idNodoDestino"
-                (change)="onSeleccionNodoDestino(opcionIndex, rama, $any($event.target).value)"
-              >
-                <option [value]="null">Selecciona un nodo…</option>
-                <option [value]="CREAR_NODO_DESTINO">+ Crear nodo destino…</option>
-                @for (n of nodosDisponibles(); track n.idNodo) {
-                  <option [value]="n.idNodo">{{ n.titulo }}</option>
-                }
+              Lleva a
+              <select formControlName="tipoDestino">
+                <option value="nodo">Otro nodo</option>
+                <option value="final">Un final</option>
               </select>
             </label>
-          } @else {
-            <label>
-              Final de destino
-              <select formControlName="idFinal">
-                <option [value]="null">Selecciona un final…</option>
-                @for (f of finalesDisponibles(); track f.idFinal) {
-                  <option [value]="f.idFinal">{{ f.titulo }}</option>
-                }
-              </select>
-            </label>
-          }
 
-          <fieldset class="nodo-form__seccion" formArrayName="efectos">
-            <legend>Efectos al elegir esta opción</legend>
-            <div class="efectos-lista">
-              @for (efecto of efectosDe(opcionIndex, rama).controls; track $index; let efectoIndex = $index) {
-                <div class="efecto-row" [formGroupName]="efectoIndex">
-                  <select
-                    formControlName="tipoVariable"
-                    (change)="onCambioTipoEfecto(opcionIndex, rama, efectoIndex)"
-                  >
-                    <option value="caracteristica">Característica</option>
-                    <option value="evento">Evento</option>
-                  </select>
-
-                  @if (efecto.get('tipoVariable')?.value === 'caracteristica') {
-                    <select
-                      formControlName="idCaracteristica"
-                      (change)="onSeleccionCaracteristica(opcionIndex, rama, efectoIndex, $any($event.target).value)"
-                    >
-                      <option [value]="CREAR_CARACTERISTICA">+ Añadir característica…</option>
-                      @for (car of caracteristicas(); track car.idCaracteristica) {
-                        <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
-                      }
-                    </select>
-
-                    <select formControlName="operacionEfecto">
-                      @for (op of operacionEfectoOpciones; track op.valor) {
-                        <option [value]="op.valor">{{ op.etiqueta }}</option>
-                      }
-                    </select>
-                    <input type="number" formControlName="valor" />
-                  } @else {
-                    <select
-                      class="efecto-row__select-evento"
-                      formControlName="idEvento"
-                      (change)="onSeleccionEvento(opcionIndex, rama, efectoIndex, $any($event.target).value)"
-                    >
-                      <option [value]="CREAR_EVENTO">+ Añadir evento…</option>
-                      @for (ev of eventos(); track ev.idEvento) {
-                        <option [value]="ev.idEvento">{{ ev.nombre }}</option>
-                      }
-                    </select>
-
-                    <label class="efecto-row__checkbox">
-                      <input type="checkbox" formControlName="marcado" />
-                      Marcado
-                    </label>
+            @if (resultado.get('tipoDestino')?.value === 'nodo') {
+              <label>
+                Nodo de destino
+                <select
+                  formControlName="idNodoDestino"
+                  (change)="onSeleccionNodoDestino(opcionIndex, rama, $any($event.target).value)"
+                >
+                  <option [value]="null">Selecciona un nodo…</option>
+                  <option [value]="CREAR_NODO_DESTINO">+ Crear nodo destino…</option>
+                  @for (n of nodosDisponibles(); track n.idNodo) {
+                    <option [value]="n.idNodo">{{ n.titulo }}</option>
                   }
+                </select>
+              </label>
+            } @else {
+              <label>
+                Final de destino
+                <select formControlName="idFinal">
+                  <option [value]="null">Selecciona un final…</option>
+                  @for (f of finalesDisponibles(); track f.idFinal) {
+                    <option [value]="f.idFinal">{{ f.titulo }}</option>
+                  }
+                </select>
+              </label>
+            }
 
-                  <button type="button" (click)="quitarEfecto(opcionIndex, rama, efectoIndex)">Quitar</button>
-                </div>
-              }
-            </div>
-            <button type="button" (click)="agregarEfecto(opcionIndex, rama)">Añadir efecto</button>
-          </fieldset>
+            @if (efectosDe(opcionIndex, rama).length === 0) {
+              <div class="resultado-fila__efectos-trigger">
+                <span class="resultado-fila__efectos-trigger-etiqueta">Efectos</span>
+                <button
+                  type="button"
+                  class="btn-icono btn-icono--primary"
+                  (click)="agregarEfecto(opcionIndex, rama)"
+                  aria-label="Añadir efectos"
+                  title="Añadir efectos"
+                >
+                  <app-icono nombre="añadir" />
+                </button>
+              </div>
+            }
+          </div>
+
+          @if (efectosDe(opcionIndex, rama).length > 0) {
+            <fieldset class="nodo-form__seccion" formArrayName="efectos">
+              <legend>Efectos al elegir esta opción</legend>
+              <div class="efectos-lista">
+                @for (efecto of efectosDe(opcionIndex, rama).controls; track $index; let efectoIndex = $index) {
+                  <div class="efecto-row" [formGroupName]="efectoIndex">
+                    <select
+                      formControlName="tipoVariable"
+                      (change)="onCambioTipoEfecto(opcionIndex, rama, efectoIndex)"
+                    >
+                      <option value="caracteristica">Característica</option>
+                      <option value="evento">Evento</option>
+                    </select>
+
+                    @if (efecto.get('tipoVariable')?.value === 'caracteristica') {
+                      <select
+                        formControlName="idCaracteristica"
+                        (change)="onSeleccionCaracteristica(opcionIndex, rama, efectoIndex, $any($event.target).value)"
+                      >
+                        <option [value]="CREAR_CARACTERISTICA">+ Añadir característica…</option>
+                        @for (car of caracteristicas(); track car.idCaracteristica) {
+                          <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
+                        }
+                      </select>
+
+                      <select formControlName="operacionEfecto">
+                        @for (op of operacionEfectoOpciones; track op.valor) {
+                          <option [value]="op.valor">{{ op.etiqueta }}</option>
+                        }
+                      </select>
+                      <input type="number" formControlName="valor" />
+                    } @else {
+                      <select
+                        class="efecto-row__select-evento"
+                        formControlName="idEvento"
+                        (change)="onSeleccionEvento(opcionIndex, rama, efectoIndex, $any($event.target).value)"
+                      >
+                        <option [value]="CREAR_EVENTO">+ Añadir evento…</option>
+                        @for (ev of eventos(); track ev.idEvento) {
+                          <option [value]="ev.idEvento">{{ ev.nombre }}</option>
+                        }
+                      </select>
+
+                      <label class="efecto-row__checkbox">
+                        <input type="checkbox" formControlName="marcado" />
+                        Marcado
+                      </label>
+                    }
+
+                    <button type="button" (click)="quitarEfecto(opcionIndex, rama, efectoIndex)">Quitar</button>
+                  </div>
+                }
+              </div>
+              <button type="button" (click)="agregarEfecto(opcionIndex, rama)">Añadir efecto</button>
+            </fieldset>
+          }
         </fieldset>
       </ng-template>
 
@@ -191,45 +247,81 @@
 
         @for (opcion of opciones.controls; track $index; let opcionIndex = $index) {
           <div class="opcion-card" [formGroupName]="opcionIndex">
-            <div class="opcion-card__cabecera">
-              <label class="opcion-card__texto">
+            <div class="opcion-card__eliminar">
+              <button
+                type="button"
+                class="btn-icono btn-icono--peligro"
+                (click)="pedirEliminarOpcion(opcionIndex)"
+                aria-label="Eliminar opción"
+                title="Eliminar opción"
+              >
+                <app-icono nombre="eliminar" />
+              </button>
+            </div>
+
+            <div class="opcion-card__fila-texto">
+              <label
+                class="opcion-card__texto"
+                [class.opcion-card__texto--completo]="gruposCondicionDe(opcion).length > 0"
+              >
                 Texto de la opción
                 <input type="text" formControlName="texto" />
               </label>
-              <button type="button" (click)="quitarOpcion(opcionIndex)">Eliminar opción</button>
+
+              @if (gruposCondicionDe(opcion).length === 0) {
+                <div class="opcion-card__condiciones-trigger">
+                  <span class="opcion-card__condiciones-trigger-etiqueta">Condiciones</span>
+                  <button
+                    type="button"
+                    class="btn-icono btn-icono--primary"
+                    (click)="agregarGrupoCondicion(gruposCondicionDe(opcion))"
+                    aria-label="Añadir grupo de condiciones"
+                    title="Añadir grupo de condiciones"
+                  >
+                    <app-icono nombre="condicion" />
+                  </button>
+                </div>
+              }
             </div>
 
-            <ng-container
-              *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(opcion) }"
-            ></ng-container>
+            @if (gruposCondicionDe(opcion).length > 0) {
+              <ng-container
+                *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(opcion) }"
+              ></ng-container>
+            }
 
             <fieldset class="nodo-form__seccion">
               <legend>Tirada</legend>
-              <label class="efecto-row__checkbox">
-                <input type="checkbox" formControlName="tieneTirada" />
-                Esta opción incluye tirada
-              </label>
+              <div class="tirada-fila">
+                <button
+                  type="button"
+                  class="tirada-toggle"
+                  [class.tirada-toggle--activo]="opcion.get('tieneTirada')?.value"
+                  (click)="opcion.get('tieneTirada')!.setValue(!opcion.get('tieneTirada')!.value)"
+                >
+                  Tirada
+                </button>
 
-              @if (opcion.get('tieneTirada')?.value) {
-                <div class="tirada-row">
-                  <label>
+                @if (opcion.get('tieneTirada')?.value) {
+                  <label class="tirada-fila__caracteristica">
                     Característica
                     <select
                       formControlName="idCaracteristicaTirada"
                       (change)="onSeleccionCaracteristicaTirada(opcionIndex, $any($event.target).value)"
                     >
+                      <option [value]="null">Sin característica</option>
                       <option [value]="CREAR_CARACTERISTICA">+ Añadir característica…</option>
                       @for (car of caracteristicas(); track car.idCaracteristica) {
                         <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
                       }
                     </select>
                   </label>
-                  <label>
+                  <label class="tirada-fila__dificultad">
                     Dificultad
                     <input type="number" formControlName="dificultad" />
                   </label>
-                </div>
-              }
+                }
+              </div>
             </fieldset>
 
             <ng-container
@@ -304,6 +396,26 @@
         [idAventura]="idAventura"
         (cerrado)="cerrarModalCaracteristicaTirada()"
         (guardado)="onCaracteristicaTiradaCreada($event)"
+      />
+    }
+
+    @if (eliminarContenidoIndex() !== null) {
+      <app-confirmar-eliminar-modal
+        titulo="Eliminar texto"
+        mensaje="¿Seguro que quieres eliminar este texto? Se perderán también sus condiciones."
+        [accion]="confirmarEliminarContenido"
+        (cerrado)="cerrarEliminarContenido()"
+        (eliminado)="cerrarEliminarContenido()"
+      />
+    }
+
+    @if (eliminarOpcionIndex() !== null) {
+      <app-confirmar-eliminar-modal
+        titulo="Eliminar opción"
+        mensaje="¿Seguro que quieres eliminar esta opción? Se perderán también sus condiciones, tirada y resultados."
+        [accion]="confirmarEliminarOpcion"
+        (cerrado)="cerrarEliminarOpcion()"
+        (eliminado)="cerrarEliminarOpcion()"
       />
     }
   }

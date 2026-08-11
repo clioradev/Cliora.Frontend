@@ -3,6 +3,7 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { CampanaFormModalComponent } from '../../components/campana-form-modal/campana-form-modal.component';
 import { UniversoFormModalComponent } from '../../components/universo-form-modal/universo-form-modal.component';
 import { AutorService } from '../../data-access/autor.service';
@@ -21,7 +22,7 @@ interface EliminarModalState {
 
 @Component({
   selector: 'app-panel-autor',
-  imports: [RouterLink, UniversoFormModalComponent, CampanaFormModalComponent, ConfirmarEliminarModalComponent],
+  imports: [RouterLink, IconoComponent, UniversoFormModalComponent, CampanaFormModalComponent, ConfirmarEliminarModalComponent],
   templateUrl: './panel-autor.component.html',
   styleUrl: './panel-autor.component.scss',
 })

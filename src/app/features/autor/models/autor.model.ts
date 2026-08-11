@@ -79,6 +79,7 @@ export interface GuardarAventuraRequest {
   orden: number;
   cantidadDecision: number;
   rutaImagen: string | null;
+  duracion: number | null;
 }
 
 export interface GuardarActoRequest {

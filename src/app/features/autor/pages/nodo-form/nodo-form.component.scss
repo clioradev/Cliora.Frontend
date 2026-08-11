@@ -1,15 +1,10 @@
+@use 'breakpoints' as *;
+
 :host {
   display: block;
-  max-width: var(--content-width-lg, 800px);
+  max-width: var(--content-width-lg);
   margin: 0 auto;
   padding: var(--space-4);
-}
-
-.nodo-form__volver {
-  display: inline-block;
-  margin-bottom: var(--space-4);
-  color: var(--color-text-secondary);
-  cursor: pointer;
 }
 
 .nodo-form__cabecera {
@@ -31,12 +26,19 @@ form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+  min-width: 0;
 }
 
 label {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
+}
+
+select,
+input,
+textarea {
+  min-width: 0;
 }
 
 .nodo-form__seccion {
@@ -46,6 +48,7 @@ label {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
 }
 
 .nodo-form__seccion > legend {
@@ -55,12 +58,20 @@ label {
 
 .nodo-form__contenido {
   display: flex;
+  flex-direction: column;
   gap: var(--space-2);
-  align-items: flex-start;
+  min-width: 0;
 }
 
 .nodo-form__contenido textarea {
-  flex: 1;
+  width: 100%;
+  min-width: 0;
+}
+
+.nodo-form__contenido-acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
 }
 
 .nodo-form__placeholder {
@@ -74,16 +85,42 @@ label {
   display: flex;
   flex-direction: column;
   gap: var(--space-3);
+  min-width: 0;
 }
 
-.opcion-card__cabecera {
+.opcion-card__eliminar {
   display: flex;
-  align-items: flex-end;
-  gap: var(--space-2);
+  justify-content: flex-end;
+}
+
+.opcion-card__fila-texto {
+  display: grid;
+  grid-template-columns: 5fr 1fr;
+  gap: var(--space-3);
+}
+
+.opcion-card__texto--completo {
+  grid-column: 1 / -1;
 }
 
 .opcion-card__texto {
-  flex: 1;
+  min-width: 0;
+}
+
+.opcion-card__condiciones-trigger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.opcion-card__condiciones-trigger .btn-icono {
+  width: 2.625rem;
+  height: 2.625rem;
+}
+
+.opcion-card__condiciones-trigger-etiqueta {
+  font-size: var(--text-sm);
 }
 
 .grupo-condicion {
@@ -92,6 +129,7 @@ label {
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  min-width: 0;
 }
 
 .grupo-condicion__cabecera {
@@ -110,6 +148,7 @@ label {
 
 .condicion-row select {
   flex: 1;
+  min-width: 0;
 }
 
 .condicion-row input {
@@ -147,18 +186,76 @@ label {
   width: auto;
 }
 
-.tirada-row {
+.tirada-fila {
   display: flex;
-  gap: var(--space-2);
-  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  align-items: flex-end;
 }
 
-.tirada-row select {
-  flex: 2;
+.tirada-toggle {
+  height: 2.625rem;
+  padding: 0 var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-text);
+  font: inherit;
+  cursor: pointer;
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    color 0.15s ease;
 }
 
-.tirada-row input {
-  width: 6rem;
+.tirada-toggle:hover:not(.tirada-toggle--activo) {
+  border-color: var(--color-secondary);
+}
+
+.tirada-toggle--activo {
+  background: var(--color-success);
+  border-color: var(--color-success);
+  color: #fff;
+}
+
+.tirada-fila__caracteristica {
+  flex: 2 1 12rem;
+  min-width: 0;
+}
+
+.tirada-fila__dificultad {
+  flex: 0 0 6rem;
+  min-width: 0;
+}
+
+.resultado-fila {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-3);
+}
+
+.resultado-fila--sin-efectos-boton {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+.resultado-fila > label {
+  min-width: 0;
+}
+
+.resultado-fila__efectos-trigger {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  min-width: 0;
+}
+
+.resultado-fila__efectos-trigger .btn-icono {
+  width: 2.625rem;
+  height: 2.625rem;
+}
+
+.resultado-fila__efectos-trigger-etiqueta {
+  font-size: var(--text-sm);
 }
 
 .nodo-form__acciones {
@@ -166,4 +263,47 @@ label {
   align-items: center;
   justify-content: flex-end;
   gap: var(--space-3);
+}
+
+@media (max-width: $bp-tablet) {
+  .opcion-card__fila-texto,
+  .resultado-fila,
+  .resultado-fila--sin-efectos-boton {
+    grid-template-columns: 1fr;
+  }
+
+  .efectos-lista {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .efecto-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .efecto-row select,
+  .efecto-row input {
+    width: auto;
+    flex: 1 1 8rem;
+  }
+
+  .efecto-row__select-evento {
+    flex-basis: 100%;
+  }
+
+  .condicion-row {
+    flex-wrap: wrap;
+  }
+
+  .condicion-row select {
+    flex: 1 1 45%;
+  }
+
+  .condicion-row input {
+    flex: 1 1 6rem;
+    width: auto;
+  }
 }

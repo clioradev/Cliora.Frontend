@@ -1,5 +1,10 @@
 <div class="aventura-form">
-  <h1>{{ idAventura() ? 'Editar aventura' : 'Añadir nueva aventura' }}</h1>
+  <div class="aventura-form__cabecera">
+    <a class="btn-icono" routerLink="/autor" aria-label="Volver" title="Volver">
+      <app-icono nombre="volver" />
+    </a>
+    <h1>{{ idAventura() ? 'Editar aventura' : 'Añadir nueva aventura' }}</h1>
+  </div>
 
   <nav class="aventura-form__tabs">
     <button type="button" [class.aventura-form__tab--activa]="tabActiva() === 'datos'" (click)="tabActiva.set('datos')">
@@ -17,7 +22,7 @@
       [class.aventura-form__tab--activa]="tabActiva() === 'caracteristicas'"
       (click)="tabActiva.set('caracteristicas')"
     >
-      Características
+      Variables
     </button>
   </nav>
 
@@ -25,61 +30,83 @@
     <p>Cargando…</p>
   } @else if (tabActiva() === 'datos') {
     <form [formGroup]="form" (ngSubmit)="guardar()">
-      <label>
-        Título
-        <input type="text" formControlName="titulo" />
-      </label>
+      <div class="aventura-form__fila-principal">
+        <label class="campo-titulo">
+          Título
+          <input type="text" formControlName="titulo" />
+        </label>
+
+        <label class="campo-orden">
+          Orden
+          <input type="number" formControlName="orden" min="1" />
+        </label>
+
+        <label class="campo-cantidad">
+          Cantidad de decisión
+          <select formControlName="cantidadDecision">
+            @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
+              <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+            }
+          </select>
+        </label>
+
+        <label class="campo-duracion">
+          Duración actual (min)
+          <input type="number" formControlName="duracion" min="0" [disabled]="!idAventura()" />
+        </label>
+
+        <div class="campo-calcular">
+          <span class="campo-calcular__etiqueta">Calcular</span>
+          <button
+            type="button"
+            class="btn-icono btn-icono--primary"
+            (click)="calcularDuracion()"
+            [disabled]="!idAventura() || calculandoDuracion()"
+            [attr.aria-label]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
+            [attr.title]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
+          >
+            <app-icono nombre="calcular" />
+          </button>
+        </div>
+      </div>
+
+      @if (errorDuracion()) {
+        <p class="status status--error">{{ errorDuracion() }}</p>
+      }
 
       <label>
         Descripción
         <textarea formControlName="descripcion" rows="4"></textarea>
       </label>
 
-      <label>
-        Orden
-        <input type="number" formControlName="orden" min="1" />
-      </label>
+      <div class="aventura-form__fila-imagen">
+        <label class="campo-ruta-imagen">
+          Imagen (ruta)
+          <input type="text" formControlName="rutaImagen" placeholder="aventuras/mi-aventura/caratula.jpg" />
+        </label>
 
-      <label>
-        Cantidad de decisión
-        <select formControlName="cantidadDecision">
-          @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
-            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
-          }
-        </select>
-      </label>
-
-      <label>
-        Imagen (ruta)
-        <input type="text" formControlName="rutaImagen" placeholder="aventuras/mi-aventura/caratula.jpg" />
-      </label>
-
-      @if (idAventura()) {
-        <div class="aventura-form__duracion">
-          <span>
-            @if (aventura()?.duracion !== null && aventura()?.duracion !== undefined) {
-              Duración actual: {{ aventura()!.duracion }} min
-            } @else {
-              Duración no calculada todavía
-            }
-          </span>
-          <button type="button" (click)="calcularDuracion()" [disabled]="calculandoDuracion()">
-            {{ calculandoDuracion() ? 'Calculando…' : 'Calcular duración' }}
-          </button>
-          @if (errorDuracion()) {
-            <p class="status status--error">{{ errorDuracion() }}</p>
-          }
+        <div class="campo-subir-imagen">
+          <span class="campo-subir-imagen__etiqueta">&nbsp;</span>
+          <label class="btn-icono btn-icono--primary" for="subir-imagen-input" aria-label="Subir imagen" title="Subir imagen">
+            <app-icono nombre="subir" />
+          </label>
+          <input type="file" id="subir-imagen-input" accept="image/*" hidden />
         </div>
-      }
+      </div>
 
       @if (error()) {
         <p class="status status--error">{{ error() }}</p>
       }
 
       <div class="aventura-form__acciones">
-        <a routerLink="/autor">Cancelar</a>
-        <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
-          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        <button
+          type="submit"
+          class="btn-icono btn-icono--primary"
+          [disabled]="form.invalid || guardando()"
+          [attr.aria-label]="guardando() ? 'Guardando…' : 'Guardar'"
+          [attr.title]="guardando() ? 'Guardando…' : 'Guardar'"
+        >
+          <app-icono nombre="guardar" />
         </button>
       </div>
     </form>
@@ -90,6 +117,6 @@
       <app-caracteristicas [idAventura]="id" />
     }
   } @else {
-    <p class="aventura-form__placeholder">Guarda la aventura primero para añadir actos, escenas y características.</p>
+    <p class="aventura-form__placeholder">Guarda la aventura primero para añadir actos, escenas y variables.</p>
   }
 </div>

@@ -45,6 +45,7 @@ export interface AventuraAutor {
   cantidadDecision: number;
   rutaImagen: string | null;
   visible: boolean;
+  duracion: number | null;
   actos: ActoAutor[];
 }
 

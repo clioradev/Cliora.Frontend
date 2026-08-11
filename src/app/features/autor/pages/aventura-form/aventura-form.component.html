@@ -54,6 +54,24 @@
         <input type="text" formControlName="rutaImagen" placeholder="aventuras/mi-aventura/caratula.jpg" />
       </label>
 
+      @if (idAventura()) {
+        <div class="aventura-form__duracion">
+          <span>
+            @if (aventura()?.duracion !== null && aventura()?.duracion !== undefined) {
+              Duración actual: {{ aventura()!.duracion }} min
+            } @else {
+              Duración no calculada todavía
+            }
+          </span>
+          <button type="button" (click)="calcularDuracion()" [disabled]="calculandoDuracion()">
+            {{ calculandoDuracion() ? 'Calculando…' : 'Calcular duración' }}
+          </button>
+          @if (errorDuracion()) {
+            <p class="status status--error">{{ errorDuracion() }}</p>
+          }
+        </div>
+      }
+
       @if (error()) {
         <p class="status status--error">{{ error() }}</p>
       }

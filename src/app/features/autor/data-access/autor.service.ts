@@ -63,6 +63,10 @@ export class AutorService {
     return this.http.get<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}`);
   }
 
+  calcularDuracionAventura(idAventura: number): Observable<AventuraAutor> {
+    return this.http.post<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/CalcularDuracion`, {});
+  }
+
   getSiguienteOrden(idCampana: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/Autor/Campana/${idCampana}/SiguienteOrden`);
   }

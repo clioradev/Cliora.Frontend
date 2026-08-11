@@ -47,3 +47,11 @@ label {
 .aventura-form__placeholder {
   opacity: 0.7;
 }
+
+.aventura-form__duracion {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}

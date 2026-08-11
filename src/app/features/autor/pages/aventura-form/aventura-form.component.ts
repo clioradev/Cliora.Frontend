@@ -93,6 +93,20 @@ export class AventuraFormComponent {
     this.guardarAction.run();
   }
 
+  private readonly calcularDuracionAction = asyncAction(
+    () => this.autorService.calcularDuracionAventura(this.idAventura()!),
+    {
+      onSuccess: () => this.aventuraResource.reload(),
+      defaultErrorMessage: 'No se ha podido calcular la duración.',
+    },
+  );
+  protected readonly calculandoDuracion = this.calcularDuracionAction.loading;
+  protected readonly errorDuracion = this.calcularDuracionAction.error;
+
+  protected calcularDuracion(): void {
+    this.calcularDuracionAction.run();
+  }
+
   private precargarFormulario(aventura: AventuraAutor): void {
     this.form.patchValue({
       titulo: aventura.titulo,

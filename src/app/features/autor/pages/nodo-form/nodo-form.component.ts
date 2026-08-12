@@ -172,7 +172,7 @@ export class NodoFormComponent {
   }
 
   private crearOpcionGroup(opcion?: OpcionArbol) {
-    const tieneTirada = opcion?.idCaracteristicaTirada != null;
+    const tieneTirada = opcion?.dificultad != null;
     return this.fb.group({
       texto: this.fb.nonNullable.control(opcion?.texto ?? '', [Validators.required, Validators.maxLength(500)]),
       gruposCondicion: this.fb.array((opcion?.gruposCondicion ?? []).map((g) => this.crearGrupoCondicionGroup(g))),
@@ -412,21 +412,25 @@ export class NodoFormComponent {
     () => {
       const raw = this.form.getRawValue();
 
+      // Los <select> nativos entregan el valor elegido como string aunque el FormControl
+      // esté tipado como number | null; aquí se normaliza antes de enviarlo al backend.
+      const toNum = (v: unknown): number | null => (v === null || v === undefined || v === '' ? null : Number(v));
+
       const mapResultado = (r: (typeof raw.opciones)[number]['resultado']) => ({
-        idNodoDestino: r.tipoDestino === 'nodo' ? r.idNodoDestino : null,
-        idFinal: r.tipoDestino === 'final' ? r.idFinal : null,
+        idNodoDestino: r.tipoDestino === 'nodo' ? toNum(r.idNodoDestino) : null,
+        idFinal: r.tipoDestino === 'final' ? toNum(r.idFinal) : null,
         efectos: r.efectos.map((e) =>
           e.tipoVariable === 'evento'
             ? {
                 idCaracteristica: null,
-                idEvento: e.idEvento,
+                idEvento: toNum(e.idEvento),
                 operacionEfecto: e.marcado ? EnumOperacionEfecto.AnadirEvento : EnumOperacionEfecto.EliminarEvento,
                 valor: null,
               }
             : {
-                idCaracteristica: e.idCaracteristica,
+                idCaracteristica: toNum(e.idCaracteristica),
                 idEvento: null,
-                operacionEfecto: e.operacionEfecto,
+                operacionEfecto: toNum(e.operacionEfecto)!,
                 valor: e.valor,
               },
         ),
@@ -439,8 +443,8 @@ export class NodoFormComponent {
           texto: c.texto,
           gruposCondicion: c.gruposCondicion.map((g) => ({
             condiciones: g.condiciones.map((cond) => ({
-              idCaracteristica: cond.idCaracteristica!,
-              operacion: cond.operacion,
+              idCaracteristica: toNum(cond.idCaracteristica)!,
+              operacion: toNum(cond.operacion)!,
               valor: cond.valor,
             })),
           })),
@@ -449,12 +453,12 @@ export class NodoFormComponent {
           texto: o.texto,
           gruposCondicion: o.gruposCondicion.map((g) => ({
             condiciones: g.condiciones.map((c) => ({
-              idCaracteristica: c.idCaracteristica!,
-              operacion: c.operacion,
+              idCaracteristica: toNum(c.idCaracteristica)!,
+              operacion: toNum(c.operacion)!,
               valor: c.valor,
             })),
           })),
-          idCaracteristicaTirada: o.tieneTirada ? o.idCaracteristicaTirada : null,
+          idCaracteristicaTirada: o.tieneTirada ? toNum(o.idCaracteristicaTirada) : null,
           dificultad: o.tieneTirada ? o.dificultad : null,
           resultado: mapResultado(o.resultado),
           resultadoFracaso: o.tieneTirada ? mapResultado(o.resultadoFracaso) : null,

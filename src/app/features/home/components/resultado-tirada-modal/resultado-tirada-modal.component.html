@@ -4,8 +4,11 @@
   </h3>
 
   <p class="resultado-tirada__desglose">
-    Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos + {{ resultado().nombreCaracteristica }}
-    {{ resultado().valorCaracteristica }} = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+    Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos
+    @if (resultado().nombreCaracteristica) {
+      + {{ resultado().nombreCaracteristica }} {{ resultado().valorCaracteristica }}
+    }
+    = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
   </p>
 
   <button type="button" class="btn--primary" (click)="aceptar.emit()">Aceptar</button>

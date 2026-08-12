@@ -45,18 +45,52 @@
                   let condicionIndex = $index
                 ) {
                   <div class="condicion-row" [formGroupName]="condicionIndex">
-                    <select formControlName="idCaracteristica">
-                      <option [value]="null">Característica…</option>
-                      @for (car of caracteristicas(); track car.idCaracteristica) {
-                        <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
-                      }
+                    <select
+                      formControlName="tipoVariable"
+                      (change)="onCambioTipoCondicion(grupos, grupoIndex, condicionIndex)"
+                    >
+                      <option value="caracteristica">Característica</option>
+                      <option value="evento">Evento</option>
                     </select>
-                    <select formControlName="operacion">
-                      @for (op of operacionCondicionOpciones; track op.valor) {
-                        <option [value]="op.valor">{{ op.etiqueta }}</option>
-                      }
-                    </select>
-                    <input type="number" formControlName="valor" />
+
+                    @if (condicion.get('tipoVariable')?.value === 'caracteristica') {
+                      <select
+                        formControlName="idCaracteristica"
+                        (change)="
+                          onSeleccionCaracteristicaCondicion(grupos, grupoIndex, condicionIndex, $any($event.target).value)
+                        "
+                      >
+                        <option [value]="CREAR_CARACTERISTICA">+ Añadir característica…</option>
+                        @for (car of caracteristicas(); track car.idCaracteristica) {
+                          <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
+                        }
+                      </select>
+
+                      <select formControlName="operacion">
+                        @for (op of operacionCondicionOpciones; track op.valor) {
+                          <option [value]="op.valor">{{ op.etiqueta }}</option>
+                        }
+                      </select>
+                      <input type="number" formControlName="valor" />
+                    } @else {
+                      <select
+                        formControlName="idEvento"
+                        (change)="
+                          onSeleccionEventoCondicion(grupos, grupoIndex, condicionIndex, $any($event.target).value)
+                        "
+                      >
+                        <option [value]="CREAR_EVENTO">+ Añadir evento…</option>
+                        @for (ev of eventos(); track ev.idEvento) {
+                          <option [value]="ev.idEvento">{{ ev.nombre }}</option>
+                        }
+                      </select>
+
+                      <label class="efecto-row__checkbox">
+                        <input type="checkbox" formControlName="marcado" />
+                        Marcado
+                      </label>
+                    }
+
                     <button type="button" (click)="quitarCondicion(grupos, grupoIndex, condicionIndex)">
                       Quitar
                     </button>
@@ -387,6 +421,22 @@
           [idAventura]="idAventura"
           (cerrado)="cerrarModalVariable()"
           (guardado)="onEventoCreado($event)"
+        />
+      }
+    }
+
+    @if (condicionCreandoVariable(); as destinoCondicion) {
+      @if (destinoCondicion.tipo === 'caracteristica') {
+        <app-caracteristica-form-modal
+          [idAventura]="idAventura"
+          (cerrado)="cerrarModalVariableCondicion()"
+          (guardado)="onCaracteristicaCreadaCondicion($event)"
+        />
+      } @else {
+        <app-evento-form-modal
+          [idAventura]="idAventura"
+          (cerrado)="cerrarModalVariableCondicion()"
+          (guardado)="onEventoCreadoCondicion($event)"
         />
       }
     }

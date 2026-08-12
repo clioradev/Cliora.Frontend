@@ -105,6 +105,13 @@ export class NodoFormComponent {
     tipo: 'caracteristica' | 'evento';
   } | null>(null);
 
+  protected readonly condicionCreandoVariable = signal<{
+    grupos: FormArray;
+    grupoIndex: number;
+    condicionIndex: number;
+    tipo: 'caracteristica' | 'evento';
+  } | null>(null);
+
   protected readonly opcionIndexCreandoCaracteristicaTirada = signal<number | null>(null);
 
   protected readonly eliminarContenidoIndex = signal<number | null>(null);
@@ -119,13 +126,18 @@ export class NodoFormComponent {
 
   private crearCondicionGroup(condicion?: CondicionAutor) {
     return this.fb.group({
-      idCaracteristica: this.fb.nonNullable.control<number | null>(condicion?.idCaracteristica ?? null, [
-        Validators.required,
-      ]),
+      tipoVariable: this.fb.nonNullable.control<'caracteristica' | 'evento'>(
+        condicion?.idEvento != null ? 'evento' : 'caracteristica',
+      ),
+      idCaracteristica: this.fb.nonNullable.control<number | null>(
+        condicion?.idCaracteristica ?? (condicion ? null : this.primeraCaracteristica()),
+      ),
+      idEvento: this.fb.nonNullable.control<number | null>(condicion?.idEvento ?? null),
       operacion: this.fb.nonNullable.control(condicion?.operacion ?? EnumOperacionCondicion.Igual, [
         Validators.required,
       ]),
       valor: this.fb.nonNullable.control(condicion?.valor ?? 0, [Validators.required]),
+      marcado: this.fb.nonNullable.control(condicion?.idEvento != null ? condicion.valor !== 0 : true),
     });
   }
 
@@ -392,6 +404,80 @@ export class NodoFormComponent {
     this.condicionesDe(grupos, grupoIndex).removeAt(condicionIndex);
   }
 
+  protected onCambioTipoCondicion(grupos: FormArray, grupoIndex: number, condicionIndex: number): void {
+    const condicion = this.condicionesDe(grupos, grupoIndex).at(condicionIndex);
+    const tipoVariable = condicion.get('tipoVariable')!.value as 'caracteristica' | 'evento';
+    condicion.patchValue({
+      idCaracteristica: tipoVariable === 'caracteristica' ? this.primeraCaracteristica() : null,
+      idEvento: tipoVariable === 'evento' ? this.primerEvento() : null,
+      operacion: EnumOperacionCondicion.Igual,
+      marcado: true,
+    });
+  }
+
+  protected abrirCrearCaracteristicaCondicion(grupos: FormArray, grupoIndex: number, condicionIndex: number): void {
+    this.condicionCreandoVariable.set({ grupos, grupoIndex, condicionIndex, tipo: 'caracteristica' });
+  }
+
+  protected abrirCrearEventoCondicion(grupos: FormArray, grupoIndex: number, condicionIndex: number): void {
+    this.condicionCreandoVariable.set({ grupos, grupoIndex, condicionIndex, tipo: 'evento' });
+  }
+
+  protected onSeleccionCaracteristicaCondicion(
+    grupos: FormArray,
+    grupoIndex: number,
+    condicionIndex: number,
+    valor: string,
+  ): void {
+    if (valor === this.CREAR_CARACTERISTICA) {
+      this.condicionesDe(grupos, grupoIndex)
+        .at(condicionIndex)
+        .get('idCaracteristica')!
+        .setValue(this.primeraCaracteristica());
+      this.abrirCrearCaracteristicaCondicion(grupos, grupoIndex, condicionIndex);
+    }
+  }
+
+  protected onSeleccionEventoCondicion(
+    grupos: FormArray,
+    grupoIndex: number,
+    condicionIndex: number,
+    valor: string,
+  ): void {
+    if (valor === this.CREAR_EVENTO) {
+      this.condicionesDe(grupos, grupoIndex).at(condicionIndex).get('idEvento')!.setValue(this.primerEvento());
+      this.abrirCrearEventoCondicion(grupos, grupoIndex, condicionIndex);
+    }
+  }
+
+  protected cerrarModalVariableCondicion(): void {
+    this.condicionCreandoVariable.set(null);
+  }
+
+  protected onCaracteristicaCreadaCondicion(caracteristica: CaracteristicaAutor): void {
+    this.caracteristicasResource.value.update((lista) => [...(lista ?? []), caracteristica]);
+    const destino = this.condicionCreandoVariable();
+    if (destino) {
+      this.condicionesDe(destino.grupos, destino.grupoIndex)
+        .at(destino.condicionIndex)
+        .get('idCaracteristica')!
+        .setValue(caracteristica.idCaracteristica);
+    }
+    this.condicionCreandoVariable.set(null);
+  }
+
+  protected onEventoCreadoCondicion(evento: EventoAutor): void {
+    this.eventosResource.value.update((lista) => [...(lista ?? []), evento]);
+    const destino = this.condicionCreandoVariable();
+    if (destino) {
+      this.condicionesDe(destino.grupos, destino.grupoIndex)
+        .at(destino.condicionIndex)
+        .get('idEvento')!
+        .setValue(evento.idEvento);
+    }
+    this.condicionCreandoVariable.set(null);
+  }
+
   protected efectosDe(opcionIndex: number, rama: Rama): FormArray {
     return this.resultadoGroupDe(opcionIndex, rama).get('efectos') as FormArray;
   }
@@ -436,27 +522,29 @@ export class NodoFormComponent {
         ),
       });
 
+      const mapCondicion = (cond: (typeof raw.contenidos)[number]['gruposCondicion'][number]['condiciones'][number]) =>
+        cond.tipoVariable === 'evento'
+          ? {
+              idCaracteristica: null,
+              idEvento: toNum(cond.idEvento),
+              operacion: EnumOperacionCondicion.Igual,
+              valor: cond.marcado ? 1 : 0,
+            }
+          : { idCaracteristica: toNum(cond.idCaracteristica), idEvento: null, operacion: toNum(cond.operacion)!, valor: cond.valor };
+
       const dto = {
         titulo: raw.titulo,
         contenidos: raw.contenidos.map((c, index) => ({
           orden: index + 1,
           texto: c.texto,
           gruposCondicion: c.gruposCondicion.map((g) => ({
-            condiciones: g.condiciones.map((cond) => ({
-              idCaracteristica: toNum(cond.idCaracteristica)!,
-              operacion: toNum(cond.operacion)!,
-              valor: cond.valor,
-            })),
+            condiciones: g.condiciones.map(mapCondicion),
           })),
         })),
         opciones: raw.opciones.map((o) => ({
           texto: o.texto,
           gruposCondicion: o.gruposCondicion.map((g) => ({
-            condiciones: g.condiciones.map((c) => ({
-              idCaracteristica: toNum(c.idCaracteristica)!,
-              operacion: toNum(c.operacion)!,
-              valor: c.valor,
-            })),
+            condiciones: g.condiciones.map(mapCondicion),
           })),
           idCaracteristicaTirada: o.tieneTirada ? toNum(o.idCaracteristicaTirada) : null,
           dificultad: o.tieneTirada ? o.dificultad : null,
@@ -512,6 +600,15 @@ export class NodoFormComponent {
       )
     ) {
       this.errorValidacion.set('Cada efecto debe tener una característica o un evento seleccionado.');
+      return;
+    }
+
+    const gruposCondicionTodos = [
+      ...raw.contenidos.flatMap((c) => c.gruposCondicion),
+      ...raw.opciones.flatMap((o) => o.gruposCondicion),
+    ];
+    if (gruposCondicionTodos.some((g) => faltaVariable(g.condiciones))) {
+      this.errorValidacion.set('Cada condición debe tener una característica o un evento seleccionado.');
       return;
     }
 

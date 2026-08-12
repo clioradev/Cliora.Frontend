@@ -9,6 +9,15 @@
     @for (acto of actos(); track acto.idActo; let first = $first, last = $last) {
       <section class="acto-card">
         <div class="acto-card__header">
+          <button
+            type="button"
+            class="plegar-toggle"
+            (click)="toggleActo(acto.idActo)"
+            [attr.aria-expanded]="actoAbierto(acto.idActo)"
+            [attr.aria-label]="actoAbierto(acto.idActo) ? 'Minimizar acto' : 'Expandir acto'"
+          >
+            {{ actoAbierto(acto.idActo) ? '▾' : '▸' }}
+          </button>
           <span class="acto-card__orden">#{{ acto.orden }}</span>
           <h3 class="acto-card__titulo">{{ acto.titulo }}</h3>
           <div class="acto-card__acciones">
@@ -18,62 +27,80 @@
             <button type="button" (click)="eliminarActo(acto)">Eliminar</button>
           </div>
         </div>
-        @if (acto.descripcion) {
-          <p>{{ acto.descripcion }}</p>
-        }
 
-        @if (acto.escenas.length > 0) {
-          <ul class="escena-list">
-            @for (escena of acto.escenas; track escena.idEscena; let eFirst = $first, eLast = $last) {
-              <li class="escena-list__item">
-                <div class="escena-list__header">
-                  <span class="escena-list__orden">#{{ escena.orden }}</span>
-                  <span class="escena-list__titulo">{{ escena.titulo }}</span>
-                  <div class="escena-list__acciones">
+        @if (actoAbierto(acto.idActo)) {
+          @if (acto.descripcion) {
+            <p>{{ acto.descripcion }}</p>
+          }
+
+          @if (acto.escenas.length > 0) {
+            <ul class="escena-list">
+              @for (escena of acto.escenas; track escena.idEscena; let eFirst = $first, eLast = $last) {
+                <li class="escena-list__item">
+                  <div class="escena-list__header">
                     <button
                       type="button"
-                      [disabled]="eFirst"
-                      (click)="moverEscena(acto.idActo, acto.escenas, escena, -1)"
-                      aria-label="Subir escena"
+                      class="plegar-toggle"
+                      (click)="toggleEscena(escena.idEscena)"
+                      [attr.aria-expanded]="escenaAbierta(escena.idEscena)"
+                      [attr.aria-label]="escenaAbierta(escena.idEscena) ? 'Minimizar escena' : 'Expandir escena'"
                     >
-                      ↑
+                      {{ escenaAbierta(escena.idEscena) ? '▾' : '▸' }}
                     </button>
-                    <button
-                      type="button"
-                      [disabled]="eLast"
-                      (click)="moverEscena(acto.idActo, acto.escenas, escena, 1)"
-                      aria-label="Bajar escena"
-                    >
-                      ↓
-                    </button>
-                    <button type="button" (click)="editarEscena(acto.idActo, escena)">Editar</button>
-                    <button type="button" (click)="eliminarEscena(escena)">Eliminar</button>
+                    <span class="escena-list__orden">#{{ escena.orden }}</span>
+                    <span class="escena-list__titulo">{{ escena.titulo }}</span>
+                    <div class="escena-list__acciones">
+                      <button
+                        type="button"
+                        [disabled]="eFirst"
+                        (click)="moverEscena(acto.idActo, acto.escenas, escena, -1)"
+                        aria-label="Subir escena"
+                      >
+                        ↑
+                      </button>
+                      <button
+                        type="button"
+                        [disabled]="eLast"
+                        (click)="moverEscena(acto.idActo, acto.escenas, escena, 1)"
+                        aria-label="Bajar escena"
+                      >
+                        ↓
+                      </button>
+                      <button type="button" (click)="editarEscena(acto.idActo, escena)">Editar</button>
+                      <button type="button" (click)="eliminarEscena(escena)">Eliminar</button>
+                    </div>
                   </div>
-                </div>
 
-                @if (escena.nodos.length > 0) {
-                  <ul class="nodo-list">
-                    @for (nodo of escena.nodos; track nodo.idNodo) {
-                      <li class="nodo-list__item">
-                        <span class="nodo-list__titulo">{{ nodo.titulo }}</span>
-                        <span class="nodo-list__opciones">{{ nodo.cantidadOpciones }} opción(es)</span>
-                        <div class="nodo-list__acciones">
-                          <button type="button" (click)="editarNodo(nodo)">Editar</button>
-                          <button type="button" (click)="eliminarNodo(nodo)">Eliminar</button>
-                        </div>
-                      </li>
+                  @if (escenaAbierta(escena.idEscena)) {
+                    @if (escena.nodos.length > 0) {
+                      <ul class="nodo-list">
+                        @for (nodo of escena.nodos; track nodo.idNodo) {
+                          <li class="nodo-list__item" [id]="'nodo-' + nodo.idNodo">
+                            <span class="nodo-list__titulo">{{ nodo.titulo }}</span>
+                            <span class="nodo-list__opciones">{{ nodo.cantidadOpciones }} opción(es)</span>
+                            <div class="nodo-list__acciones">
+                              <button type="button" (click)="editarNodo(nodo)">Editar</button>
+                              <button type="button" (click)="eliminarNodo(nodo)">Eliminar</button>
+                            </div>
+                          </li>
+                        }
+                      </ul>
                     }
-                  </ul>
-                }
-                <button type="button" class="nodo-list__anadir" (click)="nuevoNodo(escena.idEscena)">
-                  Añadir nodo
-                </button>
-              </li>
-            }
-          </ul>
-        }
+                    <button type="button" class="nodo-list__anadir" (click)="nuevoNodo(escena.idEscena)">
+                      Añadir nodo
+                    </button>
+                  } @else if (escena.nodos.length > 0) {
+                    <p class="escena-list__resumen">{{ escena.nodos.length }} nodo(s)</p>
+                  }
+                </li>
+              }
+            </ul>
+          }
 
-        <button type="button" (click)="nuevaEscena(acto.idActo)">Añadir escena</button>
+          <button type="button" (click)="nuevaEscena(acto.idActo)">Añadir escena</button>
+        } @else if (acto.escenas.length > 0) {
+          <p class="acto-card__resumen">{{ acto.escenas.length }} escena(s)</p>
+        }
       </section>
     }
   }

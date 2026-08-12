@@ -104,7 +104,8 @@ export interface ContenidoNodoAutor {
 
 export interface CondicionAutor {
   idCondicion: number;
-  idCaracteristica: number;
+  idCaracteristica: number | null;
+  idEvento: number | null;
   operacion: EnumOperacionCondicion;
   valor: number;
 }
@@ -192,7 +193,8 @@ export interface GuardarContenidoNodoRequest {
 }
 
 export interface GuardarCondicionRequest {
-  idCaracteristica: number;
+  idCaracteristica: number | null;
+  idEvento: number | null;
   operacion: EnumOperacionCondicion;
   valor: number;
 }

@@ -1,4 +1,4 @@
-import { Component, inject, input, output, signal } from '@angular/core';
+import { Component, effect, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
@@ -35,6 +35,105 @@ export class ActosEscenasComponent {
   protected readonly actoModal = signal<ActoAutor | 'nuevo' | null>(null);
   protected readonly escenaModal = signal<EscenaModalState | null>(null);
   protected readonly eliminarModal = signal<EliminarModalState | null>(null);
+
+  private static readonly LS_ACTOS_ABIERTOS = 'cliora:autor:actosAbiertos';
+  private static readonly LS_ESCENAS_ABIERTAS = 'cliora:autor:escenasAbiertas';
+  private static readonly LS_NODO_EDITANDO = 'cliora:autor:nodoEditando';
+
+  protected readonly actosAbiertos = signal<Set<number>>(
+    this.leerSetLocalStorage(ActosEscenasComponent.LS_ACTOS_ABIERTOS),
+  );
+  protected readonly escenasAbiertas = signal<Set<number>>(
+    this.leerSetLocalStorage(ActosEscenasComponent.LS_ESCENAS_ABIERTAS),
+  );
+
+  constructor() {
+    effect(() => {
+      if (this.actos().length > 0) {
+        this.irAlNodoEnEdicion();
+      }
+    });
+  }
+
+  private leerSetLocalStorage(clave: string): Set<number> {
+    try {
+      const raw = localStorage.getItem(clave);
+      return raw ? new Set(JSON.parse(raw) as number[]) : new Set();
+    } catch {
+      return new Set();
+    }
+  }
+
+  private guardarSetLocalStorage(clave: string, valores: Set<number>): void {
+    localStorage.setItem(clave, JSON.stringify([...valores]));
+  }
+
+  protected actoAbierto(idActo: number): boolean {
+    return this.actosAbiertos().has(idActo);
+  }
+
+  protected toggleActo(idActo: number): void {
+    const set = new Set(this.actosAbiertos());
+    set.has(idActo) ? set.delete(idActo) : set.add(idActo);
+    this.actosAbiertos.set(set);
+    this.guardarSetLocalStorage(ActosEscenasComponent.LS_ACTOS_ABIERTOS, set);
+  }
+
+  private abrirActo(idActo: number): void {
+    if (this.actosAbiertos().has(idActo)) {
+      return;
+    }
+    const set = new Set(this.actosAbiertos());
+    set.add(idActo);
+    this.actosAbiertos.set(set);
+    this.guardarSetLocalStorage(ActosEscenasComponent.LS_ACTOS_ABIERTOS, set);
+  }
+
+  protected escenaAbierta(idEscena: number): boolean {
+    return this.escenasAbiertas().has(idEscena);
+  }
+
+  protected toggleEscena(idEscena: number): void {
+    const set = new Set(this.escenasAbiertas());
+    set.has(idEscena) ? set.delete(idEscena) : set.add(idEscena);
+    this.escenasAbiertas.set(set);
+    this.guardarSetLocalStorage(ActosEscenasComponent.LS_ESCENAS_ABIERTAS, set);
+  }
+
+  private abrirEscena(idEscena: number): void {
+    if (this.escenasAbiertas().has(idEscena)) {
+      return;
+    }
+    const set = new Set(this.escenasAbiertas());
+    set.add(idEscena);
+    this.escenasAbiertas.set(set);
+    this.guardarSetLocalStorage(ActosEscenasComponent.LS_ESCENAS_ABIERTAS, set);
+  }
+
+  private irAlNodoEnEdicion(): void {
+    const idNodoStr = localStorage.getItem(ActosEscenasComponent.LS_NODO_EDITANDO);
+    if (!idNodoStr) {
+      return;
+    }
+    const idNodo = Number(idNodoStr);
+    localStorage.removeItem(ActosEscenasComponent.LS_NODO_EDITANDO);
+
+    for (const acto of this.actos()) {
+      for (const escena of acto.escenas) {
+        if (escena.nodos.some((n) => n.idNodo === idNodo)) {
+          this.abrirActo(acto.idActo);
+          this.abrirEscena(escena.idEscena);
+        }
+      }
+    }
+
+    setTimeout(() => {
+      const el = document.getElementById(`nodo-${idNodo}`);
+      el?.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      el?.classList.add('nodo-list__item--resaltado');
+      setTimeout(() => el?.classList.remove('nodo-list__item--resaltado'), 2000);
+    });
+  }
 
   protected nuevoActo(): void {
     this.actoModal.set('nuevo');
@@ -133,6 +232,7 @@ export class ActosEscenasComponent {
   }
 
   private irANodo(idNodo: number): void {
+    localStorage.setItem(ActosEscenasComponent.LS_NODO_EDITANDO, String(idNodo));
     void this.router.navigate(['/autor/aventura', this.idAventura(), 'nodo', idNodo]);
   }
 

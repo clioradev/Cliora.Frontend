@@ -5,12 +5,19 @@
 } @else if (final(); as f) {
   <p class="final__texto">{{ f.texto }}</p>
 
-  <button type="button" class="btn--primary" (click)="finalizarAventura()" [disabled]="finalizando()">
-    Finalizar aventura
-  </button>
+  @if (!previsualizacionTerminada()) {
+    <button type="button" class="btn--primary" (click)="finalizarAventura()" [disabled]="finalizando()">
+      Finalizar aventura
+    </button>
+  }
 
   @if (finalizarError()) {
     <p class="status status--error">{{ finalizarError() }}</p>
+  }
+
+  @if (previsualizacionTerminada()) {
+    <p class="status">Previsualización terminada.</p>
+    <button type="button" class="btn--primary" (click)="volverAlEditor()">← Volver al editor</button>
   }
 
   @if (idAventuraFinalizada(); as idAventura) {

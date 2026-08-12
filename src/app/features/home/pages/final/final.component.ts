@@ -18,6 +18,9 @@ export class FinalComponent {
 
   private readonly idFinal = Number(this.route.snapshot.paramMap.get('idFinal'));
 
+  protected readonly preview = this.route.snapshot.queryParamMap.get('preview') === 'true';
+  private readonly idAventuraQuery = this.route.snapshot.queryParamMap.get('idAventura');
+
   private readonly finalResource = rxResource({
     stream: () => this.partidaService.getFinal(this.idFinal),
   });
@@ -26,9 +29,16 @@ export class FinalComponent {
   protected readonly error = computed(() => this.finalResource.error() !== undefined);
 
   protected readonly idAventuraFinalizada = signal<number | null>(null);
+  protected readonly previsualizacionTerminada = signal(false);
 
   private readonly finalizarAction = asyncAction(() => this.partidaService.finalizarAventura(this.idFinal), {
-    onSuccess: (respuesta) => this.idAventuraFinalizada.set(respuesta.idAventura),
+    onSuccess: (respuesta) => {
+      if (this.preview) {
+        this.previsualizacionTerminada.set(true);
+      } else {
+        this.idAventuraFinalizada.set(respuesta.idAventura);
+      }
+    },
     defaultErrorMessage: 'No se ha podido finalizar la aventura.',
   });
   protected readonly finalizando = this.finalizarAction.loading;
@@ -40,5 +50,12 @@ export class FinalComponent {
 
   protected onValoracionCerrada(): void {
     void this.router.navigate(['/']);
+  }
+
+  protected volverAlEditor(): void {
+    if (!this.idAventuraQuery) {
+      return;
+    }
+    void this.router.navigate(['/autor/aventura', Number(this.idAventuraQuery)], { queryParams: { tab: 'contenido' } });
   }
 }

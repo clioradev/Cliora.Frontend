@@ -4,6 +4,9 @@
   <p class="status status--error">No se ha podido cargar el nodo.</p>
 } @else if (nodo(); as n) {
   <div class="nodo__cabecera">
+    @if (preview()) {
+      <button type="button" class="nodo__boton-editor" (click)="volverAlEditor()">← Volver al editor</button>
+    }
     <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
   </div>
 

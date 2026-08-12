@@ -26,6 +26,8 @@ export class PartidaComponent {
     return idAventuraParam ? Number(idAventuraParam) : null;
   });
 
+  protected readonly preview = computed(() => this.queryParamMap().get('preview') === 'true');
+
   private readonly nodoResource = rxResource({
     params: () => Number(this.paramMap().get('idNodo')),
     stream: ({ params }) => this.partidaService.getNodo(params),
@@ -74,9 +76,17 @@ export class PartidaComponent {
     }
   }
 
+  protected volverAlEditor(): void {
+    const idAventura = this.idAventura();
+    if (idAventura === null) {
+      return;
+    }
+    void this.router.navigate(['/autor/aventura', idAventura], { queryParams: { tab: 'contenido' } });
+  }
+
   private navegarA(idNodo: number | null, idFinal: number | null): void {
     const idAventura = this.idAventura();
-    const queryParams = idAventura !== null ? { idAventura } : undefined;
+    const queryParams = idAventura !== null ? { idAventura, preview: this.preview() || undefined } : undefined;
 
     if (idFinal !== null) {
       void this.router.navigate(['/final', idFinal], { queryParams });

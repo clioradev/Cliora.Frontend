@@ -116,6 +116,20 @@ export class AventuraFormComponent {
     this.calcularDuracionAction.run();
   }
 
+  private readonly previsualizarAction = asyncAction(() => this.autorService.previsualizarAventura(this.idAventura()!), {
+    onSuccess: (respuesta) =>
+      void this.router.navigate(['/partida', respuesta.idNodoActual], {
+        queryParams: { idAventura: this.idAventura(), preview: true },
+      }),
+    defaultErrorMessage: 'No se ha podido previsualizar la aventura.',
+  });
+  protected readonly previsualizando = this.previsualizarAction.loading;
+  protected readonly errorPrevisualizar = this.previsualizarAction.error;
+
+  protected previsualizar(): void {
+    this.previsualizarAction.run();
+  }
+
   private precargarFormulario(aventura: AventuraAutor): void {
     this.form.patchValue({
       titulo: aventura.titulo,

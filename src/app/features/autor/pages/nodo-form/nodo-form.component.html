@@ -281,41 +281,41 @@
 
         @for (opcion of opciones.controls; track $index; let opcionIndex = $index) {
           <div class="opcion-card" [formGroupName]="opcionIndex">
-            <div class="opcion-card__eliminar">
-              <button
-                type="button"
-                class="btn-icono btn-icono--peligro"
-                (click)="pedirEliminarOpcion(opcionIndex)"
-                aria-label="Eliminar opción"
-                title="Eliminar opción"
-              >
-                <app-icono nombre="eliminar" />
-              </button>
-            </div>
-
             <div class="opcion-card__fila-texto">
-              <label
-                class="opcion-card__texto"
-                [class.opcion-card__texto--completo]="gruposCondicionDe(opcion).length > 0"
-              >
+              <label class="opcion-card__texto">
                 Texto de la opción
                 <input type="text" formControlName="texto" />
               </label>
 
-              @if (gruposCondicionDe(opcion).length === 0) {
-                <div class="opcion-card__condiciones-trigger">
-                  <span class="opcion-card__condiciones-trigger-etiqueta">Condiciones</span>
+              <div class="opcion-card__acciones-fila">
+                @if (gruposCondicionDe(opcion).length === 0) {
+                  <div class="opcion-card__condiciones-trigger">
+                    <span class="opcion-card__condiciones-trigger-etiqueta">Condiciones</span>
+                    <button
+                      type="button"
+                      class="btn-icono btn-icono--primary"
+                      (click)="agregarGrupoCondicion(gruposCondicionDe(opcion))"
+                      aria-label="Añadir grupo de condiciones"
+                      title="Añadir grupo de condiciones"
+                    >
+                      <app-icono nombre="condicion" />
+                    </button>
+                  </div>
+                }
+
+                <div class="opcion-card__eliminar-trigger">
+                  <span class="opcion-card__eliminar-trigger-etiqueta">Borrar</span>
                   <button
                     type="button"
-                    class="btn-icono btn-icono--primary"
-                    (click)="agregarGrupoCondicion(gruposCondicionDe(opcion))"
-                    aria-label="Añadir grupo de condiciones"
-                    title="Añadir grupo de condiciones"
+                    class="btn-icono btn-icono--peligro"
+                    (click)="pedirEliminarOpcion(opcionIndex)"
+                    aria-label="Eliminar opción"
+                    title="Eliminar opción"
                   >
-                    <app-icono nombre="condicion" />
+                    <app-icono nombre="eliminar" />
                   </button>
                 </div>
-              }
+              </div>
             </div>
 
             @if (gruposCondicionDe(opcion).length > 0) {

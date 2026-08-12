@@ -4,7 +4,17 @@
       <app-icono nombre="volver" />
     </a>
     <h1>{{ idAventura() ? 'Editar aventura' : 'Añadir nueva aventura' }}</h1>
+
+    @if (idAventura()) {
+      <button type="button" class="btn--primary" (click)="previsualizar()" [disabled]="previsualizando()">
+        {{ previsualizando() ? 'Preparando…' : 'Previsualizar aventura' }}
+      </button>
+    }
   </div>
+
+  @if (errorPrevisualizar()) {
+    <p class="status status--error">{{ errorPrevisualizar() }}</p>
+  }
 
   <nav class="aventura-form__tabs">
     <button type="button" [class.aventura-form__tab--activa]="tabActiva() === 'datos'" (click)="tabActiva.set('datos')">

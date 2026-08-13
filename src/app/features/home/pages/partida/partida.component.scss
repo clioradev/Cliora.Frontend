@@ -49,7 +49,6 @@
     font-family: var(--font-reading);
     font-size: var(--text-reading);
     line-height: var(--line-height-reading);
-    max-width: var(--content-width-reading);
     white-space: pre-line;
 
     &:not(:last-child) {
@@ -75,7 +74,6 @@
     display: flex;
     flex-direction: column;
     gap: var(--space-2);
-    max-width: var(--content-width-sm);
 
     button {
       text-align: left;

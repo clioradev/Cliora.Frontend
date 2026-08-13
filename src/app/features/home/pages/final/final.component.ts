@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { AutorService } from '../../../autor/data-access/autor.service';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
 
@@ -15,6 +16,7 @@ export class FinalComponent {
   private readonly route = inject(ActivatedRoute);
   private readonly router = inject(Router);
   private readonly partidaService = inject(PartidaService);
+  private readonly autorService = inject(AutorService);
 
   private readonly idFinal = Number(this.route.snapshot.paramMap.get('idFinal'));
 
@@ -56,6 +58,8 @@ export class FinalComponent {
     if (!this.idAventuraQuery) {
       return;
     }
-    void this.router.navigate(['/autor/aventura', Number(this.idAventuraQuery)], { queryParams: { tab: 'contenido' } });
+    const idAventura = Number(this.idAventuraQuery);
+    this.autorService.detenerPrevisualizacion(idAventura).subscribe();
+    void this.router.navigate(['/autor/aventura', idAventura], { queryParams: { tab: 'contenido' } });
   }
 }

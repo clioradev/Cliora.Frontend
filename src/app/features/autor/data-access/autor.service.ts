@@ -71,6 +71,10 @@ export class AutorService {
     return this.http.post<{ idNodoActual: number }>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Previsualizar`, {});
   }
 
+  detenerPrevisualizacion(idAventura: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Previsualizar`);
+  }
+
   getSiguienteOrden(idCampana: number): Observable<number> {
     return this.http.get<number>(`${this.baseUrl}/Autor/Campana/${idCampana}/SiguienteOrden`);
   }

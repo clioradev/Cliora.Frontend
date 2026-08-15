@@ -128,6 +128,57 @@
                   <app-icono nombre="condicion" />
                 </button>
               }
+
+              <input
+                #imagenInput
+                type="file"
+                accept="image/png,image/jpeg,image/webp"
+                hidden
+                (change)="seleccionarImagen(index, $any($event.target).files); imagenInput.value = ''"
+              />
+              <button
+                type="button"
+                class="btn-icono btn-icono--primary"
+                [class.btn-icono--activo]="contenido.get('imagenUrl')?.value"
+                (click)="imagenInput.click()"
+                [disabled]="!contenido.get('idContenidoNodo')?.value || subiendoImagen()"
+                [attr.aria-label]="contenido.get('imagenUrl')?.value ? 'Cambiar imagen' : 'Añadir imagen'"
+                [attr.title]="
+                  !contenido.get('idContenidoNodo')?.value
+                    ? 'Guarda el nodo primero para poder añadir una imagen a este texto'
+                    : contenido.get('imagenUrl')?.value
+                      ? 'Cambiar imagen'
+                      : 'Añadir imagen'
+                "
+              >
+                <app-icono nombre="imagen" />
+              </button>
+
+              <input
+                #audioInput
+                type="file"
+                accept="audio/mpeg,audio/wav,audio/ogg"
+                hidden
+                (change)="seleccionarAudio(index, $any($event.target).files); audioInput.value = ''"
+              />
+              <button
+                type="button"
+                class="btn-icono btn-icono--primary"
+                [class.btn-icono--activo]="contenido.get('audioUrl')?.value"
+                (click)="audioInput.click()"
+                [disabled]="!contenido.get('idContenidoNodo')?.value || subiendoAudio()"
+                [attr.aria-label]="contenido.get('audioUrl')?.value ? 'Cambiar audio' : 'Añadir audio'"
+                [attr.title]="
+                  !contenido.get('idContenidoNodo')?.value
+                    ? 'Guarda el nodo primero para poder añadir un audio a este texto'
+                    : contenido.get('audioUrl')?.value
+                      ? 'Cambiar audio'
+                      : 'Añadir audio'
+                "
+              >
+                <app-icono nombre="audio" />
+              </button>
+
               <button
                 type="button"
                 class="btn-icono btn-icono--peligro"
@@ -389,8 +440,8 @@
         <button type="button" class="btn--primary" (click)="agregarOpcion()">Añadir opción</button>
       </fieldset>
 
-      @if (errorValidacion() || error()) {
-        <p class="status status--error">{{ errorValidacion() ?? error() }}</p>
+      @if (errorValidacion() || error() || errorImagen() || errorAudio()) {
+        <p class="status status--error">{{ errorValidacion() ?? error() ?? errorImagen() ?? errorAudio() }}</p>
       }
 
       <div class="nodo-form__acciones">

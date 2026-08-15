@@ -119,7 +119,10 @@ export class NodoFormComponent {
 
   private crearContenidoGroup(contenido?: ContenidoNodoAutor) {
     return this.fb.group({
+      idContenidoNodo: this.fb.nonNullable.control<number | null>(contenido?.idContenidoNodo ?? null),
       texto: this.fb.nonNullable.control(contenido?.texto ?? '', [Validators.required]),
+      imagenUrl: this.fb.nonNullable.control<string | null>(contenido?.imagenUrl ?? null),
+      audioUrl: this.fb.nonNullable.control<string | null>(contenido?.audioUrl ?? null),
       gruposCondicion: this.fb.array((contenido?.gruposCondicion ?? []).map((g) => this.crearGrupoCondicionGroup(g))),
     });
   }
@@ -225,8 +228,7 @@ export class NodoFormComponent {
     this.finalesDisponibles.set(nodo.finalesDisponibles);
 
     this.contenidos.clear();
-    const contenidos: ContenidoNodoAutor[] =
-      nodo.contenidos.length > 0 ? nodo.contenidos : [{ orden: 1, texto: '', gruposCondicion: [] }];
+    const contenidos: Array<ContenidoNodoAutor | undefined> = nodo.contenidos.length > 0 ? nodo.contenidos : [undefined];
     contenidos.forEach((c) => this.contenidos.push(this.crearContenidoGroup(c)));
 
     this.opciones.clear();
@@ -257,6 +259,46 @@ export class NodoFormComponent {
     }
     return of(undefined);
   };
+
+  private readonly subirImagenAction = asyncAction(
+    (index: number, archivo: File) => {
+      const idContenidoNodo = this.contenidos.at(index).get('idContenidoNodo')!.value as number;
+      return this.autorService.subirImagenContenidoNodo(idContenidoNodo, archivo);
+    },
+    {
+      onSuccess: (contenido, index) => this.contenidos.at(index).patchValue({ imagenUrl: contenido.imagenUrl }),
+      defaultErrorMessage: 'No se ha podido subir la imagen.',
+    },
+  );
+  protected readonly subiendoImagen = this.subirImagenAction.loading;
+  protected readonly errorImagen = this.subirImagenAction.error;
+
+  private readonly subirAudioAction = asyncAction(
+    (index: number, archivo: File) => {
+      const idContenidoNodo = this.contenidos.at(index).get('idContenidoNodo')!.value as number;
+      return this.autorService.subirAudioContenidoNodo(idContenidoNodo, archivo);
+    },
+    {
+      onSuccess: (contenido, index) => this.contenidos.at(index).patchValue({ audioUrl: contenido.audioUrl }),
+      defaultErrorMessage: 'No se ha podido subir el audio.',
+    },
+  );
+  protected readonly subiendoAudio = this.subirAudioAction.loading;
+  protected readonly errorAudio = this.subirAudioAction.error;
+
+  protected seleccionarImagen(index: number, files: FileList | null): void {
+    const archivo = files?.[0];
+    if (archivo) {
+      this.subirImagenAction.run(index, archivo);
+    }
+  }
+
+  protected seleccionarAudio(index: number, files: FileList | null): void {
+    const archivo = files?.[0];
+    if (archivo) {
+      this.subirAudioAction.run(index, archivo);
+    }
+  }
 
   protected agregarOpcion(): void {
     this.opciones.push(this.crearOpcionGroup());
@@ -537,6 +579,8 @@ export class NodoFormComponent {
         contenidos: raw.contenidos.map((c, index) => ({
           orden: index + 1,
           texto: c.texto,
+          imagenUrl: c.imagenUrl,
+          audioUrl: c.audioUrl,
           gruposCondicion: c.gruposCondicion.map((g) => ({
             condiciones: g.condiciones.map(mapCondicion),
           })),

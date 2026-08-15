@@ -97,8 +97,11 @@ export interface CrearNodoRequest {
 }
 
 export interface ContenidoNodoAutor {
+  idContenidoNodo: number;
   orden: number;
   texto: string;
+  imagenUrl: string | null;
+  audioUrl: string | null;
   gruposCondicion: GrupoCondicionAutor[];
 }
 
@@ -189,6 +192,8 @@ export interface GuardarEventoRequest {
 export interface GuardarContenidoNodoRequest {
   orden: number;
   texto: string;
+  imagenUrl: string | null;
+  audioUrl: string | null;
   gruposCondicion: GuardarGrupoCondicionRequest[];
 }
 

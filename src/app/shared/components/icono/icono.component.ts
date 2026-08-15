@@ -8,7 +8,9 @@ export type NombreIcono =
   | 'volver'
   | 'calcular'
   | 'subir'
-  | 'condicion';
+  | 'condicion'
+  | 'imagen'
+  | 'audio';
 
 const PATHS: Record<NombreIcono, string> = {
   editar:
@@ -22,6 +24,10 @@ const PATHS: Record<NombreIcono, string> = {
   subir: 'M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z',
   condicion:
     'M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39c.51-.66.04-1.61-.79-1.61H5.04c-.83 0-1.3.95-.79 1.61z',
+  imagen:
+    'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z',
+  audio:
+    'M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z',
 };
 
 @Component({

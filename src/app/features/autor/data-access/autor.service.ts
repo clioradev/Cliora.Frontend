@@ -8,6 +8,7 @@ import {
   CampanaAutor,
   CaracteristicaAutor,
   CatTipoCaracteristicaAutor,
+  ContenidoNodoAutor,
   CrearNodoRequest,
   EscenaAutor,
   EventoAutor,
@@ -145,6 +146,24 @@ export class AutorService {
 
   marcarNodoInicial(idNodo: number): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/Autor/Nodo/${idNodo}/MarcarInicial`, {});
+  }
+
+  subirImagenContenidoNodo(idContenidoNodo: number, archivo: File): Observable<ContenidoNodoAutor> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<ContenidoNodoAutor>(
+      `${this.baseUrl}/Autor/ContenidoNodo/${idContenidoNodo}/Imagen`,
+      formData,
+    );
+  }
+
+  subirAudioContenidoNodo(idContenidoNodo: number, archivo: File): Observable<ContenidoNodoAutor> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<ContenidoNodoAutor>(
+      `${this.baseUrl}/Autor/ContenidoNodo/${idContenidoNodo}/Audio`,
+      formData,
+    );
   }
 
   getFinales(idAventura: number): Observable<FinalAutor[]> {

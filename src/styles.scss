@@ -138,6 +138,11 @@ button {
       color: #fff;
     }
   }
+
+  &--activo {
+    border-color: var(--color-success);
+    color: var(--color-success);
+  }
 }
 
 input:not([type='checkbox']):not([type='radio']):not([type='range']),

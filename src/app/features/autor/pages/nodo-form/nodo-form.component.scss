@@ -74,6 +74,37 @@ textarea {
   gap: var(--space-2);
 }
 
+.nodo-form__contenido-adjuntos {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.adjunto-chip {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  padding: var(--space-1) var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  font-size: var(--text-sm);
+}
+
+.adjunto-chip__ruta {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.adjunto-chip .btn-icono {
+  flex: none;
+  width: 1.75rem;
+  height: 1.75rem;
+}
+
 .nodo-form__placeholder {
   opacity: 0.7;
 }

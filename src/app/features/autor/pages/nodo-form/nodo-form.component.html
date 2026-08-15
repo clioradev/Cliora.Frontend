@@ -110,6 +110,43 @@
           <div class="nodo-form__contenido" [formGroupName]="index">
             <textarea formControlName="texto" rows="8"></textarea>
 
+            @if (contenido.get('imagenUrl')?.value || contenido.get('audioUrl')?.value) {
+              <div class="nodo-form__contenido-adjuntos">
+                @if (contenido.get('imagenUrl')?.value; as rutaImagen) {
+                  <div class="adjunto-chip">
+                    <app-icono nombre="imagen" />
+                    <span class="adjunto-chip__ruta">{{ rutaImagen }}</span>
+                    <button
+                      type="button"
+                      class="btn-icono btn-icono--peligro"
+                      (click)="eliminarImagenContenido(index)"
+                      [disabled]="eliminandoImagen()"
+                      aria-label="Quitar imagen"
+                      title="Quitar imagen"
+                    >
+                      <app-icono nombre="eliminar" />
+                    </button>
+                  </div>
+                }
+                @if (contenido.get('audioUrl')?.value; as rutaAudio) {
+                  <div class="adjunto-chip">
+                    <app-icono nombre="audio" />
+                    <span class="adjunto-chip__ruta">{{ rutaAudio }}</span>
+                    <button
+                      type="button"
+                      class="btn-icono btn-icono--peligro"
+                      (click)="eliminarAudioContenido(index)"
+                      [disabled]="eliminandoAudio()"
+                      aria-label="Quitar audio"
+                      title="Quitar audio"
+                    >
+                      <app-icono nombre="eliminar" />
+                    </button>
+                  </div>
+                }
+              </div>
+            }
+
             @if (gruposCondicionDe(contenido).length > 0) {
               <ng-container
                 *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(contenido) }"
@@ -440,8 +477,12 @@
         <button type="button" class="btn--primary" (click)="agregarOpcion()">Añadir opción</button>
       </fieldset>
 
-      @if (errorValidacion() || error() || errorImagen() || errorAudio()) {
-        <p class="status status--error">{{ errorValidacion() ?? error() ?? errorImagen() ?? errorAudio() }}</p>
+      @if (
+        errorValidacion() || error() || errorImagen() || errorAudio() || errorEliminarImagen() || errorEliminarAudio()
+      ) {
+        <p class="status status--error">
+          {{ errorValidacion() ?? error() ?? errorImagen() ?? errorAudio() ?? errorEliminarImagen() ?? errorEliminarAudio() }}
+        </p>
       }
 
       <div class="nodo-form__acciones">

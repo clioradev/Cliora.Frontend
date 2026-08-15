@@ -12,16 +12,14 @@
 
   <div class="nodo__contenidos">
     @for (contenido of n.contenidos; track contenido.idContenidoNodo) {
-      @switch (contenido.tipo) {
-        @case ('Texto') {
-          <p class="nodo__texto">{{ contenido.texto }}</p>
-        }
-        @case ('Imagen') {
-          <img class="nodo__imagen" [src]="contenido.imagenUrl" alt="" />
-        }
-        @case ('Audio') {
-          <audio class="nodo__audio" [src]="contenido.audioUrl" controls></audio>
-        }
+      @if (contenido.imagenUrl) {
+        <img class="nodo__imagen" [src]="contenido.imagenUrl" alt="" />
+      }
+      @if (contenido.texto) {
+        <p class="nodo__texto">{{ contenido.texto }}</p>
+      }
+      @if (contenido.audioUrl) {
+        <audio class="nodo__audio" [src]="contenido.audioUrl" controls></audio>
       }
     }
   </div>

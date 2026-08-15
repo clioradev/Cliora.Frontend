@@ -300,6 +300,40 @@ export class NodoFormComponent {
     }
   }
 
+  private readonly eliminarImagenAction = asyncAction(
+    (index: number) => {
+      const idContenidoNodo = this.contenidos.at(index).get('idContenidoNodo')!.value as number;
+      return this.autorService.eliminarImagenContenidoNodo(idContenidoNodo);
+    },
+    {
+      onSuccess: (_contenido, index) => this.contenidos.at(index).patchValue({ imagenUrl: null }),
+      defaultErrorMessage: 'No se ha podido quitar la imagen.',
+    },
+  );
+  protected readonly eliminandoImagen = this.eliminarImagenAction.loading;
+  protected readonly errorEliminarImagen = this.eliminarImagenAction.error;
+
+  private readonly eliminarAudioAction = asyncAction(
+    (index: number) => {
+      const idContenidoNodo = this.contenidos.at(index).get('idContenidoNodo')!.value as number;
+      return this.autorService.eliminarAudioContenidoNodo(idContenidoNodo);
+    },
+    {
+      onSuccess: (_contenido, index) => this.contenidos.at(index).patchValue({ audioUrl: null }),
+      defaultErrorMessage: 'No se ha podido quitar el audio.',
+    },
+  );
+  protected readonly eliminandoAudio = this.eliminarAudioAction.loading;
+  protected readonly errorEliminarAudio = this.eliminarAudioAction.error;
+
+  protected eliminarImagenContenido(index: number): void {
+    this.eliminarImagenAction.run(index);
+  }
+
+  protected eliminarAudioContenido(index: number): void {
+    this.eliminarAudioAction.run(index);
+  }
+
   protected agregarOpcion(): void {
     this.opciones.push(this.crearOpcionGroup());
   }

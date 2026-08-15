@@ -166,6 +166,14 @@ export class AutorService {
     );
   }
 
+  eliminarImagenContenidoNodo(idContenidoNodo: number): Observable<ContenidoNodoAutor> {
+    return this.http.delete<ContenidoNodoAutor>(`${this.baseUrl}/Autor/ContenidoNodo/${idContenidoNodo}/Imagen`);
+  }
+
+  eliminarAudioContenidoNodo(idContenidoNodo: number): Observable<ContenidoNodoAutor> {
+    return this.http.delete<ContenidoNodoAutor>(`${this.baseUrl}/Autor/ContenidoNodo/${idContenidoNodo}/Audio`);
+  }
+
   getFinales(idAventura: number): Observable<FinalAutor[]> {
     return this.http.get<FinalAutor[]>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Final`);
   }

@@ -5,13 +5,29 @@
 }
 
 .detalle {
+  position: relative;
+  overflow: hidden;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
   max-width: var(--content-width-lg);
 }
 
+.detalle__fondo {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  background-size: cover;
+  background-position: center;
+  opacity: 0.16;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 85%);
+  pointer-events: none;
+}
+
 .detalle__caratula {
+  position: relative;
+  z-index: 1;
   flex: 0 0 auto;
   width: 16rem;
   max-width: 100%;
@@ -41,6 +57,8 @@
 }
 
 .detalle__contenido {
+  position: relative;
+  z-index: 1;
   flex: 1 1 auto;
   min-width: 0;
   display: flex;

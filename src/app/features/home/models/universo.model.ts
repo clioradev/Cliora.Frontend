@@ -43,6 +43,7 @@ export interface Universo {
   descripcion: string | null;
   campanas: Campana[];
   tipos: string[];
+  fondoUrl: string | null;
   puntuacionMedia: number | null;
   ultimaValoracion: UltimaValoracion | null;
 }

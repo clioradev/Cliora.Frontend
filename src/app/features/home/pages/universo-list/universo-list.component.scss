@@ -27,13 +27,29 @@
 }
 
 .universo-card {
+  position: relative;
+  overflow: hidden;
   padding: var(--space-6);
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-md);
 
+  &__fondo {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    background-size: cover;
+    background-position: center;
+    opacity: 0.16;
+    mask-image: linear-gradient(to bottom, black, transparent 85%);
+    -webkit-mask-image: linear-gradient(to bottom, black, transparent 85%);
+    pointer-events: none;
+  }
+
   &__header {
+    position: relative;
+    z-index: 1;
     display: flex;
     flex-wrap: wrap;
     align-items: baseline;
@@ -46,12 +62,16 @@
   }
 
   &__descripcion {
+    position: relative;
+    z-index: 1;
     margin: var(--space-2) 0 0;
     color: var(--color-text-secondary);
   }
 }
 
 .campanas {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-direction: column;
   gap: var(--space-6);
@@ -339,6 +359,8 @@ button.tag-chip:hover:not(.tag-chip--activo) {
 }
 
 .universo-card__tags {
+  position: relative;
+  z-index: 1;
   display: flex;
   flex-wrap: wrap;
   gap: var(--space-1);

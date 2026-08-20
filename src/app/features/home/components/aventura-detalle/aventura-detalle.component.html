@@ -1,6 +1,10 @@
 @let a = aventura();
 
 <div class="detalle">
+  @if (universo().fondoUrl) {
+    <div class="detalle__fondo" [style.background-image]="'url(' + universo().fondoUrl + ')'"></div>
+  }
+
   <section class="detalle__caratula">
     <div class="detalle-caratula" [style.--hue.deg]="hueCaratula(a)">
       @if (a.caratulaUrl) {

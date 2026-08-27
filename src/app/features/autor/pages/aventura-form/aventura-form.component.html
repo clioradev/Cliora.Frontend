@@ -90,19 +90,52 @@
       </label>
 
       <div class="aventura-form__fila-imagen">
-        <label class="campo-ruta-imagen">
-          Imagen (ruta)
-          <input type="text" formControlName="rutaImagen" placeholder="aventuras/mi-aventura/caratula.jpg" />
-        </label>
+        <span class="aventura-form__caratula-etiqueta">Carátula</span>
 
-        <div class="campo-subir-imagen">
-          <span class="campo-subir-imagen__etiqueta">&nbsp;</span>
-          <label class="btn-icono btn-icono--primary" for="subir-imagen-input" aria-label="Subir imagen" title="Subir imagen">
+        @if (caratulaUrl(); as url) {
+          <img class="aventura-form__caratula" [src]="url" alt="Carátula de la aventura" />
+        }
+
+        @if (idAventura()) {
+          <input
+            #caratulaInput
+            type="file"
+            accept="image/png,image/jpeg,image/webp"
+            hidden
+            (change)="seleccionarCaratula($any($event.target).files); caratulaInput.value = ''"
+          />
+          <button
+            type="button"
+            class="btn-icono btn-icono--primary"
+            [class.btn-icono--activo]="caratulaUrl()"
+            (click)="caratulaInput.click()"
+            [disabled]="subiendoCaratula() || quitandoCaratula()"
+            [attr.aria-label]="caratulaUrl() ? 'Cambiar carátula' : 'Subir carátula'"
+            [attr.title]="caratulaUrl() ? 'Cambiar carátula' : 'Subir carátula'"
+          >
             <app-icono nombre="subir" />
-          </label>
-          <input type="file" id="subir-imagen-input" accept="image/*" hidden />
-        </div>
+          </button>
+
+          @if (caratulaUrl()) {
+            <button
+              type="button"
+              class="btn-icono btn-icono--peligro"
+              (click)="quitarCaratula()"
+              [disabled]="subiendoCaratula() || quitandoCaratula()"
+              aria-label="Quitar carátula"
+              title="Quitar carátula"
+            >
+              <app-icono nombre="eliminar" />
+            </button>
+          }
+        } @else {
+          <span class="aventura-form__caratula-aviso">Guarda la aventura primero para subir una carátula.</span>
+        }
       </div>
+
+      @if (errorCaratula()) {
+        <p class="status status--error">{{ errorCaratula() }}</p>
+      }
 
       @if (error()) {
         <p class="status status--error">{{ error() }}</p>

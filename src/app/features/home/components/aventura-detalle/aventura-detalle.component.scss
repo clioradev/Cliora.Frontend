@@ -18,10 +18,8 @@
   inset: 0;
   z-index: 0;
   background-size: cover;
-  background-position: center;
-  opacity: 0.16;
-  mask-image: linear-gradient(to bottom, black, transparent 85%);
-  -webkit-mask-image: linear-gradient(to bottom, black, transparent 85%);
+  background-position: top center;
+  opacity: 0.4;
   pointer-events: none;
 }
 

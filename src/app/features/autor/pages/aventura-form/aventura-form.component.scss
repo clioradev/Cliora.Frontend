@@ -85,23 +85,27 @@ label {
 }
 
 .aventura-form__fila-imagen {
-  display: grid;
-  grid-template-columns: 5fr 1fr;
-  gap: var(--space-3);
-}
-
-.campo-ruta-imagen {
-  min-width: 0;
-}
-
-.campo-subir-imagen {
   display: flex;
-  flex-direction: column;
-  gap: var(--space-1);
+  align-items: center;
+  gap: var(--space-3);
+  flex-wrap: wrap;
 }
 
-.campo-subir-imagen__etiqueta {
+.aventura-form__caratula-etiqueta {
   font-size: var(--text-sm);
+}
+
+.aventura-form__caratula {
+  width: 120px;
+  height: 160px;
+  object-fit: cover;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--color-border);
+}
+
+.aventura-form__caratula-aviso {
+  font-size: var(--text-sm);
+  opacity: 0.7;
 }
 
 .aventura-form__acciones {
@@ -116,8 +120,7 @@ label {
 }
 
 @media (max-width: $bp-tablet) {
-  .aventura-form__fila-principal,
-  .aventura-form__fila-imagen {
+  .aventura-form__fila-principal {
     grid-template-columns: 1fr;
   }
 

@@ -44,6 +44,7 @@ export interface AventuraAutor {
   orden: number;
   cantidadDecision: number;
   rutaImagen: string | null;
+  caratulaUrl: string | null;
   visible: boolean;
   duracion: number | null;
   actos: ActoAutor[];
@@ -78,7 +79,6 @@ export interface GuardarAventuraRequest {
   descripcion: string | null;
   orden: number;
   cantidadDecision: number;
-  rutaImagen: string | null;
   duracion: number | null;
 }
 

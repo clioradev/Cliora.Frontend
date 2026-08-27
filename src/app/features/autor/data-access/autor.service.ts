@@ -64,6 +64,16 @@ export class AutorService {
     return this.http.get<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}`);
   }
 
+  subirImagenAventura(idAventura: number, archivo: File): Observable<AventuraAutor> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Imagen`, formData);
+  }
+
+  eliminarImagenAventura(idAventura: number): Observable<AventuraAutor> {
+    return this.http.delete<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Imagen`);
+  }
+
   calcularDuracionAventura(idAventura: number): Observable<AventuraAutor> {
     return this.http.post<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/CalcularDuracion`, {});
   }

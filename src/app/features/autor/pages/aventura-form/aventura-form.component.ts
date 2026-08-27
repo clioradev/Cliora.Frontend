@@ -40,9 +40,10 @@ export class AventuraFormComponent {
     descripcion: [''],
     orden: [1, [Validators.required, Validators.min(1)]],
     cantidadDecision: [2, [Validators.required]],
-    rutaImagen: [''],
     duracion: this.fb.control<number | null>(null, [Validators.min(0)]),
   });
+
+  protected readonly caratulaUrl = signal<string | null>(null);
 
   private readonly aventuraResource = rxResource({
     params: () => this.idAventura(),
@@ -68,13 +69,12 @@ export class AventuraFormComponent {
 
   private readonly guardarAction = asyncAction(
     () => {
-      const { titulo, descripcion, orden, cantidadDecision, rutaImagen, duracion } = this.form.getRawValue();
+      const { titulo, descripcion, orden, cantidadDecision, duracion } = this.form.getRawValue();
       const dto = {
         titulo,
         descripcion: descripcion.trim() || null,
         orden,
         cantidadDecision,
-        rutaImagen: rutaImagen.trim() || null,
         duracion: duracion ?? null,
       };
 
@@ -130,14 +130,45 @@ export class AventuraFormComponent {
     this.previsualizarAction.run();
   }
 
+  private readonly subirCaratulaAction = asyncAction(
+    (archivo: File) => this.autorService.subirImagenAventura(this.idAventura()!, archivo),
+    {
+      onSuccess: (aventura) => this.caratulaUrl.set(aventura.caratulaUrl),
+      defaultErrorMessage: 'No se ha podido subir la carátula.',
+    },
+  );
+  protected readonly subiendoCaratula = this.subirCaratulaAction.loading;
+
+  private readonly quitarCaratulaAction = asyncAction(
+    () => this.autorService.eliminarImagenAventura(this.idAventura()!),
+    {
+      onSuccess: (aventura) => this.caratulaUrl.set(aventura.caratulaUrl),
+      defaultErrorMessage: 'No se ha podido quitar la carátula.',
+    },
+  );
+  protected readonly quitandoCaratula = this.quitarCaratulaAction.loading;
+
+  protected readonly errorCaratula = computed(() => this.subirCaratulaAction.error() ?? this.quitarCaratulaAction.error());
+
+  protected seleccionarCaratula(files: FileList | null): void {
+    const archivo = files?.[0];
+    if (archivo) {
+      this.subirCaratulaAction.run(archivo);
+    }
+  }
+
+  protected quitarCaratula(): void {
+    this.quitarCaratulaAction.run();
+  }
+
   private precargarFormulario(aventura: AventuraAutor): void {
     this.form.patchValue({
       titulo: aventura.titulo,
       descripcion: aventura.descripcion ?? '',
       orden: aventura.orden,
       cantidadDecision: aventura.cantidadDecision,
-      rutaImagen: aventura.rutaImagen ?? '',
       duracion: aventura.duracion,
     });
+    this.caratulaUrl.set(aventura.caratulaUrl);
   }
 }

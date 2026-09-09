@@ -9,11 +9,29 @@
       <button type="button" class="btn--primary" (click)="previsualizar()" [disabled]="previsualizando()">
         {{ previsualizando() ? 'Preparando…' : 'Previsualizar aventura' }}
       </button>
+
+      @if (!esSolicitudPendiente()) {
+        <button type="button" class="btn--primary" (click)="solicitarPublicacion()" [disabled]="solicitandoPublicacion()">
+          {{ solicitandoPublicacion() ? 'Solicitando…' : 'Solicitar publicación' }}
+        </button>
+      } @else {
+        <button type="button" (click)="cancelarSolicitud()" [disabled]="cancelandoSolicitud()">
+          {{ cancelandoSolicitud() ? 'Cancelando…' : 'Cancelar solicitud' }}
+        </button>
+      }
     }
   </div>
 
+  @if (esSolicitudPendiente()) {
+    <p class="status">Pendiente de revisión por un administrador desde {{ fechaSolicitud() | date: 'short' }}.</p>
+  }
+
   @if (errorPrevisualizar()) {
     <p class="status status--error">{{ errorPrevisualizar() }}</p>
+  }
+
+  @if (errorSolicitarPublicacion()) {
+    <p class="status status--error">{{ errorSolicitarPublicacion() }}</p>
   }
 
   <nav class="aventura-form__tabs">

@@ -1,0 +1,61 @@
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (solicitudes().length === 0) {
+  <p>No hay ninguna solicitud de publicación pendiente.</p>
+} @else {
+  @if (errorPrevisualizar()) {
+    <p class="status status--error">{{ errorPrevisualizar() }}</p>
+  }
+  @if (errorPublicar()) {
+    <p class="status status--error">{{ errorPublicar() }}</p>
+  }
+  @if (errorRechazar()) {
+    <p class="status status--error">{{ errorRechazar() }}</p>
+  }
+
+  <ul class="solicitud-list">
+    @for (solicitud of solicitudes(); track solicitud.idVersionAventura) {
+      <li class="solicitud-list__item">
+        @if (solicitud.caratulaUrl) {
+          <img class="solicitud-list__caratula" [src]="solicitud.caratulaUrl" alt="" />
+        } @else {
+          <div class="solicitud-list__caratula solicitud-list__caratula--vacia">
+            {{ solicitud.tieneCaratula ? '…' : 'Sin carátula' }}
+          </div>
+        }
+
+        <div class="solicitud-list__info">
+          <span class="solicitud-list__titulo">{{ solicitud.tituloAventura }} (v{{ solicitud.version }})</span>
+          @if (solicitud.descripcionAventura) {
+            <span class="solicitud-list__descripcion">{{ solicitud.descripcionAventura }}</span>
+          }
+          <span class="solicitud-list__jerarquia">
+            {{ solicitud.tituloUniverso }} · {{ solicitud.tituloCampana }}
+          </span>
+          @if (solicitud.tiposUniverso.length > 0) {
+            <span class="solicitud-list__tipos">{{ solicitud.tiposUniverso.join(', ') }}</span>
+          }
+          <span class="solicitud-list__contenido">
+            {{ solicitud.cantidadActos }} actos · {{ solicitud.cantidadEscenas }} escenas ·
+            {{ solicitud.cantidadNodos }} nodos · {{ solicitud.cantidadFinales }} finales
+          </span>
+          @if (solicitud.fechaSolicitud) {
+            <span class="solicitud-list__fecha">Solicitada el {{ solicitud.fechaSolicitud | date: 'short' }}</span>
+          }
+        </div>
+
+        <div class="solicitud-list__acciones">
+          <button type="button" (click)="previsualizar(solicitud)" [disabled]="accionEnCurso(solicitud)">
+            Previsualizar
+          </button>
+          <button type="button" class="btn--primary" (click)="publicar(solicitud)" [disabled]="accionEnCurso(solicitud)">
+            Publicar
+          </button>
+          <button type="button" class="btn--peligro" (click)="rechazar(solicitud)" [disabled]="accionEnCurso(solicitud)">
+            Rechazar
+          </button>
+        </div>
+      </li>
+    }
+  </ul>
+}

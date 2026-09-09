@@ -3,18 +3,21 @@ import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, of } from 'rxjs';
 import { Usuario } from '../../../../core/auth/usuario.model';
 import { EditarRolesModalComponent } from '../../components/editar-roles-modal/editar-roles-modal.component';
+import { SolicitudesPublicacionComponent } from '../../components/solicitudes-publicacion/solicitudes-publicacion.component';
 import { AdminService } from '../../data-access/admin.service';
 
 const LONGITUD_MINIMA_BUSQUEDA = 2;
 
 @Component({
   selector: 'app-panel-admin',
-  imports: [EditarRolesModalComponent],
+  imports: [EditarRolesModalComponent, SolicitudesPublicacionComponent],
   templateUrl: './panel-admin.component.html',
   styleUrl: './panel-admin.component.scss',
 })
 export class PanelAdminComponent {
   private readonly adminService = inject(AdminService);
+
+  protected readonly tabActiva = signal<'aventuras' | 'roles'>('aventuras');
 
   protected readonly query = signal('');
   private readonly queryDebounced = toSignal(

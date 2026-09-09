@@ -58,6 +58,10 @@ export class PanelAutorComponent {
     this.universosResource.reload();
   }
 
+  protected onTipoActualizado(): void {
+    this.universosResource.reload();
+  }
+
   protected nuevaCampana(idUniverso: number): void {
     this.campanaModal.set({ idUniverso, campana: null });
   }

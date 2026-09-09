@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { AdminService } from '../../../admin/data-access/admin.service';
 import { AutorService } from '../../../autor/data-access/autor.service';
 import { FichaPersonajeModalComponent } from '../../components/ficha-personaje-modal/ficha-personaje-modal.component';
 import { ResultadoTiradaModalComponent } from '../../components/resultado-tirada-modal/resultado-tirada-modal.component';
@@ -19,6 +20,7 @@ export class PartidaComponent {
   private readonly router = inject(Router);
   private readonly partidaService = inject(PartidaService);
   private readonly autorService = inject(AutorService);
+  private readonly adminService = inject(AdminService);
 
   private readonly paramMap = toSignal(this.route.paramMap, { requireSync: true });
   private readonly queryParamMap = toSignal(this.route.queryParamMap, { requireSync: true });
@@ -27,6 +29,13 @@ export class PartidaComponent {
     const idAventuraParam = this.queryParamMap().get('idAventura');
     return idAventuraParam ? Number(idAventuraParam) : null;
   });
+
+  protected readonly idVersionAventura = computed(() => {
+    const idVersionParam = this.queryParamMap().get('idVersionAventura');
+    return idVersionParam ? Number(idVersionParam) : null;
+  });
+
+  protected readonly esAdmin = computed(() => this.queryParamMap().get('admin') === 'true');
 
   protected readonly preview = computed(() => this.queryParamMap().get('preview') === 'true');
 
@@ -79,6 +88,16 @@ export class PartidaComponent {
   }
 
   protected volverAlEditor(): void {
+    if (this.esAdmin()) {
+      const idVersionAventura = this.idVersionAventura();
+      if (idVersionAventura === null) {
+        return;
+      }
+      this.adminService.detenerPrevisualizacionVersion(idVersionAventura).subscribe();
+      void this.router.navigate(['/admin']);
+      return;
+    }
+
     const idAventura = this.idAventura();
     if (idAventura === null) {
       return;
@@ -88,8 +107,16 @@ export class PartidaComponent {
   }
 
   private navegarA(idNodo: number | null, idFinal: number | null): void {
+    const esAdmin = this.esAdmin();
+    const idVersionAventura = this.idVersionAventura();
     const idAventura = this.idAventura();
-    const queryParams = idAventura !== null ? { idAventura, preview: this.preview() || undefined } : undefined;
+
+    const queryParams =
+      esAdmin && idVersionAventura !== null
+        ? { idVersionAventura, admin: true, preview: this.preview() || undefined }
+        : idAventura !== null
+          ? { idAventura, preview: this.preview() || undefined }
+          : undefined;
 
     if (idFinal !== null) {
       void this.router.navigate(['/final', idFinal], { queryParams });

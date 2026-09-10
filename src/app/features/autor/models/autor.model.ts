@@ -1,3 +1,10 @@
+export enum EnumEstadoPublicacion {
+  Borrador = 1,
+  Publicada = 2,
+  Oculta = 3,
+  SolicitudPublicacion = 4,
+}
+
 export enum EnumOperacionCondicion {
   Igual = 1,
   Distinto = 2,
@@ -47,6 +54,8 @@ export interface AventuraAutor {
   caratulaUrl: string | null;
   visible: boolean;
   duracion: number | null;
+  estadoVersionEdicion: EnumEstadoPublicacion | null;
+  fechaSolicitudPublicacion: string | null;
   actos: ActoAutor[];
 }
 
@@ -57,11 +66,24 @@ export interface CampanaAutor {
   aventuras: AventuraAutor[];
 }
 
+export interface UniversoTipoAutor {
+  idCatTipoUniverso: number;
+  nombre: string;
+  esPrincipal: boolean;
+}
+
+export interface CatTipoUniversoAutor {
+  id: number;
+  nombre: string;
+  fondoUrl: string | null;
+}
+
 export interface UniversoAutor {
   idUniverso: number;
   titulo: string;
   descripcion: string | null;
   campanas: CampanaAutor[];
+  tipos: UniversoTipoAutor[];
 }
 
 export interface GuardarUniversoRequest {
@@ -155,6 +177,7 @@ export interface NodoArbol {
   codigo: string;
   titulo: string;
   esNodoInicial: boolean;
+  estadoVersionEdicion: EnumEstadoPublicacion;
   contenidos: ContenidoNodoAutor[];
   opciones: OpcionArbol[];
   nodosDisponibles: NodoAutorResumen[];

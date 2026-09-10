@@ -2,6 +2,7 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { AdminService } from '../../../admin/data-access/admin.service';
 import { AutorService } from '../../../autor/data-access/autor.service';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
@@ -17,11 +18,14 @@ export class FinalComponent {
   private readonly router = inject(Router);
   private readonly partidaService = inject(PartidaService);
   private readonly autorService = inject(AutorService);
+  private readonly adminService = inject(AdminService);
 
   private readonly idFinal = Number(this.route.snapshot.paramMap.get('idFinal'));
 
   protected readonly preview = this.route.snapshot.queryParamMap.get('preview') === 'true';
   private readonly idAventuraQuery = this.route.snapshot.queryParamMap.get('idAventura');
+  private readonly esAdmin = this.route.snapshot.queryParamMap.get('admin') === 'true';
+  private readonly idVersionAventuraQuery = this.route.snapshot.queryParamMap.get('idVersionAventura');
 
   private readonly finalResource = rxResource({
     stream: () => this.partidaService.getFinal(this.idFinal),
@@ -55,6 +59,16 @@ export class FinalComponent {
   }
 
   protected volverAlEditor(): void {
+    if (this.esAdmin) {
+      if (!this.idVersionAventuraQuery) {
+        return;
+      }
+      const idVersionAventura = Number(this.idVersionAventuraQuery);
+      this.adminService.detenerPrevisualizacionVersion(idVersionAventura).subscribe();
+      void this.router.navigate(['/admin']);
+      return;
+    }
+
     if (!this.idAventuraQuery) {
       return;
     }

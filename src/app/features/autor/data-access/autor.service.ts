@@ -8,6 +8,7 @@ import {
   CampanaAutor,
   CaracteristicaAutor,
   CatTipoCaracteristicaAutor,
+  CatTipoUniversoAutor,
   ContenidoNodoAutor,
   CrearNodoRequest,
   EscenaAutor,
@@ -84,6 +85,26 @@ export class AutorService {
 
   detenerPrevisualizacion(idAventura: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Previsualizar`);
+  }
+
+  solicitarPublicacion(idAventura: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Autor/Aventura/${idAventura}/SolicitarPublicacion`, {});
+  }
+
+  cancelarSolicitudPublicacion(idAventura: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Autor/Aventura/${idAventura}/CancelarSolicitudPublicacion`, {});
+  }
+
+  getCatalogoTiposUniverso(): Observable<CatTipoUniversoAutor[]> {
+    return this.http.get<CatTipoUniversoAutor[]>(`${this.baseUrl}/Autor/CatTipoUniverso`);
+  }
+
+  anadirTipoUniverso(idUniverso: number, idCatTipoUniverso: number): Observable<UniversoAutor> {
+    return this.http.post<UniversoAutor>(`${this.baseUrl}/Autor/Universo/${idUniverso}/Tipo/${idCatTipoUniverso}`, {});
+  }
+
+  quitarTipoUniverso(idUniverso: number, idCatTipoUniverso: number): Observable<UniversoAutor> {
+    return this.http.delete<UniversoAutor>(`${this.baseUrl}/Autor/Universo/${idUniverso}/Tipo/${idCatTipoUniverso}`);
   }
 
   getSiguienteOrden(idCampana: number): Observable<number> {

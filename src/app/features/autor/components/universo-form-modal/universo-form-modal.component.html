@@ -23,4 +23,28 @@
       </button>
     </div>
   </form>
+
+  @if (universoActual(); as universo) {
+    <fieldset class="universo-form-modal__tipos">
+      <legend>Tipos de universo</legend>
+
+      @if (errorTipo()) {
+        <p class="status status--error">{{ errorTipo() }}</p>
+      }
+
+      @for (tipo of tiposCatalogo(); track tipo.id) {
+        <label>
+          <input
+            type="checkbox"
+            [checked]="tieneTipo(tipo)"
+            [disabled]="actualizandoTipo()"
+            (change)="toggleTipo(tipo, $event)"
+          />
+          {{ tipo.nombre }}
+        </label>
+      }
+    </fieldset>
+  } @else {
+    <p class="universo-form-modal__aviso">Guarda el universo primero para asignarle tipos.</p>
+  }
 </app-modal>

@@ -3,7 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import { Usuario } from '../../../core/auth/usuario.model';
-import { Rol } from '../models/admin.model';
+import { Rol, SolicitudPublicacionAdmin } from '../models/admin.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -24,5 +24,28 @@ export class AdminService {
 
   quitarRol(idUsuario: number, idRol: number): Observable<Usuario> {
     return this.http.delete<Usuario>(`${this.baseUrl}/Admin/Usuario/${idUsuario}/Rol/${idRol}`);
+  }
+
+  obtenerSolicitudesPublicacion(): Observable<SolicitudPublicacionAdmin[]> {
+    return this.http.get<SolicitudPublicacionAdmin[]>(`${this.baseUrl}/Admin/SolicitudPublicacion`);
+  }
+
+  publicarVersion(idVersionAventura: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Publicar`, {});
+  }
+
+  rechazarVersion(idVersionAventura: number): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Rechazar`, {});
+  }
+
+  previsualizarVersion(idVersionAventura: number): Observable<{ idNodoActual: number }> {
+    return this.http.post<{ idNodoActual: number }>(
+      `${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Previsualizar`,
+      {},
+    );
+  }
+
+  detenerPrevisualizacionVersion(idVersionAventura: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Previsualizar`);
   }
 }

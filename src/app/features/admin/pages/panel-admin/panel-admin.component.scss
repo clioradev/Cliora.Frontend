@@ -1,12 +1,32 @@
 :host {
   display: block;
-  max-width: var(--content-width-md, 800px);
+  max-width: var(--content-width-lg, 1100px);
   margin: 0 auto;
   padding: var(--space-4);
 }
 
 .panel-admin__header {
   margin-bottom: var(--space-4);
+}
+
+.panel-admin__tabs {
+  display: flex;
+  gap: var(--space-2);
+  border-bottom: 1px solid var(--border-color, currentColor);
+  margin-bottom: var(--space-4);
+}
+
+.panel-admin__tabs button {
+  border: none;
+  background: none;
+  padding: var(--space-2) var(--space-3);
+  cursor: pointer;
+  opacity: 0.6;
+}
+
+.panel-admin__tab--activa {
+  opacity: 1;
+  border-bottom: 2px solid currentColor;
 }
 
 .panel-admin__buscador {

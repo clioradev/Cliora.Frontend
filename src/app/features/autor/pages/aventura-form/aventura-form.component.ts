@@ -1,3 +1,4 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -9,11 +10,11 @@ import { IconoComponent } from '../../../../shared/components/icono/icono.compon
 import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
 import { CaracteristicasComponent } from '../../components/caracteristicas/caracteristicas.component';
 import { AutorService } from '../../data-access/autor.service';
-import { AventuraAutor } from '../../models/autor.model';
+import { AventuraAutor, EnumEstadoPublicacion } from '../../models/autor.model';
 
 @Component({
   selector: 'app-aventura-form',
-  imports: [ReactiveFormsModule, RouterLink, IconoComponent, ActosEscenasComponent, CaracteristicasComponent],
+  imports: [ReactiveFormsModule, RouterLink, IconoComponent, ActosEscenasComponent, CaracteristicasComponent, DatePipe],
   templateUrl: './aventura-form.component.html',
   styleUrl: './aventura-form.component.scss',
 })
@@ -128,6 +129,39 @@ export class AventuraFormComponent {
 
   protected previsualizar(): void {
     this.previsualizarAction.run();
+  }
+
+  protected readonly estadoVersion = computed(() => this.aventura()?.estadoVersionEdicion ?? null);
+  protected readonly esSolicitudPendiente = computed(
+    () => this.estadoVersion() === EnumEstadoPublicacion.SolicitudPublicacion,
+  );
+  protected readonly fechaSolicitud = computed(() => this.aventura()?.fechaSolicitudPublicacion ?? null);
+
+  private readonly solicitarPublicacionAction = asyncAction(
+    () => this.autorService.solicitarPublicacion(this.idAventura()!),
+    {
+      onSuccess: () => this.aventuraResource.reload(),
+      defaultErrorMessage: 'No se ha podido solicitar la publicación.',
+    },
+  );
+  protected readonly solicitandoPublicacion = this.solicitarPublicacionAction.loading;
+  protected readonly errorSolicitarPublicacion = this.solicitarPublicacionAction.error;
+
+  protected solicitarPublicacion(): void {
+    this.solicitarPublicacionAction.run();
+  }
+
+  private readonly cancelarSolicitudAction = asyncAction(
+    () => this.autorService.cancelarSolicitudPublicacion(this.idAventura()!),
+    {
+      onSuccess: () => this.aventuraResource.reload(),
+      defaultErrorMessage: 'No se ha podido cancelar la solicitud.',
+    },
+  );
+  protected readonly cancelandoSolicitud = this.cancelarSolicitudAction.loading;
+
+  protected cancelarSolicitud(): void {
+    this.cancelarSolicitudAction.run();
   }
 
   private readonly subirCaratulaAction = asyncAction(

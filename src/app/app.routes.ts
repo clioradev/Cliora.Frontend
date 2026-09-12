@@ -10,32 +10,36 @@ export const routes: Routes = [
     component: ShellComponent,
     children: [
       {
-        path: 'login',
+        path: 'bienvenida',
         canActivate: [guestGuard],
         loadComponent: () =>
-          import('./features/public/pages/login/login.component').then((m) => m.LoginComponent),
-      },
-      {
-        path: 'registro',
-        canActivate: [guestGuard],
-        loadComponent: () =>
-          import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
-      },
-      {
-        path: 'olvido-contrasena',
-        canActivate: [guestGuard],
-        loadComponent: () =>
-          import('./features/public/pages/olvido-contrasena/olvido-contrasena.component').then(
-            (m) => m.OlvidoContrasenaComponent,
-          ),
-      },
-      {
-        path: 'restablecer-contrasena',
-        canActivate: [guestGuard],
-        loadComponent: () =>
-          import('./features/public/pages/restablecer-contrasena/restablecer-contrasena.component').then(
-            (m) => m.RestablecerContrasenaComponent,
-          ),
+          import('./features/public/pages/portal/portal.component').then((m) => m.PortalComponent),
+        children: [
+          {
+            path: 'login',
+            loadComponent: () =>
+              import('./features/public/pages/login/login.component').then((m) => m.LoginComponent),
+          },
+          {
+            path: 'registro',
+            loadComponent: () =>
+              import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
+          },
+          {
+            path: 'olvido-contrasena',
+            loadComponent: () =>
+              import('./features/public/pages/olvido-contrasena/olvido-contrasena.component').then(
+                (m) => m.OlvidoContrasenaComponent,
+              ),
+          },
+          {
+            path: 'restablecer-contrasena',
+            loadComponent: () =>
+              import('./features/public/pages/restablecer-contrasena/restablecer-contrasena.component').then(
+                (m) => m.RestablecerContrasenaComponent,
+              ),
+          },
+        ],
       },
       {
         path: 'configuracion',

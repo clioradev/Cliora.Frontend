@@ -61,4 +61,8 @@ export class ValoracionModalComponent {
       comentario: this.comentario().trim() || null,
     });
   }
+
+  protected noValorar(): void {
+    this.cerrado.emit();
+  }
 }

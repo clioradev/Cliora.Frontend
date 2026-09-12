@@ -1,0 +1,69 @@
+<div class="portal">
+  <section class="portal__hero">
+    <img
+      class="portal__hero-textura"
+      src="/media/logos/Cliora-mono-croma-reducido.png"
+      alt=""
+      aria-hidden="true"
+    />
+
+    <div class="portal__hero-inner">
+      <img class="portal__logo marca-claro" src="/media/logos/Cliora-fondo-claro-reducido.png" alt="Cliora" />
+      <img class="portal__logo marca-oscuro" src="/media/logos/Cliora-fondo-oscuro-reducido.png" alt="Cliora" />
+
+      <h1 class="portal__titulo">Donde tus decisiones se convierten en historia.</h1>
+
+      <p class="portal__subtitulo">
+        Cliora es un motor de narrativa interactiva: tú decides, los dados responden, y el mundo recuerda cada
+        elección. Sin hojas de personaje que memorizar, sin reglas que aprender — solo la historia.
+      </p>
+
+      <div class="portal__cta">
+        <a routerLink="login" class="btn--primary">Entrar</a>
+        <a routerLink="registro" class="portal__cta-secundario">Crear cuenta</a>
+      </div>
+    </div>
+  </section>
+
+  <section class="portal__pilares">
+    <article class="portal__pilar">
+      <h2>El motor es invisible</h2>
+      <p>
+        Nunca verás una tirada rota ni una opción que no existía para ti. Vives la aventura como quien lee una
+        novela: el personaje tampoco sabría lo que no eligió.
+      </p>
+    </article>
+
+    <article class="portal__pilar">
+      <h2>El mundo recuerda</h2>
+      <p>
+        Lo que hiciste en una aventura puede volver en otra. Tus rasgos y tus decisiones pasadas viajan contigo — el
+        mundo no olvida, aunque tú a veces sí.
+      </p>
+    </article>
+
+    <article class="portal__pilar">
+      <h2>Un multiverso de géneros</h2>
+      <p>
+        Terror, investigación, medieval, futurista... cada universo es una puerta distinta.
+      </p>
+    </article>
+  </section>
+
+  <section class="portal__cierre">
+    <blockquote class="portal__cita">
+      «El jugador no debe recordar las mecánicas; debe recordar la historia.»
+    </blockquote>
+
+    <a routerLink="registro" class="btn--primary">Empieza tu historia</a>
+  </section>
+
+  <div class="portal__modal" [class.portal__modal--abierto]="modalAbierto()">
+    <div class="portal__modal-backdrop" (click)="cerrarModal()"></div>
+
+    <div class="portal__modal-tarjeta">
+      <button type="button" class="portal__modal-cerrar" aria-label="Cerrar" (click)="cerrarModal()">×</button>
+      <router-outlet (activate)="modalAbierto.set(true)" (deactivate)="modalAbierto.set(false)" />
+    </div>
+  </div>
+</div>

@@ -33,7 +33,7 @@ export const authInterceptor: HttpInterceptorFn = (req, next) => {
         }),
         catchError((refreshError: unknown) => {
           authService.clearSession();
-          void router.navigate(['/login']);
+          void router.navigate(['/bienvenida/login']);
           return throwError(() => refreshError);
         }),
       );

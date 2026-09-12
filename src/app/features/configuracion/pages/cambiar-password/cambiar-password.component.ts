@@ -35,7 +35,7 @@ export class CambiarPasswordComponent {
     {
       onSuccess: () => {
         this.authService.clearSession();
-        void this.router.navigate(['/login']);
+        void this.router.navigate(['/bienvenida/login']);
       },
       defaultErrorMessage: 'No se ha podido cambiar la contraseña.',
     },

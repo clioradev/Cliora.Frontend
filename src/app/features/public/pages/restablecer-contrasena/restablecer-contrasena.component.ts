@@ -37,7 +37,7 @@ export class RestablecerContrasenaComponent {
   private readonly restablecerAction = asyncAction(
     (token: string, nuevaPassword: string) => this.authService.restablecerContrasena(token, nuevaPassword),
     {
-      onSuccess: () => void this.router.navigate(['/login']),
+      onSuccess: () => void this.router.navigate(['../login'], { relativeTo: this.route }),
       defaultErrorMessage: 'El enlace no es válido o ha caducado.',
     },
   );

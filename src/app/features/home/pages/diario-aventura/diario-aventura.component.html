@@ -1,0 +1,46 @@
+@if (loadingAventura()) {
+  <p class="status">Cargando aventura…</p>
+} @else if (errorAventura()) {
+  <p class="status status--error">No se ha podido cargar la aventura.</p>
+} @else if (notFound()) {
+  <p class="status status--error">No se ha encontrado la aventura.</p>
+  <a routerLink="/">← Volver</a>
+} @else if (aventura(); as a) {
+  <a class="diario__volver" routerLink="/">← Volver</a>
+
+  <header class="diario__cabecera">
+    <div class="diario-caratula" [style.--hue.deg]="hueCaratula(a)">
+      @if (a.caratulaUrl) {
+        <img class="diario-caratula__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
+      } @else {
+        <svg class="diario-caratula__icono" viewBox="0 0 24 24" aria-hidden="true">
+          <path
+            d="M4 5a2 2 0 012-2h6v18H6a2 2 0 01-2-2V5zM20 5a2 2 0 00-2-2h-6v18h6a2 2 0 002-2V5z"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+            stroke-linejoin="round"
+          />
+        </svg>
+      }
+    </div>
+
+    <h1 class="diario__titulo">{{ a.titulo }}</h1>
+  </header>
+
+  @if (loadingDiario()) {
+    <p class="status">Cargando tu aventura…</p>
+  } @else if (errorDiario()) {
+    <p class="status status--error">No se ha podido recuperar el texto de tu aventura.</p>
+  } @else {
+    <article class="diario__texto">
+      @for (bloque of bloques(); track $index) {
+        @if (bloque.esOpcionElegida) {
+          <p class="diario__opcion">{{ bloque.texto }}</p>
+        } @else {
+          <p>{{ bloque.texto }}</p>
+        }
+      }
+    </article>
+  }
+}

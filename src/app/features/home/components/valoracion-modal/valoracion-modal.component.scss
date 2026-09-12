@@ -25,3 +25,9 @@ app-star-rating-input {
   resize: vertical;
   box-sizing: border-box;
 }
+
+.valoracion-modal__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}

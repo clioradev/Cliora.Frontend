@@ -161,6 +161,7 @@ export interface OpcionArbol {
   gruposCondicion: GrupoCondicionAutor[];
   idCaracteristicaTirada: number | null;
   dificultad: number | null;
+  resultadoVisible: boolean;
   resultado: ResultadoAutor | null;
   resultadoFracaso: ResultadoAutor | null;
 }
@@ -249,6 +250,7 @@ export interface GuardarOpcionRequest {
   gruposCondicion: GuardarGrupoCondicionRequest[];
   idCaracteristicaTirada: number | null;
   dificultad: number | null;
+  resultadoVisible: boolean;
   resultado: GuardarResultadoRequest;
   resultadoFracaso: GuardarResultadoRequest | null;
 }

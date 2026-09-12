@@ -251,13 +251,24 @@ textarea {
 }
 
 .tirada-fila__caracteristica {
-  flex: 2 1 12rem;
+  flex: 1 1 8rem;
   min-width: 0;
 }
 
 .tirada-fila__dificultad {
   flex: 0 0 6rem;
   min-width: 0;
+}
+
+.tirada-fila__visible {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-1);
+  height: 2.625rem;
+}
+
+.tirada-fila__visible input {
+  width: auto;
 }
 
 .resultado-fila {

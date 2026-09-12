@@ -1,0 +1,191 @@
+@use 'breakpoints' as *;
+@use 'tokens';
+
+.portal {
+  // El portal está diseñado sobre la paleta clara ("papel"); se fuerza aquí
+  // para que no dependa de las preferencias de tema del sistema o del usuario.
+  // Se redeclaran color/background explícitamente (no basta con las variables)
+  // porque el <body> ya resolvió las suyas con el tema del sistema antes de
+  // llegar aquí, y esa resolución se hereda tal cual a los hijos que no la
+  // vuelvan a fijar.
+  @include tokens.paleta-clara;
+  color: var(--color-text);
+  background: var(--color-bg);
+}
+
+// --- Hero ---------------------------------------------------------------
+
+.portal__hero {
+  position: relative;
+  margin: calc(var(--space-6) * -1) calc(var(--space-6) * -1) 0;
+  padding: var(--space-16) var(--space-6);
+  background: var(--color-libro-bg);
+  border-bottom: 1px solid var(--color-border);
+  overflow: hidden;
+  text-align: center;
+}
+
+.portal__hero-textura {
+  position: absolute;
+  top: -10%;
+  right: -10%;
+  width: 60vw;
+  max-width: 640px;
+  opacity: 0.08;
+  mask-image: linear-gradient(to bottom, black, transparent 85%);
+  -webkit-mask-image: linear-gradient(to bottom, black, transparent 85%);
+  pointer-events: none;
+}
+
+.portal__hero-inner {
+  position: relative;
+  max-width: var(--content-width-md);
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.portal__logo {
+  height: 5rem;
+}
+
+.portal__titulo {
+  font-family: var(--font-reading);
+  font-size: 2rem;
+  line-height: 1.2;
+  margin: 0;
+
+  @media (min-width: $bp-tablet) {
+    font-size: 2.5rem;
+  }
+}
+
+.portal__subtitulo {
+  color: var(--color-text-secondary);
+  font-size: var(--text-md);
+  line-height: 1.6;
+  margin: 0;
+}
+
+.portal__cta {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+}
+
+.portal__cta-secundario {
+  display: inline-block;
+  font: inherit;
+  padding: var(--space-2) var(--space-4);
+  border: 1px solid var(--color-primary);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--color-primary);
+  text-decoration: none;
+
+  &:hover {
+    color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+  }
+
+  &:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 3px var(--color-focus-ring);
+  }
+}
+
+// --- Pilares --------------------------------------------------------------
+
+.portal__pilares {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: var(--space-8);
+  padding: var(--space-16) 0;
+}
+
+.portal__pilar {
+  h2 {
+    font-size: var(--text-lg);
+    margin: 0 0 var(--space-2);
+  }
+
+  p {
+    color: var(--color-text-secondary);
+    line-height: 1.6;
+    margin: 0;
+  }
+}
+
+// --- Cierre -----------------------------------------------------------
+
+.portal__cierre {
+  text-align: center;
+  padding: 0 0 var(--space-16);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--space-6);
+}
+
+.portal__cita {
+  font-family: var(--font-reading);
+  font-style: italic;
+  font-size: var(--text-lg);
+  max-width: var(--content-width-md);
+  margin: 0;
+  color: var(--color-text);
+}
+
+// --- Modal (login / registro / olvido / restablecer) -----------------
+
+.portal__modal {
+  display: none;
+}
+
+.portal__modal--abierto {
+  display: block;
+}
+
+.portal__modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: var(--color-overlay);
+  z-index: var(--z-modal);
+}
+
+.portal__modal-tarjeta {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: calc(var(--z-modal) + 1);
+  width: calc(100vw - var(--space-8));
+  max-width: var(--content-width-sm);
+  max-height: calc(100vh - var(--space-8));
+  overflow-y: auto;
+  background: var(--color-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+  padding: var(--space-6);
+}
+
+.portal__modal-cerrar {
+  position: absolute;
+  top: var(--space-2);
+  right: var(--space-2);
+  border: none;
+  background: transparent;
+  font-size: var(--text-xl);
+  line-height: 1;
+  padding: var(--space-1) var(--space-2);
+  cursor: pointer;
+  color: var(--color-text-secondary);
+
+  &:hover {
+    color: var(--color-text);
+  }
+}

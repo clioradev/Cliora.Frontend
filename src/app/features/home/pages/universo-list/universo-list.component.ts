@@ -1,10 +1,10 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
-import { StarRatingDisplayComponent } from '../../../../shared/components/star-rating-display/star-rating-display.component';
 import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
+import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { UniversoService } from '../../data-access/universo.service';
 import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
 
@@ -16,7 +16,7 @@ interface ContextoAventura {
 
 @Component({
   selector: 'app-universo-list',
-  imports: [RouterLink, StarRatingDisplayComponent, ResenasModalComponent, AventuraDetalleComponent, ReiniciarAventuraModalComponent],
+  imports: [RouterLink, ResenasModalComponent, AventuraDetalleComponent, ReiniciarAventuraModalComponent, ValoracionModalComponent],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
 })
@@ -33,6 +33,7 @@ export class UniversoListComponent {
 
   protected readonly opinionesAbiertas = signal<{ nivel: NivelValoracion; id: number; titulo: string } | null>(null);
   protected readonly idAventuraAReiniciar = signal<number | null>(null);
+  protected readonly idAventuraAValorar = signal<number | null>(null);
 
   protected readonly aventuraEnCurso = computed<ContextoAventura | null>(() => {
     for (const universo of this.universos()) {
@@ -149,6 +150,14 @@ export class UniversoListComponent {
   protected onAventuraReiniciada(): void {
     this.idAventuraAReiniciar.set(null);
     this.recargarUniversos();
+  }
+
+  protected valorarAventura(idAventura: number): void {
+    this.idAventuraAValorar.set(idAventura);
+  }
+
+  protected onValoracionCerrada(): void {
+    this.idAventuraAValorar.set(null);
   }
 
   private establecerIndice(campana: Campana, indice: number): void {

@@ -72,3 +72,8 @@ export interface ContinuarInfo {
   idNodo: number;
   idAventura: number;
 }
+
+export interface BloqueDiario {
+  texto: string;
+  esOpcionElegida: boolean;
+}

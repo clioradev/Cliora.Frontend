@@ -1,6 +1,4 @@
 .olvido-form {
-  max-width: var(--content-width-sm);
-  margin: var(--space-16) auto;
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
@@ -17,7 +15,6 @@
   }
 
   &__mensaje {
-    max-width: var(--content-width-sm);
-    margin: var(--space-16) auto;
+    margin: 0;
   }
 }

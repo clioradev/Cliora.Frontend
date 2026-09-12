@@ -1,4 +1,4 @@
-<div class="shell">
+<div class="shell" [class.shell--publico]="!authService.isAuthenticated()">
   <header class="shell-header">
     <img
       class="shell-header__brand marca-claro"

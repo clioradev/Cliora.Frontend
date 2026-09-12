@@ -13,10 +13,10 @@ export class CerrarSesionComponent {
 
   protected onLogout(): void {
     this.authService.logout().subscribe({
-      next: () => void this.router.navigate(['/login']),
+      next: () => void this.router.navigate(['/bienvenida']),
       error: () => {
         this.authService.clearSession();
-        void this.router.navigate(['/login']);
+        void this.router.navigate(['/bienvenida']);
       },
     });
   }

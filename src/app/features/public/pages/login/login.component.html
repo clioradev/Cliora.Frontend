@@ -1,7 +1,4 @@
 <form class="login-form" [formGroup]="form" (ngSubmit)="onSubmit()">
-  <img class="login-form__marca marca-claro" src="/media/logos/Cliora-fondo-claro-reducido.png" alt="Cliora" />
-  <img class="login-form__marca marca-oscuro" src="/media/logos/Cliora-fondo-oscuro-reducido.png" alt="Cliora" />
-
   <h1>Iniciar sesión</h1>
 
   <label>
@@ -22,6 +19,6 @@
     {{ submitting() ? 'Entrando…' : 'Entrar' }}
   </button>
 
-  <a routerLink="/registro">Crear cuenta</a>
-  <a routerLink="/olvido-contrasena">¿Has olvidado tu contraseña?</a>
+  <a routerLink="../registro">Crear cuenta</a>
+  <a routerLink="../olvido-contrasena">¿Has olvidado tu contraseña?</a>
 </form>

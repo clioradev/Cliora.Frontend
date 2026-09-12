@@ -23,8 +23,12 @@
       <p class="status status--error">{{ guardarError() }}</p>
     }
 
-    <button type="button" class="btn--primary" (click)="guardar()" [disabled]="guardando() || puntuacion() <= 0">
-      {{ guardando() ? 'Guardando…' : 'Guardar valoración' }}
-    </button>
+    <div class="valoracion-modal__acciones">
+      <button type="button" (click)="noValorar()" [disabled]="guardando()">No valorar</button>
+
+      <button type="button" class="btn--primary" (click)="guardar()" [disabled]="guardando() || puntuacion() <= 0">
+        {{ guardando() ? 'Guardando…' : 'Guardar valoración' }}
+      </button>
+    </div>
   }
 </app-modal>

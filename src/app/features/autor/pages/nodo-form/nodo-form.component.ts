@@ -194,6 +194,7 @@ export class NodoFormComponent {
       tieneTirada: this.fb.nonNullable.control(tieneTirada),
       idCaracteristicaTirada: this.fb.nonNullable.control<number | null>(opcion?.idCaracteristicaTirada ?? null),
       dificultad: this.fb.nonNullable.control<number | null>(opcion?.dificultad ?? null),
+      resultadoVisible: this.fb.nonNullable.control(opcion?.resultadoVisible ?? false),
       resultado: this.crearResultadoGroup(opcion?.resultado),
       resultadoFracaso: this.crearResultadoGroup(opcion?.resultadoFracaso),
     });
@@ -626,6 +627,7 @@ export class NodoFormComponent {
           })),
           idCaracteristicaTirada: o.tieneTirada ? toNum(o.idCaracteristicaTirada) : null,
           dificultad: o.tieneTirada ? o.dificultad : null,
+          resultadoVisible: o.tieneTirada ? o.resultadoVisible : false,
           resultado: mapResultado(o.resultado),
           resultadoFracaso: o.tieneTirada ? mapResultado(o.resultadoFracaso) : null,
         })),

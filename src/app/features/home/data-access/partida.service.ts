@@ -3,6 +3,7 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import {
+  BloqueDiario,
   ContinuarInfo,
   ElegirOpcionResponse,
   EmpezarPartidaResponse,
@@ -47,5 +48,9 @@ export class PartidaService {
 
   reiniciarAventura(idAventura: number): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/Partida/Reiniciar`, { idAventura });
+  }
+
+  obtenerDiario(idAventura: number): Observable<BloqueDiario[]> {
+    return this.http.get<BloqueDiario[]>(`${this.baseUrl}/Partida/Diario/${idAventura}`);
   }
 }

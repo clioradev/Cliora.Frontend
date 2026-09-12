@@ -7,6 +7,7 @@ import { Component, computed, input } from '@angular/core';
 })
 export class StarRatingDisplayComponent {
   readonly value = input<number>(0);
+  readonly size = input<string | null>(null);
 
   protected readonly fillPercent = computed(() => Math.max(0, Math.min(100, (this.value() / 5) * 100)));
 }

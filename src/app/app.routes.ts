@@ -26,6 +26,13 @@ export const routes: Routes = [
               import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
           },
           {
+            path: 'confirmar-registro',
+            loadComponent: () =>
+              import('./features/public/pages/confirmar-registro/confirmar-registro.component').then(
+                (m) => m.ConfirmarRegistroComponent,
+              ),
+          },
+          {
             path: 'olvido-contrasena',
             loadComponent: () =>
               import('./features/public/pages/olvido-contrasena/olvido-contrasena.component').then(

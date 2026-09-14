@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { passwordComplejidadValidator } from '../../../../core/validators/password-complejidad.validator';
 import { asyncAction } from '../../../../core/utils/async-action';
 
 function passwordsIgualesValidator(control: AbstractControl): ValidationErrors | null {
@@ -24,7 +25,7 @@ export class CambiarPasswordComponent {
   protected readonly form = this.fb.nonNullable.group(
     {
       passwordActual: ['', [Validators.required]],
-      passwordNueva: ['', [Validators.required]],
+      passwordNueva: ['', [Validators.required, passwordComplejidadValidator]],
       confirmarPassword: ['', [Validators.required]],
     },
     { validators: passwordsIgualesValidator },

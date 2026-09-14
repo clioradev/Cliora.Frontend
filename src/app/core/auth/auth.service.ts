@@ -32,6 +32,16 @@ export class AuthService {
     return this.http.post<Usuario>(`${this.baseUrl}/Permiso/Registrar`, { nombre, email, password });
   }
 
+  confirmarRegistro(email: string, codigo: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${this.baseUrl}/Permiso/ConfirmarRegistro`, { email, codigo }, { withCredentials: true })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  reenviarCodigoRegistro(email: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Permiso/ReenviarCodigoRegistro`, { email });
+  }
+
   olvidoContrasena(email: string): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/Permiso/OlvidoContrasena`, { email });
   }

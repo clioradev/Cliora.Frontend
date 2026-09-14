@@ -15,6 +15,10 @@
     Contraseña
     <input type="password" formControlName="password" autocomplete="new-password" />
   </label>
+  <p class="registro-form__hint">Debe tener al menos 8 caracteres, una mayúscula, una minúscula y un número.</p>
+  @if (form.controls.password.errors?.['passwordDebil'] && form.controls.password.touched) {
+    <p class="registro-form__error">La contraseña no cumple los requisitos mínimos.</p>
+  }
 
   <label>
     Confirmar contraseña

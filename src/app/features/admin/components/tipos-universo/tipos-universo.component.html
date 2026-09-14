@@ -1,0 +1,64 @@
+<form class="tipo-universo-form" [formGroup]="form" (ngSubmit)="crear()">
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" maxlength="50" />
+  </label>
+
+  <label>
+    Descripción
+    <textarea formControlName="descripcion" rows="2"></textarea>
+  </label>
+
+  @if (errorCrear()) {
+    <p class="status status--error">{{ errorCrear() }}</p>
+  }
+
+  <button type="submit" class="btn--primary" [disabled]="form.invalid || creando()">
+    <app-icono nombre="añadir" />
+    {{ creando() ? 'Creando…' : 'Añadir tipo de universo' }}
+  </button>
+</form>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (tipos().length === 0) {
+  <p>Todavía no hay ningún tipo de universo.</p>
+} @else {
+  @if (errorImagen()) {
+    <p class="status status--error">{{ errorImagen() }}</p>
+  }
+
+  <ul class="tipo-universo-list">
+    @for (tipo of tipos(); track tipo.id) {
+      <li class="tipo-universo-list__item">
+        @if (tipo.fondoUrl) {
+          <img class="tipo-universo-list__imagen" [src]="tipo.fondoUrl" alt="" />
+        } @else {
+          <div class="tipo-universo-list__imagen tipo-universo-list__imagen--vacia">
+            <app-icono nombre="imagen" />
+          </div>
+        }
+
+        <span class="tipo-universo-list__nombre">{{ tipo.nombre }}</span>
+
+        <input
+          #imagenInput
+          type="file"
+          accept="image/png,image/jpeg,image/webp"
+          hidden
+          (change)="seleccionarImagen(tipo, $any($event.target).files); imagenInput.value = ''"
+        />
+        <button
+          type="button"
+          class="btn-icono"
+          (click)="imagenInput.click()"
+          [disabled]="filaEnCursoDe(tipo)"
+          [attr.aria-label]="tipo.fondoUrl ? 'Cambiar imagen' : 'Subir imagen'"
+          [attr.title]="tipo.fondoUrl ? 'Cambiar imagen' : 'Subir imagen'"
+        >
+          <app-icono nombre="subir" />
+        </button>
+      </li>
+    }
+  </ul>
+}

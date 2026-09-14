@@ -10,10 +10,19 @@
     <button type="button" [class.panel-admin__tab--activa]="tabActiva() === 'roles'" (click)="tabActiva.set('roles')">
       Roles
     </button>
+    <button
+      type="button"
+      [class.panel-admin__tab--activa]="tabActiva() === 'tiposUniverso'"
+      (click)="tabActiva.set('tiposUniverso')"
+    >
+      Tipos de universo
+    </button>
   </nav>
 
   @if (tabActiva() === 'aventuras') {
     <app-solicitudes-publicacion />
+  } @else if (tabActiva() === 'tiposUniverso') {
+    <app-tipos-universo />
   } @else {
     <label class="panel-admin__buscador">
       Buscar usuario por email

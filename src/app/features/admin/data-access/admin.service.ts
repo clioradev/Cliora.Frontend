@@ -3,7 +3,12 @@ import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import { Usuario } from '../../../core/auth/usuario.model';
-import { Rol, SolicitudPublicacionAdmin } from '../models/admin.model';
+import {
+  CatTipoUniversoAdmin,
+  GuardarCatTipoUniversoRequest,
+  Rol,
+  SolicitudPublicacionAdmin,
+} from '../models/admin.model';
 
 @Injectable({ providedIn: 'root' })
 export class AdminService {
@@ -24,6 +29,20 @@ export class AdminService {
 
   quitarRol(idUsuario: number, idRol: number): Observable<Usuario> {
     return this.http.delete<Usuario>(`${this.baseUrl}/Admin/Usuario/${idUsuario}/Rol/${idRol}`);
+  }
+
+  obtenerTiposUniverso(): Observable<CatTipoUniversoAdmin[]> {
+    return this.http.get<CatTipoUniversoAdmin[]>(`${this.baseUrl}/Admin/CatTipoUniverso`);
+  }
+
+  crearTipoUniverso(request: GuardarCatTipoUniversoRequest): Observable<CatTipoUniversoAdmin> {
+    return this.http.post<CatTipoUniversoAdmin>(`${this.baseUrl}/Admin/CatTipoUniverso`, request);
+  }
+
+  subirImagenTipoUniverso(id: number, archivo: File): Observable<CatTipoUniversoAdmin> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<CatTipoUniversoAdmin>(`${this.baseUrl}/Admin/CatTipoUniverso/${id}/Imagen`, formData);
   }
 
   obtenerSolicitudesPublicacion(): Observable<SolicitudPublicacionAdmin[]> {

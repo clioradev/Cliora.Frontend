@@ -2,6 +2,9 @@
   <a class="config-tabs__link" routerLink="preferencias" routerLinkActive="config-tabs__link--active">Preferencias</a>
   <a class="config-tabs__link" routerLink="contrasena" routerLinkActive="config-tabs__link--active">Contraseña</a>
   <a class="config-tabs__link" routerLink="sesion" routerLinkActive="config-tabs__link--active">Sesión</a>
+  @if (esAdmin()) {
+    <a class="config-tabs__link" routerLink="/admin" routerLinkActive="config-tabs__link--active">Administración</a>
+  }
 </nav>
 
 <router-outlet />

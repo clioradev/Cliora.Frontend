@@ -4,6 +4,17 @@ export interface Rol {
   descripcion: string | null;
 }
 
+export interface CatTipoUniversoAdmin {
+  id: number;
+  nombre: string;
+  fondoUrl: string | null;
+}
+
+export interface GuardarCatTipoUniversoRequest {
+  nombre: string;
+  descripcion: string | null;
+}
+
 export interface SolicitudPublicacionAdmin {
   idVersionAventura: number;
   version: number;

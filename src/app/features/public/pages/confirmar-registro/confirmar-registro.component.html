@@ -1,0 +1,35 @@
+@if (!email()) {
+  <p class="confirmar-form__error">El enlace no es válido. <a routerLink="../registro">Vuelve a registrarte</a>.</p>
+} @else {
+  <form class="confirmar-form" [formGroup]="form" (ngSubmit)="onSubmit()">
+    <h1>Confirma tu cuenta</h1>
+
+    <p>Hemos enviado un código a {{ email() }}. Introdúcelo para activar tu cuenta.</p>
+
+    <label>
+      Código de verificación
+      <input type="text" formControlName="codigo" inputmode="numeric" maxlength="6" autocomplete="one-time-code" />
+    </label>
+
+    @if (error()) {
+      <p class="confirmar-form__error">{{ error() }}</p>
+    }
+
+    <button type="submit" class="btn--primary" [disabled]="form.invalid || confirmando()">
+      {{ confirmando() ? 'Confirmando…' : 'Confirmar cuenta' }}
+    </button>
+
+    <button type="button" (click)="reenviarCodigo()" [disabled]="reenviando()">
+      {{ reenviando() ? 'Enviando…' : 'Reenviar código' }}
+    </button>
+
+    @if (reenviado()) {
+      <p class="confirmar-form__exito">Te hemos enviado un nuevo código.</p>
+    }
+    @if (errorReenvio()) {
+      <p class="confirmar-form__error">{{ errorReenvio() }}</p>
+    }
+
+    <a routerLink="../login">Volver</a>
+  </form>
+}

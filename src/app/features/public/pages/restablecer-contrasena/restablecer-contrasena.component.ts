@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { passwordComplejidadValidator } from '../../../../core/validators/password-complejidad.validator';
 import { asyncAction } from '../../../../core/utils/async-action';
 
 function passwordsIgualesValidator(control: AbstractControl): ValidationErrors | null {
@@ -28,7 +29,7 @@ export class RestablecerContrasenaComponent {
 
   protected readonly form = this.fb.nonNullable.group(
     {
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required, passwordComplejidadValidator]],
       confirmarPassword: ['', [Validators.required]],
     },
     { validators: passwordsIgualesValidator },

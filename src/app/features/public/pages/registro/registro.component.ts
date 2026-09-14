@@ -2,6 +2,7 @@ import { Component, inject } from '@angular/core';
 import { AbstractControl, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
+import { passwordComplejidadValidator } from '../../../../core/validators/password-complejidad.validator';
 import { asyncAction } from '../../../../core/utils/async-action';
 
 function passwordsIgualesValidator(control: AbstractControl): ValidationErrors | null {
@@ -26,7 +27,7 @@ export class RegistroComponent {
     {
       nombre: ['', [Validators.required]],
       email: ['', [Validators.required, Validators.email]],
-      password: ['', [Validators.required]],
+      password: ['', [Validators.required, passwordComplejidadValidator]],
       confirmarPassword: ['', [Validators.required]],
     },
     { validators: passwordsIgualesValidator },
@@ -35,7 +36,8 @@ export class RegistroComponent {
   private readonly registroAction = asyncAction(
     (nombre: string, email: string, password: string) => this.authService.register(nombre, email, password),
     {
-      onSuccess: () => void this.router.navigate(['../login'], { relativeTo: this.route }),
+      onSuccess: (_usuario, _nombre, email) =>
+        void this.router.navigate(['../confirmar-registro'], { relativeTo: this.route, queryParams: { email } }),
       defaultErrorMessage: 'No se ha podido completar el registro.',
     },
   );

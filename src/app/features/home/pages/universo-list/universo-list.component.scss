@@ -377,6 +377,23 @@ button.tag-chip:hover:not(.tag-chip--activo) {
   margin-top: var(--space-2);
 }
 
+@media (min-width: $bp-tablet) {
+  .libro-abierto {
+    &__pagina--izquierda {
+      order: 2;
+    }
+
+    &__lomo-central {
+      order: 1;
+    }
+
+    &__pagina--derecha {
+      order: 0;
+      box-shadow: inset -6px 0 8px -6px rgba(0, 0, 0, 0.35);
+    }
+  }
+}
+
 @media (max-width: $bp-tablet) {
   .buscador__fila {
     flex-direction: column;
@@ -404,12 +421,14 @@ button.tag-chip:hover:not(.tag-chip--activo) {
     }
 
     &__pagina--izquierda {
+      order: 0;
       width: 100%;
       max-width: 16rem;
       margin: 0 auto;
     }
 
     &__lomo-central {
+      order: 0;
       flex: 0 0 1.85rem;
       width: 100%;
 
@@ -421,6 +440,7 @@ button.tag-chip:hover:not(.tag-chip--activo) {
     }
 
     &__pagina--derecha {
+      order: 0;
       box-shadow: none;
     }
   }

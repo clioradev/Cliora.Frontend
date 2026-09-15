@@ -7,7 +7,7 @@
 
     @if (idAventura()) {
       <button type="button" class="btn--primary" (click)="previsualizar()" [disabled]="previsualizando()">
-        {{ previsualizando() ? 'Preparando…' : 'Previsualizar aventura' }}
+        {{ previsualizando() ? 'Preparando…' : 'Previsualizar' }}
       </button>
 
       @if (!esSolicitudPendiente()) {
@@ -69,33 +69,40 @@
           <input type="number" formControlName="orden" min="1" />
         </label>
 
-        <label class="campo-cantidad">
-          Cantidad de decisión
-          <select formControlName="cantidadDecision">
-            @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
-              <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
-            }
-          </select>
-        </label>
+        @if (!esLibro()) {
+          <label class="campo-cantidad">
+            Cantidad de decisión
+            <select formControlName="cantidadDecision">
+              @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
+                <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+              }
+            </select>
+          </label>
 
-        <label class="campo-duracion">
-          Duración actual (min)
-          <input type="number" formControlName="duracion" min="0" [disabled]="!idAventura()" />
-        </label>
+          <label class="campo-duracion">
+            Duración actual (min)
+            <input type="number" formControlName="duracion" min="0" [disabled]="!idAventura()" />
+          </label>
 
-        <div class="campo-calcular">
-          <span class="campo-calcular__etiqueta">Calcular</span>
-          <button
-            type="button"
-            class="btn-icono btn-icono--primary"
-            (click)="calcularDuracion()"
-            [disabled]="!idAventura() || calculandoDuracion()"
-            [attr.aria-label]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
-            [attr.title]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
-          >
-            <app-icono nombre="calcular" />
-          </button>
-        </div>
+          <div class="campo-calcular">
+            <span class="campo-calcular__etiqueta">Calcular</span>
+            <button
+              type="button"
+              class="btn-icono btn-icono--primary"
+              (click)="calcularDuracion()"
+              [disabled]="!idAventura() || calculandoDuracion()"
+              [attr.aria-label]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
+              [attr.title]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
+            >
+              <app-icono nombre="calcular" />
+            </button>
+          </div>
+        } @else {
+          <label class="campo-enlace-compra">
+            Enlace de compra (Amazon)
+            <input type="url" formControlName="enlaceCompra" placeholder="https://…" [disabled]="!idAventura()" />
+          </label>
+        }
       </div>
 
       @if (errorDuracion()) {
@@ -175,7 +182,7 @@
     @if (tabActiva() === 'contenido') {
       <app-actos-escenas [idAventura]="id" [actos]="aventura()?.actos ?? []" (cambiado)="recargarContenido()" />
     } @else {
-      <app-caracteristicas [idAventura]="id" />
+      <app-caracteristicas [idAventura]="id" [esLibro]="esLibro()" />
     }
   } @else {
     <p class="aventura-form__placeholder">Guarda la aventura primero para añadir actos, escenas y variables.</p>

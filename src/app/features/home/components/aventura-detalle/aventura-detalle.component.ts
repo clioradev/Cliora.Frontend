@@ -44,10 +44,17 @@ export class AventuraDetalleComponent {
   }
 
   private readonly empezarAction = asyncAction((aventura: Aventura) => this.partidaService.empezar(aventura.idVersionAventura!), {
-    onSuccess: (respuesta, aventura) =>
+    onSuccess: (respuesta, aventura) => {
+      // Un libro se auto-juega entero en el propio Empezar (el backend ya lo deja Finalizado):
+      // el jugador nunca ve pantallas de nodo, va directo al diario a leerlo.
+      if (aventura.esLibro) {
+        void this.router.navigate(['/aventura', aventura.idAventura, 'diario']);
+        return;
+      }
       void this.router.navigate(['/partida', respuesta.idNodoActual], {
         queryParams: { idAventura: aventura.idAventura },
-      }),
+      });
+    },
     defaultErrorMessage: 'No se ha podido empezar la partida.',
   });
   protected readonly starting = this.empezarAction.loading;

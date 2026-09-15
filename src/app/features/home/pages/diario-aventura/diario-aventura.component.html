@@ -6,7 +6,7 @@
   <p class="status status--error">No se ha encontrado la aventura.</p>
   <a routerLink="/">← Volver</a>
 } @else if (aventura(); as a) {
-  <a class="diario__volver" routerLink="/">← Volver</a>
+  <button type="button" class="diario__volver" (click)="volver()">← Volver</button>
 
   <header class="diario__cabecera">
     <div class="diario-caratula" [style.--hue.deg]="hueCaratula(a)">
@@ -35,8 +35,14 @@
   } @else {
     <article class="diario__texto">
       @for (bloque of bloques(); track $index) {
+        @if (a.esLibro && esInicioDeActo(bloque, $index) && bloque.actoDescripcion) {
+          <p class="diario__parte">{{ bloque.actoDescripcion }}</p>
+        }
+        @if (a.esLibro && esInicioDeEscena(bloque, $index) && bloque.escenaDescripcion) {
+          <p class="diario__capitulo">{{ bloque.escenaDescripcion }}</p>
+        }
         @if (bloque.esOpcionElegida) {
-          <p class="diario__opcion">{{ bloque.texto }}</p>
+          <p class="diario__opcion" [class.diario__opcion--sin-cursiva]="a.esLibro">{{ bloque.texto }}</p>
         } @else {
           <p>{{ bloque.texto }}</p>
         }

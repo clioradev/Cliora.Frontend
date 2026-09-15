@@ -1,0 +1,10 @@
+h3 {
+  margin-top: 0;
+}
+
+.tipo-aventura-modal__acciones {
+  display: flex;
+  gap: var(--space-3);
+  justify-content: flex-end;
+  margin-top: var(--space-4);
+}

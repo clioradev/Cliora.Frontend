@@ -56,6 +56,10 @@
 
     h2 {
       margin: 0;
+      // Halo suave (no una capa sólida) para que el título se lea bien sobre la foto sin taparla.
+      text-shadow:
+        0 0 6px var(--color-surface),
+        0 0 14px var(--color-surface);
     }
   }
 
@@ -64,6 +68,9 @@
     z-index: 1;
     margin: var(--space-2) 0 0;
     color: var(--color-text-secondary);
+    text-shadow:
+      0 0 6px var(--color-surface),
+      0 0 14px var(--color-surface);
   }
 }
 
@@ -140,6 +147,7 @@ $sombra-lomo-lateral:
 }
 
 .libro-lomo {
+  position: relative;
   flex: 0 0 2.75rem;
   width: 2.75rem;
   display: flex;
@@ -165,6 +173,45 @@ $sombra-lomo-lateral:
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
+  }
+
+  // Un libro se distingue en la estantería con un marco dorado bien visible, también cuando solo
+  // se ve el lomo (minimizado): mismo tratamiento que el libro abierto (--color-accent, nunca verde).
+  &--libro {
+    border-color: var(--color-accent);
+    border-width: 3px;
+    box-shadow:
+      0 0 0 3px var(--color-accent),
+      0 0 10px 2px color-mix(in srgb, var(--color-accent) 55%, transparent),
+      var(--shadow-md),
+      #{$sombra-lomo-lateral};
+  }
+
+  // Texto vertical "Libro", igual que el título del lomo (mismo sentido de lectura), pero con
+  // fondo de color llamativo para que se note incluso minimizado.
+  &__cintilla {
+    flex: 0 0 3.25rem;
+    width: 100%;
+    position: relative;
+
+    .lomo-texto {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%) rotate(-90deg);
+      white-space: nowrap;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      // Texto fijo oscuro (no var(--color-text)): el fondo dorado tiene brillo similar en los dos
+      // temas, y en modo oscuro --color-text es casi blanco -> quedaría ilegible sobre el dorado.
+      color: #2b2313;
+      background: var(--color-accent);
+      padding: 0.15rem 0.6rem;
+      border-radius: var(--radius-sm);
+      pointer-events: none;
+    }
   }
 }
 
@@ -226,6 +273,30 @@ $sombra-lomo-lateral:
     margin: 0;
     font-family: var(--font-reading);
     font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  // Un libro se distingue con un marco dorado bien llamativo, igual que su lomo en la estantería.
+  &--libro {
+    border-color: var(--color-accent);
+    border-width: 3px;
+    box-shadow:
+      0 0 0 3px var(--color-accent),
+      0 0 14px 2px color-mix(in srgb, var(--color-accent) 55%, transparent),
+      var(--shadow-md);
+  }
+
+  &__badge-libro {
+    font-size: 0.65rem;
+    font-weight: 800;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    color: #2b2313;
+    background: var(--color-accent);
+    padding: 0.15rem 0.5rem;
+    border-radius: var(--radius-sm);
   }
 
   &__descripcion {

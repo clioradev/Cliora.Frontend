@@ -21,6 +21,11 @@
   display: inline-block;
   margin-bottom: var(--space-6);
   color: var(--color-text-secondary);
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  cursor: pointer;
 }
 
 .diario__cabecera {
@@ -68,6 +73,7 @@
 
   p {
     margin: 0 0 var(--space-4);
+    white-space: pre-line;
   }
 }
 
@@ -75,6 +81,42 @@
   font-style: italic;
   color: var(--color-text-secondary);
   margin: var(--space-8) 0;
+
+  &--sin-cursiva {
+    font-style: normal;
+  }
+}
+
+// Título de capítulo (descripción de la escena) - solo en libros, al principio y en cada cambio de
+// escena.
+.diario__capitulo {
+  font-family: var(--font-reading);
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.4em;
+  margin: var(--space-8) 0 var(--space-6);
+}
+
+// Título de parte (descripción del acto) - un nivel por encima del capítulo, con una floritura
+// decorativa a cada lado para marcar el inicio de una parte nueva del libro.
+.diario__parte {
+  font-family: var(--font-reading);
+  font-weight: 700;
+  text-align: center;
+  font-size: 1.7em;
+  color: var(--color-primary);
+  margin: var(--space-10, 4rem) 0 var(--space-8);
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--color-secondary), transparent);
+  }
 }
 
 @media (max-width: $bp-tablet) {

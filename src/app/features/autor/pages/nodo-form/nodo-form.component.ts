@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { Component, effect, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { AbstractControl, FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -75,6 +75,7 @@ export class NodoFormComponent {
   });
   protected readonly cargando = this.nodoResource.isLoading;
   protected readonly nodo = this.nodoResource.value;
+  protected readonly esLibro = computed(() => this.nodo()?.esLibro ?? false);
 
   private readonly caracteristicasResource = rxResource({
     params: () => this.idAventura,
@@ -189,7 +190,10 @@ export class NodoFormComponent {
   private crearOpcionGroup(opcion?: OpcionArbol) {
     const tieneTirada = opcion?.dificultad != null;
     return this.fb.group({
-      texto: this.fb.nonNullable.control(opcion?.texto ?? '', [Validators.required, Validators.maxLength(500)]),
+      texto: this.fb.nonNullable.control(
+        opcion?.texto ?? '',
+        this.esLibro() ? [Validators.maxLength(500)] : [Validators.required, Validators.maxLength(500)],
+      ),
       gruposCondicion: this.fb.array((opcion?.gruposCondicion ?? []).map((g) => this.crearGrupoCondicionGroup(g))),
       tieneTirada: this.fb.nonNullable.control(tieneTirada),
       idCaracteristicaTirada: this.fb.nonNullable.control<number | null>(opcion?.idCaracteristicaTirada ?? null),
@@ -233,7 +237,13 @@ export class NodoFormComponent {
     contenidos.forEach((c) => this.contenidos.push(this.crearContenidoGroup(c)));
 
     this.opciones.clear();
-    nodo.opciones.forEach((o) => this.opciones.push(this.crearOpcionGroup(o)));
+    if (nodo.esLibro && nodo.opciones.length === 0) {
+      // Un nodo de libro siempre tiene una única opción: si nace vacío (recién creado), se le añade
+      // ya para que el autor no tenga que pulsar "Añadir opción" (oculto en libros).
+      this.opciones.push(this.crearOpcionGroup());
+    } else {
+      nodo.opciones.forEach((o) => this.opciones.push(this.crearOpcionGroup(o)));
+    }
   }
 
   protected agregarContenido(despuesDeIndex?: number): void {
@@ -336,10 +346,16 @@ export class NodoFormComponent {
   }
 
   protected agregarOpcion(): void {
+    if (this.esLibro()) {
+      return;
+    }
     this.opciones.push(this.crearOpcionGroup());
   }
 
   protected pedirEliminarOpcion(index: number): void {
+    if (this.esLibro()) {
+      return;
+    }
     this.eliminarOpcionIndex.set(index);
   }
 

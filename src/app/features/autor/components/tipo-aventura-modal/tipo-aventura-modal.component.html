@@ -1,0 +1,13 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>¿Es una aventura interactiva?</h3>
+
+  <p>
+    Una aventura interactiva tiene decisiones, condiciones, tiradas y varios finales posibles. Un
+    libro es una historia lineal, sin ramas: cada página lleva siempre a la siguiente.
+  </p>
+
+  <div class="tipo-aventura-modal__acciones">
+    <button type="button" (click)="elegir(true)">No, es un libro</button>
+    <button type="button" class="btn--primary" (click)="elegir(false)">Sí, interactiva</button>
+  </div>
+</app-modal>

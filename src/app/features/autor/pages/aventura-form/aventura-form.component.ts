@@ -35,13 +35,18 @@ export class AventuraFormComponent {
   });
 
   private readonly idCampana = Number(this.route.snapshot.queryParamMap.get('idCampana'));
+  // EsLibro se decide una única vez, al crear (ver panel-autor): en creación viene del query param;
+  // en edición, de la propia aventura cargada. Nunca se envía al actualizar.
+  private readonly esLibroCreacion = this.route.snapshot.queryParamMap.get('esLibro') === 'true';
+  protected readonly esLibro = computed(() => this.aventura()?.esLibro ?? this.esLibroCreacion);
 
   protected readonly form = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.maxLength(200)]],
     descripcion: [''],
     orden: [1, [Validators.required, Validators.min(1)]],
-    cantidadDecision: [2, [Validators.required]],
+    cantidadDecision: this.fb.control<number | null>(2),
     duracion: this.fb.control<number | null>(null, [Validators.min(0)]),
+    enlaceCompra: [''],
   });
 
   protected readonly caratulaUrl = signal<string | null>(null);
@@ -66,21 +71,37 @@ export class AventuraFormComponent {
         this.autorService.getSiguienteOrden(this.idCampana).subscribe((orden) => this.form.patchValue({ orden }));
       }
     });
+
+    // cantidadDecision solo es obligatoria para aventuras interactivas; en un libro el campo ni
+    // siquiera se muestra. Se recalcula cada vez que esLibro() cambia (p. ej. al cargar la aventura
+    // en modo edición, que es cuando se sabe con certeza si es un libro).
+    effect(() => {
+      const control = this.form.controls.cantidadDecision;
+      if (this.esLibro()) {
+        control.clearValidators();
+      } else {
+        control.setValidators(Validators.required);
+      }
+      control.updateValueAndValidity({ emitEvent: false });
+    });
   }
 
   private readonly guardarAction = asyncAction(
     () => {
-      const { titulo, descripcion, orden, cantidadDecision, duracion } = this.form.getRawValue();
+      const { titulo, descripcion, orden, cantidadDecision, duracion, enlaceCompra } = this.form.getRawValue();
       const dto = {
         titulo,
         descripcion: descripcion.trim() || null,
         orden,
         cantidadDecision,
         duracion: duracion ?? null,
+        enlaceCompra: enlaceCompra.trim() || null,
       };
 
       const id = this.idAventura();
-      return id ? this.autorService.actualizarAventura(id, dto) : this.autorService.crearAventura(this.idCampana, dto);
+      return id
+        ? this.autorService.actualizarAventura(id, dto)
+        : this.autorService.crearAventura(this.idCampana, { ...dto, esLibro: this.esLibroCreacion });
     },
     {
       onSuccess: (aventura) => {
@@ -118,10 +139,17 @@ export class AventuraFormComponent {
   }
 
   private readonly previsualizarAction = asyncAction(() => this.autorService.previsualizarAventura(this.idAventura()!), {
-    onSuccess: (respuesta) =>
+    onSuccess: (respuesta) => {
+      // Un libro se auto-juega entero al previsualizar (igual que a un jugador real) y aterriza
+      // directo en el diario; una aventura interactiva se sigue navegando nodo a nodo.
+      if (this.esLibro()) {
+        void this.router.navigate(['/aventura', this.idAventura(), 'diario'], { queryParams: { preview: true } });
+        return;
+      }
       void this.router.navigate(['/partida', respuesta.idNodoActual], {
         queryParams: { idAventura: this.idAventura(), preview: true },
-      }),
+      });
+    },
     defaultErrorMessage: 'No se ha podido previsualizar la aventura.',
   });
   protected readonly previsualizando = this.previsualizarAction.loading;
@@ -202,6 +230,7 @@ export class AventuraFormComponent {
       orden: aventura.orden,
       cantidadDecision: aventura.cantidadDecision,
       duracion: aventura.duracion,
+      enlaceCompra: aventura.enlaceCompra ?? '',
     });
     this.caratulaUrl.set(aventura.caratulaUrl);
   }

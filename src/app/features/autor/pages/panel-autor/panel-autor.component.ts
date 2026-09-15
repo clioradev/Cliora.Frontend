@@ -1,10 +1,11 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
 import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { CampanaFormModalComponent } from '../../components/campana-form-modal/campana-form-modal.component';
+import { TipoAventuraModalComponent } from '../../components/tipo-aventura-modal/tipo-aventura-modal.component';
 import { UniversoFormModalComponent } from '../../components/universo-form-modal/universo-form-modal.component';
 import { AutorService } from '../../data-access/autor.service';
 import { AventuraAutor, CampanaAutor, UniversoAutor } from '../../models/autor.model';
@@ -22,12 +23,20 @@ interface EliminarModalState {
 
 @Component({
   selector: 'app-panel-autor',
-  imports: [RouterLink, IconoComponent, UniversoFormModalComponent, CampanaFormModalComponent, ConfirmarEliminarModalComponent],
+  imports: [
+    RouterLink,
+    IconoComponent,
+    UniversoFormModalComponent,
+    CampanaFormModalComponent,
+    ConfirmarEliminarModalComponent,
+    TipoAventuraModalComponent,
+  ],
   templateUrl: './panel-autor.component.html',
   styleUrl: './panel-autor.component.scss',
 })
 export class PanelAutorComponent {
   private readonly autorService = inject(AutorService);
+  private readonly router = inject(Router);
 
   private readonly universosResource = rxResource({
     stream: () => this.autorService.getUniversos(),
@@ -40,6 +49,24 @@ export class PanelAutorComponent {
   protected readonly universoModal = signal<UniversoAutor | 'nuevo' | null>(null);
   protected readonly campanaModal = signal<CampanaModalState | null>(null);
   protected readonly eliminarModal = signal<EliminarModalState | null>(null);
+  protected readonly tipoAventuraModal = signal<number | null>(null);
+
+  protected nuevaAventura(idCampana: number): void {
+    this.tipoAventuraModal.set(idCampana);
+  }
+
+  protected cerrarTipoAventuraModal(): void {
+    this.tipoAventuraModal.set(null);
+  }
+
+  protected onTipoAventuraElegido(esLibro: boolean): void {
+    const idCampana = this.tipoAventuraModal();
+    this.tipoAventuraModal.set(null);
+    if (idCampana === null) {
+      return;
+    }
+    void this.router.navigate(['/autor/aventura/nueva'], { queryParams: { idCampana, esLibro } });
+  }
 
   protected nuevoUniverso(): void {
     this.universoModal.set('nuevo');

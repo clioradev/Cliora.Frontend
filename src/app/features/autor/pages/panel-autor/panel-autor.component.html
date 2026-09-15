@@ -69,15 +69,15 @@
                   </ul>
                 }
 
-                <a
+                <button
+                  type="button"
                   class="btn-icono btn-icono--primary campana-card__anadir-aventura"
-                  [routerLink]="['/autor/aventura/nueva']"
-                  [queryParams]="{ idCampana: campana.idCampana }"
+                  (click)="nuevaAventura(campana.idCampana)"
                   aria-label="Añadir nueva aventura"
                   title="Añadir nueva aventura"
                 >
                   <app-icono nombre="añadir" />
-                </a>
+                </button>
               </article>
             }
           </div>
@@ -117,4 +117,8 @@
     (cerrado)="cerrarEliminarModal()"
     (eliminado)="onEliminado()"
   />
+}
+
+@if (tipoAventuraModal() !== null) {
+  <app-tipo-aventura-modal (cerrado)="cerrarTipoAventuraModal()" (elegido)="onTipoAventuraElegido($event)" />
 }

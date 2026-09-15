@@ -154,7 +154,7 @@
             }
 
             <div class="nodo-form__contenido-acciones">
-              @if (gruposCondicionDe(contenido).length === 0) {
+              @if (!esLibro() && gruposCondicionDe(contenido).length === 0) {
                 <button
                   type="button"
                   class="btn-icono btn-icono--primary"
@@ -285,7 +285,7 @@
               </label>
             }
 
-            @if (efectosDe(opcionIndex, rama).length === 0) {
+            @if (!esLibro() && efectosDe(opcionIndex, rama).length === 0) {
               <div class="resultado-fila__efectos-trigger">
                 <span class="resultado-fila__efectos-trigger-etiqueta">Efectos</span>
                 <button
@@ -301,7 +301,7 @@
             }
           </div>
 
-          @if (efectosDe(opcionIndex, rama).length > 0) {
+          @if (!esLibro() && efectosDe(opcionIndex, rama).length > 0) {
             <fieldset class="nodo-form__seccion" formArrayName="efectos">
               <legend>Efectos al elegir esta opción</legend>
               <div class="efectos-lista">
@@ -369,86 +369,88 @@
 
         @for (opcion of opciones.controls; track $index; let opcionIndex = $index) {
           <div class="opcion-card" [formGroupName]="opcionIndex">
-            <div class="opcion-card__fila-texto">
-              <label class="opcion-card__texto">
-                Texto de la opción
-                <input type="text" formControlName="texto" />
-              </label>
+            @if (!esLibro()) {
+              <div class="opcion-card__fila-texto">
+                <label class="opcion-card__texto">
+                  Texto de la opción
+                  <input type="text" formControlName="texto" />
+                </label>
 
-              <div class="opcion-card__acciones-fila">
-                @if (gruposCondicionDe(opcion).length === 0) {
-                  <div class="opcion-card__condiciones-trigger">
-                    <span class="opcion-card__condiciones-trigger-etiqueta">Condiciones</span>
+                <div class="opcion-card__acciones-fila">
+                  @if (gruposCondicionDe(opcion).length === 0) {
+                    <div class="opcion-card__condiciones-trigger">
+                      <span class="opcion-card__condiciones-trigger-etiqueta">Condiciones</span>
+                      <button
+                        type="button"
+                        class="btn-icono btn-icono--primary"
+                        (click)="agregarGrupoCondicion(gruposCondicionDe(opcion))"
+                        aria-label="Añadir grupo de condiciones"
+                        title="Añadir grupo de condiciones"
+                      >
+                        <app-icono nombre="condicion" />
+                      </button>
+                    </div>
+                  }
+
+                  <div class="opcion-card__eliminar-trigger">
+                    <span class="opcion-card__eliminar-trigger-etiqueta">Borrar</span>
                     <button
                       type="button"
-                      class="btn-icono btn-icono--primary"
-                      (click)="agregarGrupoCondicion(gruposCondicionDe(opcion))"
-                      aria-label="Añadir grupo de condiciones"
-                      title="Añadir grupo de condiciones"
+                      class="btn-icono btn-icono--peligro"
+                      (click)="pedirEliminarOpcion(opcionIndex)"
+                      aria-label="Eliminar opción"
+                      title="Eliminar opción"
                     >
-                      <app-icono nombre="condicion" />
+                      <app-icono nombre="eliminar" />
                     </button>
                   </div>
-                }
-
-                <div class="opcion-card__eliminar-trigger">
-                  <span class="opcion-card__eliminar-trigger-etiqueta">Borrar</span>
-                  <button
-                    type="button"
-                    class="btn-icono btn-icono--peligro"
-                    (click)="pedirEliminarOpcion(opcionIndex)"
-                    aria-label="Eliminar opción"
-                    title="Eliminar opción"
-                  >
-                    <app-icono nombre="eliminar" />
-                  </button>
                 </div>
               </div>
-            </div>
 
-            @if (gruposCondicionDe(opcion).length > 0) {
-              <ng-container
-                *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(opcion) }"
-              ></ng-container>
+              @if (gruposCondicionDe(opcion).length > 0) {
+                <ng-container
+                  *ngTemplateOutlet="condicionesTpl; context: { grupos: gruposCondicionDe(opcion) }"
+                ></ng-container>
+              }
+
+              <fieldset class="nodo-form__seccion">
+                <legend>Tirada</legend>
+                <div class="tirada-fila">
+                  <button
+                    type="button"
+                    class="tirada-toggle"
+                    [class.tirada-toggle--activo]="opcion.get('tieneTirada')?.value"
+                    (click)="opcion.get('tieneTirada')!.setValue(!opcion.get('tieneTirada')!.value)"
+                  >
+                    Tirada
+                  </button>
+
+                  @if (opcion.get('tieneTirada')?.value) {
+                    <label class="tirada-fila__caracteristica">
+                      Característica
+                      <select
+                        formControlName="idCaracteristicaTirada"
+                        (change)="onSeleccionCaracteristicaTirada(opcionIndex, $any($event.target).value)"
+                      >
+                        <option [value]="null">Sin característica</option>
+                        <option [value]="CREAR_CARACTERISTICA">+ Añadir característica…</option>
+                        @for (car of caracteristicas(); track car.idCaracteristica) {
+                          <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
+                        }
+                      </select>
+                    </label>
+                    <label class="tirada-fila__dificultad">
+                      Dificultad
+                      <input type="number" formControlName="dificultad" />
+                    </label>
+                    <label class="tirada-fila__visible">
+                      <input type="checkbox" formControlName="resultadoVisible" />
+                      Visible
+                    </label>
+                  }
+                </div>
+              </fieldset>
             }
-
-            <fieldset class="nodo-form__seccion">
-              <legend>Tirada</legend>
-              <div class="tirada-fila">
-                <button
-                  type="button"
-                  class="tirada-toggle"
-                  [class.tirada-toggle--activo]="opcion.get('tieneTirada')?.value"
-                  (click)="opcion.get('tieneTirada')!.setValue(!opcion.get('tieneTirada')!.value)"
-                >
-                  Tirada
-                </button>
-
-                @if (opcion.get('tieneTirada')?.value) {
-                  <label class="tirada-fila__caracteristica">
-                    Característica
-                    <select
-                      formControlName="idCaracteristicaTirada"
-                      (change)="onSeleccionCaracteristicaTirada(opcionIndex, $any($event.target).value)"
-                    >
-                      <option [value]="null">Sin característica</option>
-                      <option [value]="CREAR_CARACTERISTICA">+ Añadir característica…</option>
-                      @for (car of caracteristicas(); track car.idCaracteristica) {
-                        <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
-                      }
-                    </select>
-                  </label>
-                  <label class="tirada-fila__dificultad">
-                    Dificultad
-                    <input type="number" formControlName="dificultad" />
-                  </label>
-                  <label class="tirada-fila__visible">
-                    <input type="checkbox" formControlName="resultadoVisible" />
-                    Visible
-                  </label>
-                }
-              </div>
-            </fieldset>
 
             <ng-container
               *ngTemplateOutlet="
@@ -478,7 +480,9 @@
           </div>
         }
 
-        <button type="button" class="btn--primary" (click)="agregarOpcion()">Añadir opción</button>
+        @if (!esLibro()) {
+          <button type="button" class="btn--primary" (click)="agregarOpcion()">Añadir opción</button>
+        }
       </fieldset>
 
       @if (

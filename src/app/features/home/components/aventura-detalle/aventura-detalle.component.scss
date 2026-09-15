@@ -68,6 +68,12 @@
   display: flex;
   flex-direction: column;
   gap: var(--space-2);
+  // Halo suave (no una capa sólida) para leer bien el texto sobre la foto de fondo sin taparla.
+  // text-shadow se hereda, así que basta con ponerlo aquí para todo el bloque (título, subtítulo,
+  // autor, meta y descripción).
+  text-shadow:
+    0 0 6px var(--color-surface),
+    0 0 14px var(--color-surface);
 
   h2 {
     margin: 0;

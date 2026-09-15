@@ -98,9 +98,13 @@
                       <button
                         type="button"
                         class="libro-lomo"
+                        [class.libro-lomo--libro]="a.esLibro"
                         (click)="irAAventura(campana, a)"
                         [attr.aria-label]="'Ir a ' + a.titulo"
                       >
+                        @if (a.esLibro) {
+                          <span class="libro-lomo__cintilla"><span class="lomo-texto">Libro</span></span>
+                        }
                         @if (a.caratulaUrl) {
                           <img class="libro-lomo__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
                         }
@@ -108,7 +112,7 @@
                       </button>
                     }
 
-                    <div class="libro-abierto">
+                    <div class="libro-abierto" [class.libro-abierto--libro]="aventura.esLibro">
                       <div class="libro-abierto__pagina libro-abierto__pagina--izquierda">
                         <div class="libro-abierto__caratula" [style.--hue.deg]="hueCaratula(aventura)">
                           @if (aventura.caratulaUrl) {
@@ -124,7 +128,12 @@
                       </div>
 
                       <div class="libro-abierto__pagina libro-abierto__pagina--derecha">
-                        <h4 class="libro-abierto__titulo">{{ aventura.titulo }}</h4>
+                        <h4 class="libro-abierto__titulo">
+                          {{ aventura.titulo }}
+                          @if (aventura.esLibro) {
+                            <span class="libro-abierto__badge-libro">Libro</span>
+                          }
+                        </h4>
 
                         @if (aventura.descripcion) {
                           <p class="libro-abierto__descripcion">{{ aventura.descripcion }}</p>
@@ -153,8 +162,8 @@
                                 type="button"
                                 class="libro-abierto__accion"
                                 (click)="valorarAventura(aventura.idAventura)"
-                                aria-label="Puntuar aventura"
-                                title="Puntuar aventura"
+                                aria-label="Puntuar"
+                                title="Puntuar"
                               >
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                   <path
@@ -187,6 +196,24 @@
                                   <path d="M8 5v14l11-7z" fill="currentColor" />
                                 </svg>
                               </a>
+
+                              @if (aventura.esLibro && aventura.enlaceCompra) {
+                                <a
+                                  class="libro-abierto__accion"
+                                  [href]="aventura.enlaceCompra"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label="Ir a la web de compra"
+                                  title="Ir a la web de compra"
+                                >
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                      d="M7 4h-2l-1 2v1h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2h-11.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7c.09-.16.14-.35.14-.54 0-.55-.45-1-1-1h-14.42l-.94-2z"
+                                      fill="currentColor"
+                                    />
+                                  </svg>
+                                </a>
+                              }
                             </div>
                           } @else if (aventura.estadoPartida === 'Finalizada') {
                             <div class="libro-abierto__acciones">
@@ -194,8 +221,8 @@
                                 type="button"
                                 class="libro-abierto__accion"
                                 (click)="valorarAventura(aventura.idAventura)"
-                                aria-label="Puntuar aventura"
-                                title="Puntuar aventura"
+                                aria-label="Puntuar"
+                                title="Puntuar"
                               >
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                   <path
@@ -205,31 +232,51 @@
                                 </svg>
                               </button>
 
-                              <button
-                                type="button"
-                                class="libro-abierto__accion"
-                                (click)="reiniciarAventura(aventura.idAventura)"
-                                aria-label="Reiniciar aventura"
-                                title="Reiniciar aventura"
-                              >
-                                <svg viewBox="0 0 24 24" aria-hidden="true">
-                                  <path
-                                    d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zM5.3 7.2 3.84 5.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8z"
-                                    fill="currentColor"
-                                  />
-                                </svg>
-                              </button>
+                              @if (!aventura.esLibro) {
+                                <button
+                                  type="button"
+                                  class="libro-abierto__accion"
+                                  (click)="reiniciarAventura(aventura.idAventura)"
+                                  aria-label="Reiniciar"
+                                  title="Reiniciar"
+                                >
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                      d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zM5.3 7.2 3.84 5.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8z"
+                                      fill="currentColor"
+                                    />
+                                  </svg>
+                                </button>
+                              }
 
                               <a
                                 class="libro-abierto__accion"
                                 [routerLink]="['/aventura', aventura.idAventura, 'diario']"
-                                aria-label="Guardar aventura"
-                                title="Guardar aventura"
+                                aria-label="Visualizar"
+                                title="Visualizar"
                               >
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                   <path d="M13 3.5 18.5 9H13V3.5zM6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6z" fill="currentColor" />
                                 </svg>
                               </a>
+
+                              @if (aventura.esLibro && aventura.enlaceCompra) {
+                                <a
+                                  class="libro-abierto__accion"
+                                  [href]="aventura.enlaceCompra"
+                                  target="_blank"
+                                  rel="noopener noreferrer"
+                                  aria-label="Ir a la web de compra"
+                                  title="Ir a la web de compra"
+                                >
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                      d="M7 4h-2l-1 2v1h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2h-11.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7c.09-.16.14-.35.14-.54 0-.55-.45-1-1-1h-14.42l-.94-2z"
+                                      fill="currentColor"
+                                    />
+                                  </svg>
+                                </a>
+                              }
                             </div>
                           } @else if (aventura.estadoPartida) {
                             <div class="libro-abierto__acciones">
@@ -237,8 +284,8 @@
                                 type="button"
                                 class="libro-abierto__accion"
                                 (click)="reiniciarAventura(aventura.idAventura)"
-                                aria-label="Reiniciar aventura"
-                                title="Reiniciar aventura"
+                                aria-label="Reiniciar"
+                                title="Reiniciar"
                               >
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
                                   <path
@@ -259,9 +306,13 @@
                       <button
                         type="button"
                         class="libro-lomo"
+                        [class.libro-lomo--libro]="a.esLibro"
                         (click)="irAAventura(campana, a)"
                         [attr.aria-label]="'Ir a ' + a.titulo"
                       >
+                        @if (a.esLibro) {
+                          <span class="libro-lomo__cintilla"><span class="lomo-texto">Libro</span></span>
+                        }
                         @if (a.caratulaUrl) {
                           <img class="libro-lomo__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
                         }

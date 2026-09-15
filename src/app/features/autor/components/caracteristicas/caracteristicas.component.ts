@@ -31,6 +31,7 @@ export class CaracteristicasComponent {
   private readonly autorService = inject(AutorService);
 
   readonly idAventura = input.required<number>();
+  readonly esLibro = input(false);
 
   private readonly caracteristicasResource = rxResource({
     params: () => this.idAventura(),

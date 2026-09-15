@@ -49,11 +49,13 @@ export interface AventuraAutor {
   titulo: string;
   descripcion: string | null;
   orden: number;
-  cantidadDecision: number;
+  cantidadDecision: number | null;
   rutaImagen: string | null;
   caratulaUrl: string | null;
   visible: boolean;
   duracion: number | null;
+  esLibro: boolean;
+  enlaceCompra: string | null;
   estadoVersionEdicion: EnumEstadoPublicacion | null;
   fechaSolicitudPublicacion: string | null;
   actos: ActoAutor[];
@@ -100,8 +102,10 @@ export interface GuardarAventuraRequest {
   titulo: string;
   descripcion: string | null;
   orden: number;
-  cantidadDecision: number;
+  cantidadDecision: number | null;
   duracion: number | null;
+  esLibro?: boolean;
+  enlaceCompra?: string | null;
 }
 
 export interface GuardarActoRequest {
@@ -183,6 +187,7 @@ export interface NodoArbol {
   opciones: OpcionArbol[];
   nodosDisponibles: NodoAutorResumen[];
   finalesDisponibles: FinalAutor[];
+  esLibro: boolean;
 }
 
 export interface CaracteristicaAutor {

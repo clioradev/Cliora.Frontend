@@ -76,4 +76,8 @@ export interface ContinuarInfo {
 export interface BloqueDiario {
   texto: string;
   esOpcionElegida: boolean;
+  idEscena: number | null;
+  escenaDescripcion: string | null;
+  idActo: number | null;
+  actoDescripcion: string | null;
 }

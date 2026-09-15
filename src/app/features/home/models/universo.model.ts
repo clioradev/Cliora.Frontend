@@ -11,10 +11,12 @@ export interface Aventura {
   puntuacionMedia: number | null;
   totalValoraciones: number;
   ultimaValoracion: UltimaValoracion | null;
-  cantidadDecision: number;
+  cantidadDecision: number | null;
   caratulaUrl?: string | null;
   autor: string | null;
   duracion: number | null;
+  esLibro: boolean;
+  enlaceCompra: string | null;
 }
 
 export interface OpcionEnum {

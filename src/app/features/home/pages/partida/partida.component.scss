@@ -1,6 +1,14 @@
+@use 'breakpoints' as *;
+
 :host {
   display: block;
   padding: var(--space-8);
+}
+
+@media (max-width: $bp-tablet) {
+  :host {
+    padding: var(--space-8) var(--space-4);
+  }
 }
 
 .status {
@@ -41,14 +49,24 @@
     }
   }
 
+  &__escena {
+    font-family: var(--font-reading);
+    font-weight: 700;
+    text-align: center;
+    font-size: 1.4em;
+    margin: 0 0 var(--space-6);
+  }
+
   &__contenidos {
     margin-bottom: var(--space-6);
+    display: flow-root; // contiene las imágenes flotantes para que no se salgan del bloque
   }
 
   &__texto {
     font-family: var(--font-reading);
     font-size: var(--text-reading);
     line-height: var(--line-height-reading);
+    text-align: justify;
     white-space: pre-line;
 
     &:not(:last-child) {
@@ -61,6 +79,14 @@
     max-width: 100%;
     height: auto;
     margin-bottom: var(--space-4);
+
+    // Si es lo bastante pequeña (< 60% del ancho del contenedor, calculado en el componente), se
+    // pega a la derecha y el texto fluye a su lado en vez de partir el bloque en dos.
+    &--flotante {
+      float: right;
+      max-width: 58%;
+      margin: 0 0 var(--space-4) var(--space-6);
+    }
   }
 
   &__audio {

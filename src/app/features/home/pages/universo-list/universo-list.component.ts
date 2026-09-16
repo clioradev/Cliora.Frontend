@@ -5,6 +5,7 @@ import { AventuraDetalleComponent } from '../../components/aventura-detalle/aven
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
+import { PartidaService } from '../../data-access/partida.service';
 import { UniversoService } from '../../data-access/universo.service';
 import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
 
@@ -22,6 +23,7 @@ interface ContextoAventura {
 })
 export class UniversoListComponent {
   private readonly universoService = inject(UniversoService);
+  private readonly partidaService = inject(PartidaService);
 
   private readonly universosResource = rxResource({
     stream: () => this.universoService.getUniversos(),
@@ -35,10 +37,20 @@ export class UniversoListComponent {
   protected readonly idAventuraAReiniciar = signal<number | null>(null);
   protected readonly idAventuraAValorar = signal<number | null>(null);
 
+  // Misma fuente que el "Continuar" del menú inferior (Partida/Continuar): la aventura con la
+  // decisión más reciente, no la primera "En curso" que aparezca en el listado.
+  private readonly continuarResource = rxResource({
+    stream: () => this.partidaService.obtenerContinuar(),
+  });
+
   protected readonly aventuraEnCurso = computed<ContextoAventura | null>(() => {
+    const idAventura = this.continuarResource.value()?.idAventura;
+    if (idAventura === undefined) {
+      return null;
+    }
     for (const universo of this.universos()) {
       for (const campana of universo.campanas) {
-        const aventura = campana.aventuras.find((a) => a.estadoPartida === 'En curso');
+        const aventura = campana.aventuras.find((a) => a.idAventura === idAventura);
         if (aventura) {
           return { universo, campana, aventura };
         }

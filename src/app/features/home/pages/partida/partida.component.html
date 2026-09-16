@@ -10,10 +10,20 @@
     <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
   </div>
 
+  @if (n.escenaDescripcion) {
+    <p class="nodo__escena">{{ n.escenaDescripcion }}</p>
+  }
+
   <div class="nodo__contenidos">
     @for (contenido of n.contenidos; track contenido.idContenidoNodo) {
       @if (contenido.imagenUrl) {
-        <img class="nodo__imagen" [src]="contenido.imagenUrl" alt="" />
+        <img
+          class="nodo__imagen"
+          [class.nodo__imagen--flotante]="imagenesFlotantes().has(contenido.idContenidoNodo)"
+          [src]="contenido.imagenUrl"
+          alt=""
+          (load)="onImagenCargada($event, contenido.idContenidoNodo)"
+        />
       }
       @if (contenido.texto) {
         <p class="nodo__texto">{{ contenido.texto }}</p>

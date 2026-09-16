@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { asyncAction } from '../../../../core/utils/async-action';
@@ -51,6 +51,26 @@ export class PartidaComponent {
   private destinoPendiente: { idNodo: number | null; idFinal: number | null } | null = null;
 
   protected readonly personajeAbierto = signal(false);
+
+  // Imágenes lo bastante pequeñas (< 60% del ancho del bloque de contenido) como para que el texto
+  // fluya a su lado en vez de partir el nodo en bloques separados - ver onImagenCargada().
+  protected readonly imagenesFlotantes = signal(new Set<number>());
+
+  constructor() {
+    effect(() => {
+      this.nodo();
+      this.imagenesFlotantes.set(new Set());
+    });
+  }
+
+  protected onImagenCargada(event: Event, idContenidoNodo: number): void {
+    const img = event.target as HTMLImageElement;
+    const anchoContenedor = img.closest('.nodo__contenidos')?.clientWidth ?? img.parentElement?.clientWidth ?? 0;
+
+    if (anchoContenedor > 0 && img.naturalWidth > 0 && img.naturalWidth < anchoContenedor * 0.6) {
+      this.imagenesFlotantes.update((actual) => new Set(actual).add(idContenidoNodo));
+    }
+  }
 
   private readonly elegirAction = asyncAction(
     (opcion: Opcion) => this.partidaService.elegirOpcion(opcion.idOpcion),

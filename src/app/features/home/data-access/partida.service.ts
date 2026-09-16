@@ -11,6 +11,7 @@ import {
   FinalizarAventuraResponse,
   Nodo,
   Personaje,
+  VolverAtrasResponse,
 } from '../models/partida.model';
 
 @Injectable({ providedIn: 'root' })
@@ -48,6 +49,10 @@ export class PartidaService {
 
   reiniciarAventura(idAventura: number): Observable<void> {
     return this.http.post<void>(`${this.baseUrl}/Partida/Reiniciar`, { idAventura });
+  }
+
+  volverAtras(idAventura: number): Observable<VolverAtrasResponse> {
+    return this.http.post<VolverAtrasResponse>(`${this.baseUrl}/Partida/VolverAtras`, { idAventura });
   }
 
   obtenerDiario(idAventura: number): Observable<BloqueDiario[]> {

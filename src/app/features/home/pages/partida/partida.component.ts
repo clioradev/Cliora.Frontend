@@ -73,6 +73,22 @@ export class PartidaComponent {
     this.elegirAction.run(opcion);
   }
 
+  private readonly volverAtrasAction = asyncAction(() => this.partidaService.volverAtras(this.idAventura()!), {
+    onSuccess: (respuesta) => {
+      const idAventura = this.idAventura();
+      void this.router.navigate(['/partida', respuesta.idNodoActual], {
+        queryParams: idAventura !== null ? { idAventura } : undefined,
+      });
+    },
+    defaultErrorMessage: 'No se ha podido volver a la página anterior.',
+  });
+  protected readonly volviendoAtras = this.volverAtrasAction.loading;
+  protected readonly volverAtrasError = this.volverAtrasAction.error;
+
+  protected volverAtras(): void {
+    this.volverAtrasAction.run();
+  }
+
   protected abrirPersonaje(): void {
     this.personajeAbierto.set(true);
   }

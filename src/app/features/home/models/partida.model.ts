@@ -29,6 +29,7 @@ export interface Nodo {
   opciones: Opcion[];
   esLibro: boolean;
   puedeVolverAtras: boolean;
+  escenaDescripcion: string | null;
 }
 
 export interface TiradaResultado {

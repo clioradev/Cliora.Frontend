@@ -121,7 +121,7 @@ export class NodoFormComponent {
   private crearContenidoGroup(contenido?: ContenidoNodoAutor) {
     return this.fb.group({
       idContenidoNodo: this.fb.nonNullable.control<number | null>(contenido?.idContenidoNodo ?? null),
-      texto: this.fb.nonNullable.control(contenido?.texto ?? '', [Validators.required]),
+      texto: this.fb.nonNullable.control(contenido?.texto ?? ''),
       imagenUrl: this.fb.nonNullable.control<string | null>(contenido?.imagenUrl ?? null),
       audioUrl: this.fb.nonNullable.control<string | null>(contenido?.audioUrl ?? null),
       gruposCondicion: this.fb.array((contenido?.gruposCondicion ?? []).map((g) => this.crearGrupoCondicionGroup(g))),

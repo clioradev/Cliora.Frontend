@@ -7,7 +7,9 @@
     @if (preview()) {
       <button type="button" class="nodo__boton-editor" (click)="volverAlEditor()">← Volver al editor</button>
     }
-    <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
+    @if (!n.esLibro) {
+      <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
+    }
   </div>
 
   @if (n.escenaDescripcion) {

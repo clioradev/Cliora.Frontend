@@ -73,7 +73,7 @@
           <button type="button" class="btn--primary" (click)="empezarPartida()" [disabled]="starting() || !a.idVersionAventura">
             {{ starting() ? 'Empezando…' : 'Empezar partida' }}
           </button>
-        } @else {
+        } @else if (!a.estadoPartida) {
           <span class="detalle__bloqueada">Completa la aventura anterior para desbloquearla</span>
         }
 

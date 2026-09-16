@@ -27,6 +27,8 @@ export interface Nodo {
   titulo: string;
   contenidos: ContenidoNodo[];
   opciones: Opcion[];
+  esLibro: boolean;
+  puedeVolverAtras: boolean;
 }
 
 export interface TiradaResultado {
@@ -71,6 +73,10 @@ export interface FinalizarAventuraResponse {
 export interface ContinuarInfo {
   idNodo: number;
   idAventura: number;
+}
+
+export interface VolverAtrasResponse {
+  idNodoActual: number;
 }
 
 export interface BloqueDiario {

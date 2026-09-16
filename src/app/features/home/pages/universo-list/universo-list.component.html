@@ -232,33 +232,20 @@
                                 </svg>
                               </button>
 
-                              @if (!aventura.esLibro) {
-                                <button
-                                  type="button"
-                                  class="libro-abierto__accion"
-                                  (click)="reiniciarAventura(aventura.idAventura)"
-                                  aria-label="Reiniciar"
-                                  title="Reiniciar"
-                                >
-                                  <svg viewBox="0 0 24 24" aria-hidden="true">
-                                    <path
-                                      d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zM5.3 7.2 3.84 5.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8z"
-                                      fill="currentColor"
-                                    />
-                                  </svg>
-                                </button>
-                              }
-
-                              <a
+                              <button
+                                type="button"
                                 class="libro-abierto__accion"
-                                [routerLink]="['/aventura', aventura.idAventura, 'diario']"
-                                aria-label="Visualizar"
-                                title="Visualizar"
+                                (click)="reiniciarAventura(aventura.idAventura)"
+                                aria-label="Reiniciar"
+                                title="Reiniciar"
                               >
                                 <svg viewBox="0 0 24 24" aria-hidden="true">
-                                  <path d="M13 3.5 18.5 9H13V3.5zM6 2c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V8l-6-6H6z" fill="currentColor" />
+                                  <path
+                                    d="M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zM5.3 7.2 3.84 5.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8z"
+                                    fill="currentColor"
+                                  />
                                 </svg>
-                              </a>
+                              </button>
 
                               @if (aventura.esLibro && aventura.enlaceCompra) {
                                 <a

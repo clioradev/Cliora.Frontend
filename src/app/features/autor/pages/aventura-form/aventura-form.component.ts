@@ -140,12 +140,6 @@ export class AventuraFormComponent {
 
   private readonly previsualizarAction = asyncAction(() => this.autorService.previsualizarAventura(this.idAventura()!), {
     onSuccess: (respuesta) => {
-      // Un libro se auto-juega entero al previsualizar (igual que a un jugador real) y aterriza
-      // directo en el diario; una aventura interactiva se sigue navegando nodo a nodo.
-      if (this.esLibro()) {
-        void this.router.navigate(['/aventura', this.idAventura(), 'diario'], { queryParams: { preview: true } });
-        return;
-      }
       void this.router.navigate(['/partida', respuesta.idNodoActual], {
         queryParams: { idAventura: this.idAventura(), preview: true },
       });

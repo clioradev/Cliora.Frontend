@@ -1,4 +1,4 @@
-import { Component, effect, inject, input, output, signal } from '@angular/core';
+import { Component, DestroyRef, effect, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
@@ -36,6 +36,12 @@ export class ActosEscenasComponent {
   protected readonly escenaModal = signal<EscenaModalState | null>(null);
   protected readonly eliminarModal = signal<EliminarModalState | null>(null);
 
+  // Burbuja con el detalle de a qué nodos apunta o quién le apunta a un nodo: solo se muestra tras
+  // 2s de ratón encima (ver empezarHoverBurbuja), para no saturar la vista con un simple paso rápido.
+  private static readonly RETARDO_BURBUJA_MS = 2000;
+  private temporizadorBurbuja: ReturnType<typeof setTimeout> | null = null;
+  protected readonly burbujaVisible = signal<{ idNodo: number; tipo: 'entradas' | 'salidas' } | null>(null);
+
   private static readonly LS_ACTOS_ABIERTOS = 'cliora:autor:actosAbiertos';
   private static readonly LS_ESCENAS_ABIERTAS = 'cliora:autor:escenasAbiertas';
   private static readonly LS_NODO_EDITANDO = 'cliora:autor:nodoEditando';
@@ -53,6 +59,8 @@ export class ActosEscenasComponent {
         this.irAlNodoEnEdicion();
       }
     });
+
+    inject(DestroyRef).onDestroy(() => this.cancelarHoverBurbuja());
   }
 
   private leerSetLocalStorage(clave: string): Set<number> {
@@ -242,5 +250,21 @@ export class ActosEscenasComponent {
       mensaje: `¿Seguro que quieres eliminar el nodo "${nodo.titulo}"?`,
       accion: () => this.autorService.eliminarNodo(nodo.idNodo),
     });
+  }
+
+  protected empezarHoverBurbuja(idNodo: number, tipo: 'entradas' | 'salidas'): void {
+    this.cancelarHoverBurbuja();
+    this.temporizadorBurbuja = setTimeout(
+      () => this.burbujaVisible.set({ idNodo, tipo }),
+      ActosEscenasComponent.RETARDO_BURBUJA_MS,
+    );
+  }
+
+  protected cancelarHoverBurbuja(): void {
+    if (this.temporizadorBurbuja !== null) {
+      clearTimeout(this.temporizadorBurbuja);
+      this.temporizadorBurbuja = null;
+    }
+    this.burbujaVisible.set(null);
   }
 }

@@ -76,6 +76,8 @@ export class NodoFormComponent {
   protected readonly cargando = this.nodoResource.isLoading;
   protected readonly nodo = this.nodoResource.value;
   protected readonly esLibro = computed(() => this.nodo()?.esLibro ?? false);
+  protected readonly idEscenaActual = computed(() => this.nodo()?.idEscena ?? 0);
+  protected readonly escenasDisponibles = computed(() => this.nodo()?.escenasDisponibles ?? []);
 
   private readonly caracteristicasResource = rxResource({
     params: () => this.idAventura,

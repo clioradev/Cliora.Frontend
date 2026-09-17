@@ -504,6 +504,8 @@
     @if (opcionIndexCreandoDestino() !== null) {
       <app-crear-nodo-destino-modal
         [idNodoOrigen]="idNodo"
+        [idEscenaActual]="idEscenaActual()"
+        [escenasDisponibles]="escenasDisponibles()"
         (cerrado)="cerrarModalNodoDestino()"
         (guardado)="onNodoDestinoCreado($event)"
       />

@@ -79,6 +79,13 @@
     </div>
   }
 
+  <div class="nodo__stats">
+    <p class="nodo__jugadores">{{ n.jugadoresEnEsteNodo }} lectores han pasado por aquí</p>
+    @if (n.porcentajeProgreso !== null) {
+      <p class="nodo__progreso">{{ n.porcentajeProgreso }}% leído</p>
+    }
+  </div>
+
   @if (eligiendoError()) {
     <p class="status status--error">{{ eligiendoError() }}</p>
   }

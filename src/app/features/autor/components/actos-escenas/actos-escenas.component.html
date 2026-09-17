@@ -77,7 +77,45 @@
                         @for (nodo of escena.nodos; track nodo.idNodo) {
                           <li class="nodo-list__item" [id]="'nodo-' + nodo.idNodo">
                             <span class="nodo-list__titulo">{{ nodo.titulo }}</span>
-                            <span class="nodo-list__opciones">{{ nodo.cantidadOpciones }} opción(es)</span>
+
+                            <span
+                              class="nodo-list__contador"
+                              (mouseenter)="empezarHoverBurbuja(nodo.idNodo, 'entradas')"
+                              (mouseleave)="cancelarHoverBurbuja()"
+                            >
+                              {{ nodo.cantidadEntradas }} entrada(s)
+                              @if (burbujaVisible()?.idNodo === nodo.idNodo && burbujaVisible()?.tipo === 'entradas') {
+                                <span class="burbuja">
+                                  @if (nodo.nodosQueApuntan.length > 0) {
+                                    @for (origen of nodo.nodosQueApuntan; track origen) {
+                                      <span class="burbuja__linea">{{ origen }}</span>
+                                    }
+                                  } @else {
+                                    <span class="burbuja__linea burbuja__linea--vacia">Ningún nodo apunta aquí todavía</span>
+                                  }
+                                </span>
+                              }
+                            </span>
+
+                            <span
+                              class="nodo-list__contador"
+                              (mouseenter)="empezarHoverBurbuja(nodo.idNodo, 'salidas')"
+                              (mouseleave)="cancelarHoverBurbuja()"
+                            >
+                              {{ nodo.cantidadOpciones }} opción(es)
+                              @if (burbujaVisible()?.idNodo === nodo.idNodo && burbujaVisible()?.tipo === 'salidas') {
+                                <span class="burbuja">
+                                  @if (nodo.nodosDeSalida.length > 0) {
+                                    @for (destino of nodo.nodosDeSalida; track destino) {
+                                      <span class="burbuja__linea">{{ destino }}</span>
+                                    }
+                                  } @else {
+                                    <span class="burbuja__linea burbuja__linea--vacia">Todavía sin destino</span>
+                                  }
+                                </span>
+                              }
+                            </span>
+
                             <div class="nodo-list__acciones">
                               <button type="button" (click)="editarNodo(nodo)">Editar</button>
                               <button type="button" (click)="eliminarNodo(nodo)">Eliminar</button>

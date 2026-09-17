@@ -26,6 +26,9 @@ export interface NodoAutorResumen {
   codigo: string;
   titulo: string;
   cantidadOpciones: number;
+  cantidadEntradas: number;
+  nodosQueApuntan: string[];
+  nodosDeSalida: string[];
 }
 
 export interface EscenaAutor {
@@ -122,6 +125,11 @@ export interface CrearNodoRequest {
   titulo: string;
 }
 
+export interface CrearNodoDestinoRequest {
+  titulo: string;
+  idEscena: number;
+}
+
 export interface ContenidoNodoAutor {
   idContenidoNodo: number;
   orden: number;
@@ -181,13 +189,21 @@ export interface NodoArbol {
   idNodo: number;
   codigo: string;
   titulo: string;
+  idEscena: number;
   esNodoInicial: boolean;
   estadoVersionEdicion: EnumEstadoPublicacion;
   contenidos: ContenidoNodoAutor[];
   opciones: OpcionArbol[];
   nodosDisponibles: NodoAutorResumen[];
   finalesDisponibles: FinalAutor[];
+  escenasDisponibles: EscenaResumenAutor[];
   esLibro: boolean;
+}
+
+export interface EscenaResumenAutor {
+  idEscena: number;
+  titulo: string;
+  tituloActo: string;
 }
 
 export interface CaracteristicaAutor {

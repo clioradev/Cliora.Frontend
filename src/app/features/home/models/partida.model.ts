@@ -30,6 +30,9 @@ export interface Nodo {
   esLibro: boolean;
   puedeVolverAtras: boolean;
   escenaDescripcion: string | null;
+  porcentajeProgreso: number | null;
+  jugadoresEnEsteNodo: number;
+  jugadoresTotalesAventura: number;
 }
 
 export interface TiradaResultado {

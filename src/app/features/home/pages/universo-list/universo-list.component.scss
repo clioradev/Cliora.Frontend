@@ -175,6 +175,39 @@ $sombra-lomo-lateral:
     width: 100%;
   }
 
+  // Estado de juego (independiente de si es un libro): mismo tratamiento que --libro pero con un
+  // marco más fino (2px) para no competir visualmente con él. Si la aventura es además un libro,
+  // --libro va después en el código y gana (mismo dorado de siempre, nunca tapado por el estado).
+  &--jugable {
+    border-color: var(--color-success);
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-success),
+      0 0 6px 1px color-mix(in srgb, var(--color-success) 45%, transparent),
+      var(--shadow-md),
+      #{$sombra-lomo-lateral};
+  }
+
+  &--bloqueada {
+    border-color: var(--color-danger);
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-danger),
+      0 0 6px 1px color-mix(in srgb, var(--color-danger) 45%, transparent),
+      var(--shadow-md),
+      #{$sombra-lomo-lateral};
+  }
+
+  &--finalizada {
+    border-color: var(--color-info);
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-info),
+      0 0 6px 1px color-mix(in srgb, var(--color-info) 45%, transparent),
+      var(--shadow-md),
+      #{$sombra-lomo-lateral};
+  }
+
   // Un libro se distingue en la estantería con un marco dorado bien visible, también cuando solo
   // se ve el lomo (minimizado): mismo tratamiento que el libro abierto (--color-accent, nunca verde).
   &--libro {
@@ -276,6 +309,35 @@ $sombra-lomo-lateral:
     display: flex;
     align-items: center;
     gap: var(--space-2);
+  }
+
+  // Estado de juego (independiente de si es un libro): mismo tratamiento que --libro pero con un
+  // marco más fino (2px). Si además es un libro, --libro va después y gana (mismo dorado de siempre).
+  &--jugable {
+    border-color: var(--color-success);
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-success),
+      0 0 8px 1px color-mix(in srgb, var(--color-success) 45%, transparent),
+      var(--shadow-md);
+  }
+
+  &--bloqueada {
+    border-color: var(--color-danger);
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-danger),
+      0 0 8px 1px color-mix(in srgb, var(--color-danger) 45%, transparent),
+      var(--shadow-md);
+  }
+
+  &--finalizada {
+    border-color: var(--color-info);
+    border-width: 2px;
+    box-shadow:
+      0 0 0 2px var(--color-info),
+      0 0 8px 1px color-mix(in srgb, var(--color-info) 45%, transparent),
+      var(--shadow-md);
   }
 
   // Un libro se distingue con un marco dorado bien llamativo, igual que su lomo en la estantería.

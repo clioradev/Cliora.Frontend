@@ -7,6 +7,15 @@
       <input type="text" formControlName="titulo" />
     </label>
 
+    <label>
+      Escena
+      <select formControlName="idEscena">
+        @for (escena of escenasDisponibles(); track escena.idEscena) {
+          <option [value]="escena.idEscena">{{ escena.tituloActo }} - {{ escena.titulo }}</option>
+        }
+      </select>
+    </label>
+
     @if (error()) {
       <p class="status status--error">{{ error() }}</p>
     }

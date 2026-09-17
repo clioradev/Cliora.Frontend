@@ -10,6 +10,7 @@ import {
   CatTipoCaracteristicaAutor,
   CatTipoUniversoAutor,
   ContenidoNodoAutor,
+  CrearNodoDestinoRequest,
   CrearNodoRequest,
   EscenaAutor,
   EventoAutor,
@@ -159,7 +160,7 @@ export class AutorService {
     return this.http.post<NodoAutorResumen>(`${this.baseUrl}/Autor/Escena/${idEscena}/Nodo`, dto);
   }
 
-  crearNodoDestino(idNodoOrigen: number, dto: CrearNodoRequest): Observable<NodoAutorResumen> {
+  crearNodoDestino(idNodoOrigen: number, dto: CrearNodoDestinoRequest): Observable<NodoAutorResumen> {
     return this.http.post<NodoAutorResumen>(`${this.baseUrl}/Autor/Nodo/${idNodoOrigen}/NodoDestino`, dto);
   }
 

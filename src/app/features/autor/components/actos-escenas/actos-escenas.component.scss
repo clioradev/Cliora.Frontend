@@ -122,9 +122,53 @@
   flex: 1;
 }
 
-.nodo-list__opciones {
+.nodo-list__opciones,
+.nodo-list__contador {
+  position: relative;
   opacity: 0.7;
   font-size: var(--text-sm);
+  cursor: default;
+}
+
+// Burbuja de conversación con el detalle de a qué nodos apunta un nodo (o quién le apunta a él),
+// solo visible tras 2s de ratón encima - ver empezarHoverBurbuja en el componente.
+.burbuja {
+  position: absolute;
+  bottom: calc(100% + var(--space-2));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 0.15rem;
+  min-width: 10rem;
+  max-width: 18rem;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-border, currentColor);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-md);
+  font-size: var(--text-sm);
+  font-style: normal;
+  white-space: normal;
+  text-align: left;
+
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border: 6px solid transparent;
+    border-top-color: var(--color-surface);
+  }
+}
+
+.burbuja__linea {
+  &--vacia {
+    opacity: 0.7;
+    font-style: italic;
+  }
 }
 
 .nodo-list__acciones {

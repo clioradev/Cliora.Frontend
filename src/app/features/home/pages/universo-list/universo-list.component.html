@@ -99,6 +99,9 @@
                         type="button"
                         class="libro-lomo"
                         [class.libro-lomo--libro]="a.esLibro"
+                        [class.libro-lomo--jugable]="estadoAventura(a) === 'jugable'"
+                        [class.libro-lomo--bloqueada]="estadoAventura(a) === 'bloqueada'"
+                        [class.libro-lomo--finalizada]="estadoAventura(a) === 'finalizada'"
                         (click)="irAAventura(campana, a)"
                         [attr.aria-label]="'Ir a ' + a.titulo"
                       >
@@ -112,7 +115,13 @@
                       </button>
                     }
 
-                    <div class="libro-abierto" [class.libro-abierto--libro]="aventura.esLibro">
+                    <div
+                      class="libro-abierto"
+                      [class.libro-abierto--libro]="aventura.esLibro"
+                      [class.libro-abierto--jugable]="estadoAventura(aventura) === 'jugable'"
+                      [class.libro-abierto--bloqueada]="estadoAventura(aventura) === 'bloqueada'"
+                      [class.libro-abierto--finalizada]="estadoAventura(aventura) === 'finalizada'"
+                    >
                       <div class="libro-abierto__pagina libro-abierto__pagina--izquierda">
                         <div class="libro-abierto__caratula" [style.--hue.deg]="hueCaratula(aventura)">
                           @if (aventura.caratulaUrl) {
@@ -276,6 +285,9 @@
                         type="button"
                         class="libro-lomo"
                         [class.libro-lomo--libro]="a.esLibro"
+                        [class.libro-lomo--jugable]="estadoAventura(a) === 'jugable'"
+                        [class.libro-lomo--bloqueada]="estadoAventura(a) === 'bloqueada'"
+                        [class.libro-lomo--finalizada]="estadoAventura(a) === 'finalizada'"
                         (click)="irAAventura(campana, a)"
                         [attr.aria-label]="'Ir a ' + a.titulo"
                       >

@@ -124,6 +124,19 @@ export class UniversoListComponent {
     return (aventura.idAventura * 47) % 360;
   }
 
+  // Estado de juego de la aventura (independiente de si es un libro): verde si se puede jugar o
+  // continuar (incluye "Abandonada", que se puede reiniciar), rojo si hay que completar antes las
+  // aventuras anteriores de la campaña, azul si ya está finalizada.
+  protected estadoAventura(aventura: Aventura): 'jugable' | 'bloqueada' | 'finalizada' {
+    if (aventura.estadoPartida === 'Finalizada') {
+      return 'finalizada';
+    }
+    if (aventura.estadoPartida !== null || aventura.puedeEmpezarPartida) {
+      return 'jugable';
+    }
+    return 'bloqueada';
+  }
+
   protected toggleTag(tag: string): void {
     const set = new Set(this.selectedTags());
     if (set.has(tag)) {

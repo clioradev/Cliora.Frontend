@@ -24,6 +24,7 @@ import {
   GuardarFinalRequest,
   GuardarNodoArbolRequest,
   GuardarUniversoRequest,
+  InformeImportacion,
   NodoArbol,
   NodoAutorResumen,
   UniversoAutor,
@@ -64,6 +65,12 @@ export class AutorService {
 
   getAventura(idAventura: number): Observable<AventuraAutor> {
     return this.http.get<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}`);
+  }
+
+  importarAventura(archivo: File): Observable<InformeImportacion> {
+    const formData = new FormData();
+    formData.append('paquete', archivo);
+    return this.http.post<InformeImportacion>(`${this.baseUrl}/Autor/Importar`, formData);
   }
 
   subirImagenAventura(idAventura: number, archivo: File): Observable<AventuraAutor> {

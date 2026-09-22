@@ -8,3 +8,9 @@ h3 {
   justify-content: flex-end;
   margin-top: var(--space-4);
 }
+
+.tipo-aventura-modal__separador {
+  margin: var(--space-4) 0;
+  border: none;
+  border-top: 1px solid var(--color-border);
+}

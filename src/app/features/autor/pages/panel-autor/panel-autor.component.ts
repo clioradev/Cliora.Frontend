@@ -8,7 +8,7 @@ import { CampanaFormModalComponent } from '../../components/campana-form-modal/c
 import { TipoAventuraModalComponent } from '../../components/tipo-aventura-modal/tipo-aventura-modal.component';
 import { UniversoFormModalComponent } from '../../components/universo-form-modal/universo-form-modal.component';
 import { AutorService } from '../../data-access/autor.service';
-import { AventuraAutor, CampanaAutor, UniversoAutor } from '../../models/autor.model';
+import { AventuraAutor, CampanaAutor, InformeImportacion, UniversoAutor } from '../../models/autor.model';
 
 interface CampanaModalState {
   idUniverso: number;
@@ -66,6 +66,14 @@ export class PanelAutorComponent {
       return;
     }
     void this.router.navigate(['/autor/aventura/nueva'], { queryParams: { idCampana, esLibro } });
+  }
+
+  protected onAventuraImportada(informe: InformeImportacion): void {
+    this.tipoAventuraModal.set(null);
+    this.universosResource.reload();
+    if (informe.idAventura !== null) {
+      void this.router.navigate(['/autor/aventura', informe.idAventura]);
+    }
   }
 
   protected nuevoUniverso(): void {

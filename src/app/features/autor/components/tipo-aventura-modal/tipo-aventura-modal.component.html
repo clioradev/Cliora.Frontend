@@ -10,4 +10,33 @@
     <button type="button" (click)="elegir(true)">No, es un libro</button>
     <button type="button" class="btn--primary" (click)="elegir(false)">Sí, interactiva</button>
   </div>
+
+  <hr class="tipo-aventura-modal__separador" />
+
+  <p>¿Ya tienes la aventura preparada como paquete de importación?</p>
+
+  <input #inputArchivo type="file" accept=".zip" hidden (change)="seleccionarArchivo(inputArchivo.files)" />
+
+  <div class="tipo-aventura-modal__acciones">
+    <button type="button" (click)="abrirSelectorArchivo()" [disabled]="importando()">
+      {{ importando() ? 'Importando…' : 'Importar desde .zip' }}
+    </button>
+  </div>
+
+  @if (errorImportar()) {
+    <p class="status status--error">{{ errorImportar() }}</p>
+  }
+
+  @if (informe(); as inf) {
+    @if (!inf.exito) {
+      <div class="status status--error">
+        <p>El paquete tiene errores y no se ha importado:</p>
+        <ul>
+          @for (error of inf.errores; track error.codigo + error.mensaje) {
+            <li>{{ error.mensaje }}</li>
+          }
+        </ul>
+      </div>
+    }
+  }
 </app-modal>

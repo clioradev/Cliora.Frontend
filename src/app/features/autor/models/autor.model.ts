@@ -294,3 +294,38 @@ export interface GuardarCaracteristicaRequest {
   valorInicial: number;
   visible: boolean;
 }
+
+export interface ErrorImportacion {
+  codigo: string;
+  mensaje: string;
+}
+
+export interface ConteoImportacion {
+  actosCreados: number;
+  actosActualizados: number;
+  actosEliminados: number;
+  escenasCreadas: number;
+  escenasActualizadas: number;
+  escenasEliminadas: number;
+  nodosCreados: number;
+  nodosActualizados: number;
+  nodosEliminados: number;
+  caracteristicasCreadas: number;
+  caracteristicasActualizadas: number;
+  caracteristicasEliminadas: number;
+  eventosCreados: number;
+  eventosActualizados: number;
+  eventosEliminados: number;
+  finalesCreados: number;
+  finalesActualizados: number;
+  finalesEliminados: number;
+}
+
+export interface InformeImportacion {
+  exito: boolean;
+  idAventura: number | null;
+  idVersionAventura: number | null;
+  errores: ErrorImportacion[];
+  advertencias: ErrorImportacion[];
+  conteo: ConteoImportacion;
+}

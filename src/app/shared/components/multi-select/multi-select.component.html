@@ -1,0 +1,26 @@
+<button
+  type="button"
+  class="multi-select__boton"
+  [class.multi-select__boton--activo]="seleccionadas().size > 0"
+  [attr.aria-label]="ariaLabel()"
+  [attr.aria-expanded]="abierto()"
+  aria-haspopup="listbox"
+  (click)="alternarPanel()"
+>
+  <span class="multi-select__resumen">{{ resumen() }}</span>
+</button>
+
+@if (abierto()) {
+  <div class="multi-select__panel" role="listbox" aria-multiselectable="true">
+    @for (opcion of opciones(); track opcion) {
+      <label class="multi-select__opcion">
+        <input type="checkbox" [checked]="seleccionadas().has(opcion)" (change)="alternado.emit(opcion)" />
+        {{ opcion }}
+      </label>
+    }
+
+    @if (seleccionadas().size > 0) {
+      <button type="button" class="multi-select__limpiar" (click)="limpiado.emit()">Quitar selección</button>
+    }
+  </div>
+}

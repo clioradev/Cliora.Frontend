@@ -32,22 +32,19 @@
           <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
         }
       </select>
-    </div>
 
-    @if (availableTags().length > 0) {
-      <div class="buscador__tags">
-        @for (tag of availableTags(); track tag) {
-          <button
-            type="button"
-            class="tag-chip"
-            [class.tag-chip--activo]="selectedTags().has(tag)"
-            (click)="toggleTag(tag)"
-          >
-            {{ tag }}
-          </button>
-        }
-      </div>
-    }
+      @if (availableTags().length > 0) {
+        <app-multi-select
+          class="buscador__tipos"
+          [opciones]="availableTags()"
+          [seleccionadas]="selectedTags()"
+          placeholder="Todos los tipos"
+          ariaLabel="Filtrar por tipo de universo"
+          (alternado)="toggleTag($event)"
+          (limpiado)="clearTags()"
+        />
+      }
+    </div>
   </div>
 }
 

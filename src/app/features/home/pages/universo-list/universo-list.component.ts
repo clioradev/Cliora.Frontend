@@ -1,6 +1,7 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { MultiSelectComponent } from '../../../../shared/components/multi-select/multi-select.component';
 import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
@@ -17,7 +18,14 @@ interface ContextoAventura {
 
 @Component({
   selector: 'app-universo-list',
-  imports: [RouterLink, ResenasModalComponent, AventuraDetalleComponent, ReiniciarAventuraModalComponent, ValoracionModalComponent],
+  imports: [
+    RouterLink,
+    ResenasModalComponent,
+    AventuraDetalleComponent,
+    ReiniciarAventuraModalComponent,
+    ValoracionModalComponent,
+    MultiSelectComponent,
+  ],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
 })
@@ -145,6 +153,10 @@ export class UniversoListComponent {
       set.add(tag);
     }
     this.selectedTags.set(set);
+  }
+
+  protected clearTags(): void {
+    this.selectedTags.set(new Set<string>());
   }
 
   protected onSearchInput(event: Event): void {

@@ -1,3 +1,5 @@
+@use 'breakpoints' as *;
+
 :host {
   display: block;
   padding: var(--space-8);
@@ -17,4 +19,10 @@
   display: inline-block;
   margin-bottom: var(--space-6);
   color: var(--color-text-secondary);
+}
+
+@media (max-width: $bp-tablet) {
+  :host {
+    padding: 0;
+  }
 }

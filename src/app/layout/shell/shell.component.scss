@@ -1,4 +1,5 @@
 @use 'tokens';
+@use 'breakpoints' as *;
 
 .shell {
   display: flex;
@@ -39,4 +40,13 @@
   padding: var(--space-6);
   padding-bottom: calc(var(--space-6) + 4.5rem);
   width: 100%;
+}
+
+// En móvil un solo margen fino alrededor del contenido: cada página añade el suyo propio si lo
+// necesita (p. ej. la tarjeta de detalle de aventura), en vez de sumar varias capas de padding.
+@media (max-width: $bp-tablet) {
+  .shell-content {
+    padding: var(--space-3);
+    padding-bottom: calc(var(--space-3) + 4.5rem);
+  }
 }

@@ -121,6 +121,7 @@
 
 @if (tipoAventuraModal() !== null) {
   <app-tipo-aventura-modal
+    [idCampana]="tipoAventuraModal()!"
     (cerrado)="cerrarTipoAventuraModal()"
     (elegido)="onTipoAventuraElegido($event)"
     (importado)="onAventuraImportada($event)"

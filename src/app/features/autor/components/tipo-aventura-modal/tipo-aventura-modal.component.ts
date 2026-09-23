@@ -1,4 +1,4 @@
-import { Component, ElementRef, inject, output, signal, viewChild } from '@angular/core';
+import { Component, ElementRef, inject, input, output, signal, viewChild } from '@angular/core';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { AutorService } from '../../data-access/autor.service';
@@ -12,6 +12,9 @@ import { InformeImportacion } from '../../models/autor.model';
 })
 export class TipoAventuraModalComponent {
   private readonly autorService = inject(AutorService);
+
+  /** Campaña sobre la que se crea la aventura (tanto manual como importada). */
+  readonly idCampana = input.required<number>();
 
   readonly cerrado = output<void>();
   readonly elegido = output<boolean>();
@@ -30,7 +33,7 @@ export class TipoAventuraModalComponent {
     this.inputArchivo()?.nativeElement.click();
   }
 
-  private readonly importarAction = asyncAction((archivo: File) => this.autorService.importarAventura(archivo), {
+  private readonly importarAction = asyncAction((archivo: File) => this.autorService.importarAventura(this.idCampana(), archivo), {
     onSuccess: (informeRecibido) => {
       this.informe.set(informeRecibido);
       if (informeRecibido.exito) {

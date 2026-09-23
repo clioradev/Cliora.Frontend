@@ -186,3 +186,11 @@
     flex-direction: row;
   }
 }
+
+// En móvil el margen de la página es mínimo (ver shell), así que el propio detalle lleva su
+// padding para que el texto y los botones no queden pegados al borde del fondo.
+@media (max-width: $bp-tablet) {
+  .detalle {
+    padding: var(--space-3);
+  }
+}

@@ -463,15 +463,10 @@ $sombra-lomo-lateral:
     min-width: 0;
   }
 
-  &__cantidad-decision {
+  &__cantidad-decision,
+  &__tipos {
     flex: 1 1 0;
     min-width: 0;
-  }
-
-  &__tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--space-2);
   }
 }
 
@@ -486,19 +481,9 @@ $sombra-lomo-lateral:
   font-size: var(--text-xs);
   line-height: 1.4;
 
-  &--activo {
-    border-color: var(--color-primary);
-    background: var(--color-primary);
-    color: #fff;
-  }
-
   &--sm {
     padding: 0.15rem var(--space-2);
   }
-}
-
-button.tag-chip:hover:not(.tag-chip--activo) {
-  border-color: var(--color-secondary);
 }
 
 .universo-card__tags {
@@ -532,7 +517,8 @@ button.tag-chip:hover:not(.tag-chip--activo) {
     flex-direction: column;
   }
 
-  .buscador__cantidad-decision {
+  .buscador__cantidad-decision,
+  .buscador__tipos {
     flex: 1 1 auto;
   }
 

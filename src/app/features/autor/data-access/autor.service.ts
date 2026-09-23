@@ -67,10 +67,10 @@ export class AutorService {
     return this.http.get<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}`);
   }
 
-  importarAventura(archivo: File): Observable<InformeImportacion> {
+  importarAventura(idCampana: number, archivo: File): Observable<InformeImportacion> {
     const formData = new FormData();
     formData.append('paquete', archivo);
-    return this.http.post<InformeImportacion>(`${this.baseUrl}/Autor/Importar`, formData);
+    return this.http.post<InformeImportacion>(`${this.baseUrl}/Autor/Campana/${idCampana}/Importar`, formData);
   }
 
   subirImagenAventura(idAventura: number, archivo: File): Observable<AventuraAutor> {

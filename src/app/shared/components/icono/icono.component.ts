@@ -8,6 +8,8 @@ export type NombreIcono =
   | 'volver'
   | 'calcular'
   | 'subir'
+  | 'flecha-arriba'
+  | 'flecha-abajo'
   | 'condicion'
   | 'imagen'
   | 'audio';
@@ -22,6 +24,8 @@ const PATHS: Record<NombreIcono, string> = {
   calcular:
     'M12 4V1L8 5l4 4V6c3.31 0 6 2.69 6 6 0 1.01-.25 1.97-.7 2.8l1.46 1.46A7.93 7.93 0 0 0 20 12c0-4.42-3.58-8-8-8zM5.3 7.2 3.84 5.74A7.93 7.93 0 0 0 4 12c0 4.42 3.58 8 8 8v3l4-4-4-4v3c-3.31 0-6-2.69-6-6 0-1.01.25-1.97.7-2.8z',
   subir: 'M9 16h6v-6h4l-7-7-7 7h4v6zm-4 2h14v2H5v-2z',
+  'flecha-arriba': 'M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z',
+  'flecha-abajo': 'M20 12l-1.41-1.41L13 16.17V4h-2v12.17l-5.58-5.59L4 12l8 8 8-8z',
   condicion:
     'M4.25 5.61C6.27 8.2 10 13 10 13v6c0 .55.45 1 1 1h2c.55 0 1-.45 1-1v-6s3.72-4.8 5.74-7.39c.51-.66.04-1.61-.79-1.61H5.04c-.83 0-1.3.95-.79 1.61z',
   imagen:

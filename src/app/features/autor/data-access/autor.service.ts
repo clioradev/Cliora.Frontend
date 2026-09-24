@@ -131,6 +131,12 @@ export class AutorService {
     return this.http.delete<void>(`${this.baseUrl}/Autor/Aventura/${idAventura}`);
   }
 
+  reordenarAventuras(idCampana: number, ids: number[]): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Autor/Campana/${idCampana}/Aventura/Reordenar`, {
+      ids,
+    });
+  }
+
   crearActo(idAventura: number, dto: GuardarActoRequest): Observable<ActoAutor> {
     return this.http.post<ActoAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Acto`, dto);
   }

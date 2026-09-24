@@ -138,6 +138,22 @@ export class PanelAutorComponent {
     });
   }
 
+  // El endpoint espera la lista completa de aventuras de la campaña en el orden deseado (igual que
+  // reordenar actos o escenas), así que se intercambian los dos ids afectados y se manda entera.
+  protected moverAventura(campana: CampanaAutor, aventura: AventuraAutor, direccion: -1 | 1): void {
+    const index = campana.aventuras.findIndex((a) => a.idAventura === aventura.idAventura);
+    const destino = index + direccion;
+    if (destino < 0 || destino >= campana.aventuras.length) {
+      return;
+    }
+
+    const ids = campana.aventuras.map((a) => a.idAventura);
+    [ids[index], ids[destino]] = [ids[destino], ids[index]];
+    this.autorService
+      .reordenarAventuras(campana.idCampana, ids)
+      .subscribe(() => this.universosResource.reload());
+  }
+
   protected eliminarAventura(aventura: AventuraAutor): void {
     this.eliminarModal.set({
       titulo: `Eliminar aventura "${aventura.titulo}"`,

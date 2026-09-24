@@ -51,13 +51,33 @@
 
                 @if (campana.aventuras.length > 0) {
                   <ul class="aventura-list">
-                    @for (aventura of campana.aventuras; track aventura.idAventura) {
+                    @for (aventura of campana.aventuras; track aventura.idAventura; let first = $first, last = $last) {
                       <li class="aventura-list__item">
                         <span class="aventura-list__orden">#{{ aventura.orden }}</span>
                         <span class="aventura-list__titulo">{{ aventura.titulo }}</span>
                         <span class="aventura-list__visible" [class.aventura-list__visible--si]="aventura.visible">
                           {{ aventura.visible ? 'Visible' : 'Oculta' }}
                         </span>
+                        <button
+                          type="button"
+                          class="btn-icono"
+                          [disabled]="first"
+                          (click)="moverAventura(campana, aventura, -1)"
+                          [attr.aria-label]="'Subir aventura ' + aventura.titulo"
+                          title="Subir aventura"
+                        >
+                          <app-icono nombre="flecha-arriba" />
+                        </button>
+                        <button
+                          type="button"
+                          class="btn-icono"
+                          [disabled]="last"
+                          (click)="moverAventura(campana, aventura, 1)"
+                          [attr.aria-label]="'Bajar aventura ' + aventura.titulo"
+                          title="Bajar aventura"
+                        >
+                          <app-icono nombre="flecha-abajo" />
+                        </button>
                         <a class="btn-icono" [routerLink]="['/autor/aventura', aventura.idAventura]" [attr.aria-label]="'Editar aventura ' + aventura.titulo" title="Editar aventura">
                           <app-icono nombre="editar" />
                         </a>

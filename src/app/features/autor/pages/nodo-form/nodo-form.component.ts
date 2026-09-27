@@ -19,6 +19,7 @@ import {
   EnumOperacionCondicion,
   EnumOperacionEfecto,
   EventoAutor,
+  EventoCondicionAutor,
   FinalAutor,
   GrupoCondicionAutor,
   NodoArbol,
@@ -91,6 +92,31 @@ export class NodoFormComponent {
   });
   protected readonly eventos = this.eventosResource.value;
 
+  // Las condiciones pueden mirar también eventos de aventuras anteriores de la campaña (nunca
+  // posteriores); los efectos solo los de esta aventura (`eventos`).
+  private readonly eventosCondicionResource = rxResource({
+    params: () => this.idAventura,
+    stream: ({ params }) => this.autorService.getEventosCondicion(params),
+  });
+  protected readonly gruposEventosCondicion = computed(() => {
+    const grupos: { etiqueta: string; eventos: EventoCondicionAutor[] }[] = [];
+    let idAventuraGrupo: number | null = null;
+    for (const evento of this.eventosCondicionResource.value() ?? []) {
+      if (evento.idAventura !== idAventuraGrupo) {
+        idAventuraGrupo = evento.idAventura;
+        grupos.push({
+          etiqueta:
+            evento.idAventura === this.idAventura
+              ? 'Esta aventura'
+              : `${evento.ordenAventura}. ${evento.tituloAventura}`,
+          eventos: [],
+        });
+      }
+      grupos[grupos.length - 1].eventos.push(evento);
+    }
+    return grupos;
+  });
+
   protected readonly errorValidacion = signal<string | null>(null);
 
   protected readonly CREAR_NODO_DESTINO = '__crear__';
@@ -159,6 +185,28 @@ export class NodoFormComponent {
 
   private primerEvento(): number | null {
     return this.eventosResource.value()?.[0]?.idEvento ?? null;
+  }
+
+  private primerEventoCondicion(): number | null {
+    const lista = this.eventosCondicionResource.value() ?? [];
+    return (lista.find((e) => e.idAventura === this.idAventura) ?? lista[0])?.idEvento ?? null;
+  }
+
+  /** Un evento recién creado es de esta aventura: también pasa a estar disponible en las condiciones. */
+  private anadirEventoCreado(evento: EventoAutor): void {
+    this.eventosResource.value.update((lista) => [...(lista ?? []), evento]);
+    this.eventosCondicionResource.value.update((lista) => {
+      const actual = (lista ?? []).find((e) => e.idAventura === this.idAventura);
+      return [
+        ...(lista ?? []),
+        {
+          ...evento,
+          idAventura: this.idAventura,
+          tituloAventura: actual?.tituloAventura ?? '',
+          ordenAventura: actual?.ordenAventura ?? 0,
+        },
+      ];
+    });
   }
 
   private crearEfectoGroup(efecto?: EfectoAutor) {
@@ -447,7 +495,7 @@ export class NodoFormComponent {
   }
 
   protected onEventoCreado(evento: EventoAutor): void {
-    this.eventosResource.value.update((lista) => [...(lista ?? []), evento]);
+    this.anadirEventoCreado(evento);
     const destino = this.efectoCreandoVariable();
     if (destino) {
       this.efectosDe(destino.opcionIndex, destino.rama).at(destino.efectoIndex).get('idEvento')!.setValue(evento.idEvento);
@@ -504,7 +552,7 @@ export class NodoFormComponent {
     const tipoVariable = condicion.get('tipoVariable')!.value as 'caracteristica' | 'evento';
     condicion.patchValue({
       idCaracteristica: tipoVariable === 'caracteristica' ? this.primeraCaracteristica() : null,
-      idEvento: tipoVariable === 'evento' ? this.primerEvento() : null,
+      idEvento: tipoVariable === 'evento' ? this.primerEventoCondicion() : null,
       operacion: EnumOperacionCondicion.Igual,
       marcado: true,
     });
@@ -540,7 +588,7 @@ export class NodoFormComponent {
     valor: string,
   ): void {
     if (valor === this.CREAR_EVENTO) {
-      this.condicionesDe(grupos, grupoIndex).at(condicionIndex).get('idEvento')!.setValue(this.primerEvento());
+      this.condicionesDe(grupos, grupoIndex).at(condicionIndex).get('idEvento')!.setValue(this.primerEventoCondicion());
       this.abrirCrearEventoCondicion(grupos, grupoIndex, condicionIndex);
     }
   }
@@ -562,7 +610,7 @@ export class NodoFormComponent {
   }
 
   protected onEventoCreadoCondicion(evento: EventoAutor): void {
-    this.eventosResource.value.update((lista) => [...(lista ?? []), evento]);
+    this.anadirEventoCreado(evento);
     const destino = this.condicionCreandoVariable();
     if (destino) {
       this.condicionesDe(destino.grupos, destino.grupoIndex)

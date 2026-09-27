@@ -229,6 +229,13 @@ export interface EventoAutor {
   descripcion: string | null;
 }
 
+/** Evento elegible en una condición: de esta aventura o de una anterior de la campaña. */
+export interface EventoCondicionAutor extends EventoAutor {
+  idAventura: number;
+  tituloAventura: string;
+  ordenAventura: number;
+}
+
 export interface GuardarEventoRequest {
   nombre: string;
   descripcion: string | null;

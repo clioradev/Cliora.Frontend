@@ -14,6 +14,7 @@ import {
   CrearNodoRequest,
   EscenaAutor,
   EventoAutor,
+  EventoCondicionAutor,
   FinalAutor,
   GuardarActoRequest,
   GuardarAventuraRequest,
@@ -257,6 +258,10 @@ export class AutorService {
 
   getEventos(idAventura: number): Observable<EventoAutor[]> {
     return this.http.get<EventoAutor[]>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Evento`);
+  }
+
+  getEventosCondicion(idAventura: number): Observable<EventoCondicionAutor[]> {
+    return this.http.get<EventoCondicionAutor[]>(`${this.baseUrl}/Autor/Aventura/${idAventura}/EventoCondicion`);
   }
 
   crearEvento(idAventura: number, dto: GuardarEventoRequest): Observable<EventoAutor> {

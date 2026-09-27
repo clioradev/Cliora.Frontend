@@ -80,8 +80,12 @@
                         "
                       >
                         <option [value]="CREAR_EVENTO">+ Añadir evento…</option>
-                        @for (ev of eventos(); track ev.idEvento) {
-                          <option [value]="ev.idEvento">{{ ev.nombre }}</option>
+                        @for (grupo of gruposEventosCondicion(); track grupo.etiqueta) {
+                          <optgroup [label]="grupo.etiqueta">
+                            @for (ev of grupo.eventos; track ev.idEvento) {
+                              <option [value]="ev.idEvento">{{ ev.nombre }}</option>
+                            }
+                          </optgroup>
                         }
                       </select>
 

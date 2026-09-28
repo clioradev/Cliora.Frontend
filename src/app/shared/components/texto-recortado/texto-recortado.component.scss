@@ -1,0 +1,62 @@
+:host {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+}
+
+.texto-recortado {
+  &__texto {
+    flex: 1 1 auto;
+    min-width: 0;
+    margin: 0;
+    white-space: pre-line;
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+
+  &__lupa {
+    flex: 0 0 auto;
+    width: 2rem;
+    height: 2rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: 1px solid var(--color-border);
+    border-radius: 50%;
+    background: var(--color-surface);
+    color: var(--color-text-secondary);
+    font-size: var(--text-md);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--color-text);
+    }
+
+    &:focus-visible {
+      outline: none;
+      box-shadow: 0 0 0 3px var(--color-focus-ring);
+    }
+  }
+
+  &__titulo {
+    margin: 0 0 var(--space-4);
+    padding-right: var(--space-6);
+    color: var(--color-text);
+    text-shadow: none;
+    text-align: left;
+  }
+
+  // Dentro de la modal: texto completo, con sus saltos de línea y colores normales
+  // (no hereda el recorte ni el color secundario del listado).
+  &__completo {
+    margin: 0;
+    white-space: pre-line;
+    color: var(--color-text);
+    text-shadow: none;
+    text-align: left;
+    line-height: 1.6;
+  }
+}

@@ -2,6 +2,8 @@ import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
 import { MultiSelectComponent } from '../../../../shared/components/multi-select/multi-select.component';
+import { TextoRecortadoComponent } from '../../../../shared/components/texto-recortado/texto-recortado.component';
+import { AnchoObservadoDirective } from '../../../../shared/directives/ancho-observado.directive';
 import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
@@ -9,6 +11,15 @@ import { ValoracionModalComponent } from '../../components/valoracion-modal/valo
 import { PartidaService } from '../../data-access/partida.service';
 import { UniversoService } from '../../data-access/universo.service';
 import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
+
+// Medidas de la estantería en rem (deben coincidir con universo-list.component.scss): ancho preferido
+// del libro abierto, ancho de un lomo y separación entre elementos.
+const ANCHO_LIBRO_ABIERTO_REM = 29;
+const ANCHO_LOMO_REM = 2.75;
+const SEPARACION_REM = 0.5;
+// En móvil los lomos se apilan en vertical; ahí no manda el ancho sino no alargar demasiado la lista.
+const LOMOS_MAXIMOS_MOVIL = 4;
+const ANCHO_TABLET_PX = 768;
 
 interface ContextoAventura {
   universo: Universo;
@@ -25,6 +36,8 @@ interface ContextoAventura {
     ReiniciarAventuraModalComponent,
     ValoracionModalComponent,
     MultiSelectComponent,
+    TextoRecortadoComponent,
+    AnchoObservadoDirective,
   ],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
@@ -73,6 +86,7 @@ export class UniversoListComponent {
   protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
 
   private readonly indicesAventura = signal(new Map<number, number>());
+  private readonly anchosEstanteria = signal(new Map<number, number>());
 
   protected readonly availableTags = computed(() => {
     const tags = new Set<string>();
@@ -112,12 +126,21 @@ export class UniversoListComponent {
 
   protected aventurasAnteriores(campana: Campana): Aventura[] {
     const indice = this.indiceActual(campana);
-    return campana.aventuras.slice(Math.max(0, indice - 2), indice);
+    return campana.aventuras.slice(indice - this.repartoLomos(campana).anteriores, indice);
   }
 
   protected aventurasSiguientes(campana: Campana): Aventura[] {
     const indice = this.indiceActual(campana);
-    return campana.aventuras.slice(indice + 1, indice + 3);
+    return campana.aventuras.slice(indice + 1, indice + 1 + this.repartoLomos(campana).siguientes);
+  }
+
+  protected onAnchoEstanteria(campana: Campana, ancho: number): void {
+    if (this.anchosEstanteria().get(campana.idCampana) === ancho) {
+      return;
+    }
+    const mapa = new Map(this.anchosEstanteria());
+    mapa.set(campana.idCampana, ancho);
+    this.anchosEstanteria.set(mapa);
   }
 
   protected indiceActual(campana: Campana): number {
@@ -195,6 +218,35 @@ export class UniversoListComponent {
 
   protected onValoracionCerrada(): void {
     this.idAventuraAValorar.set(null);
+  }
+
+  // Cuántos lomos caben junto al libro abierto y cómo se reparten: primero a partes iguales a cada
+  // lado y, si en un lado no hay tantas aventuras, el sitio sobrante se da al otro lado.
+  private repartoLomos(campana: Campana): { anteriores: number; siguientes: number } {
+    const indice = this.indiceActual(campana);
+    const disponiblesAntes = indice;
+    const disponiblesDespues = campana.aventuras.length - 1 - indice;
+
+    const huecos = this.huecosLomos(campana);
+    let anteriores = Math.min(disponiblesAntes, Math.floor(huecos / 2));
+    const siguientes = Math.min(disponiblesDespues, huecos - anteriores);
+    anteriores = Math.min(disponiblesAntes, huecos - siguientes);
+    return { anteriores, siguientes };
+  }
+
+  private huecosLomos(campana: Campana): number {
+    if (window.innerWidth <= ANCHO_TABLET_PX) {
+      return LOMOS_MAXIMOS_MOVIL;
+    }
+
+    const ancho = this.anchosEstanteria().get(campana.idCampana);
+    if (ancho === undefined) {
+      return LOMOS_MAXIMOS_MOVIL;
+    }
+
+    const rem = parseFloat(getComputedStyle(document.documentElement).fontSize) || 16;
+    const libre = ancho - ANCHO_LIBRO_ABIERTO_REM * rem;
+    return Math.max(0, Math.floor(libre / ((ANCHO_LOMO_REM + SEPARACION_REM) * rem)));
   }
 
   private establecerIndice(campana: Campana, indice: number): void {

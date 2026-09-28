@@ -12,7 +12,8 @@ export type NombreIcono =
   | 'flecha-abajo'
   | 'condicion'
   | 'imagen'
-  | 'audio';
+  | 'audio'
+  | 'buscar';
 
 const PATHS: Record<NombreIcono, string> = {
   editar:
@@ -32,6 +33,8 @@ const PATHS: Record<NombreIcono, string> = {
     'M21 19V5c0-1.1-.9-2-2-2H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h14c1.1 0 2-.9 2-2zM8.5 13.5l2.5 3.01L14.5 12l4.5 6H5l3.5-4.5z',
   audio:
     'M12 3v10.55c-.59-.34-1.27-.55-2-.55-2.21 0-4 1.79-4 4s1.79 4 4 4 4-1.79 4-4V7h4V3h-6z',
+  buscar:
+    'M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5 6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5 14 7.01 14 9.5 11.99 14 9.5 14z',
 };
 
 @Component({

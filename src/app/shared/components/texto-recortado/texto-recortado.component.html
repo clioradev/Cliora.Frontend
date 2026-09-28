@@ -1,0 +1,22 @@
+<p #parrafo class="texto-recortado__texto">{{ texto() }}</p>
+
+@if (desborda()) {
+  <button
+    type="button"
+    class="texto-recortado__lupa"
+    (click)="abierto.set(true)"
+    aria-label="Ver texto completo"
+    title="Ver texto completo"
+  >
+    <app-icono nombre="buscar" />
+  </button>
+}
+
+@if (abierto()) {
+  <app-modal (cerrar)="abierto.set(false)">
+    @if (titulo()) {
+      <h3 class="texto-recortado__titulo">{{ titulo() }}</h3>
+    }
+    <p class="texto-recortado__completo">{{ texto() }}</p>
+  </app-modal>
+}

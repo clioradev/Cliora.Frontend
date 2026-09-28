@@ -77,7 +77,11 @@
         }
 
         @if (universo.descripcion) {
-          <p class="universo-card__descripcion">{{ universo.descripcion }}</p>
+          <app-texto-recortado
+            class="universo-card__descripcion"
+            [texto]="universo.descripcion"
+            [titulo]="universo.titulo"
+          />
         }
 
         <div class="campanas">
@@ -87,10 +91,18 @@
                 <h3>{{ campana.titulo }}</h3>
               </header>
 
+              @if (campana.descripcion) {
+                <app-texto-recortado
+                  class="campana-card__descripcion"
+                  [texto]="campana.descripcion"
+                  [titulo]="campana.titulo"
+                />
+              }
+
               @if (campana.aventuras.length > 0) {
                 @let aventura = aventuraActual(campana);
 
-                <div class="estanteria">
+                <div class="estanteria" (appAnchoObservado)="onAnchoEstanteria(campana, $event)">
                     @for (a of aventurasAnteriores(campana); track a.idAventura) {
                       <button
                         type="button"

@@ -99,8 +99,8 @@
   }
 
   &__descripcion {
-    width: 100%;
-    max-width: var(--content-width-md);
+    // Algo más estrecho que la descripción del universo, para que se lean como dos textos distintos.
+    width: 90%;
     margin: var(--space-2) auto 0;
     color: var(--color-text-secondary);
     font-size: var(--text-sm);

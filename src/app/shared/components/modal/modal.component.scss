@@ -20,6 +20,10 @@
   max-height: 90vh;
   overflow-y: auto;
 
+  &--amplio {
+    max-width: max(var(--content-width-md), min(80vw, calc(var(--content-width-lg) * 0.8)));
+  }
+
   &__cerrar {
     position: absolute;
     top: var(--space-2);

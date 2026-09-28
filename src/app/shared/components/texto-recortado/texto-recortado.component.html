@@ -13,7 +13,7 @@
 }
 
 @if (abierto()) {
-  <app-modal (cerrar)="abierto.set(false)">
+  <app-modal ancho="amplio" (cerrar)="abierto.set(false)">
     @if (titulo()) {
       <h3 class="texto-recortado__titulo">{{ titulo() }}</h3>
     }

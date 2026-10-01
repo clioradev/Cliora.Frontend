@@ -156,10 +156,64 @@
         } @else {
           <span class="aventura-form__caratula-aviso">Guarda la aventura primero para subir una carátula.</span>
         }
+
+        @if (idAventura()) {
+          <div class="aventura-form__paquete">
+            <input
+              #paqueteInput
+              type="file"
+              accept=".zip"
+              hidden
+              (change)="seleccionarPaquete($any($event.target).files); paqueteInput.value = ''"
+            />
+            <button
+              type="button"
+              (click)="paqueteInput.click()"
+              [disabled]="importando()"
+              title="Sustituye el contenido de esta aventura por el de un paquete .zip"
+            >
+              {{ importando() ? 'Importando…' : 'Importar' }}
+            </button>
+            <button
+              type="button"
+              (click)="exportar()"
+              [disabled]="exportando()"
+              title="Descarga la aventura como paquete .zip (el mismo formato que acepta Importar)"
+            >
+              {{ exportando() ? 'Exportando…' : 'Exportar' }}
+            </button>
+          </div>
+        }
       </div>
 
       @if (errorCaratula()) {
         <p class="status status--error">{{ errorCaratula() }}</p>
+      }
+
+      @if (errorImportar()) {
+        <p class="status status--error">{{ errorImportar() }}</p>
+      }
+
+      @if (errorExportar()) {
+        <p class="status status--error">{{ errorExportar() }}</p>
+      }
+
+      @if (informeImportacion(); as inf) {
+        @if (inf.exito) {
+          <p class="status">
+            Paquete importado: {{ inf.conteo.nodosCreados }} nodos nuevos,
+            {{ inf.conteo.nodosActualizados }} actualizados y {{ inf.conteo.nodosEliminados }} eliminados.
+          </p>
+        } @else {
+          <div class="status status--error">
+            <p>{{ inf.idVersionAventura ? 'La importación ha terminado con errores:' : 'El paquete tiene errores y no se ha importado:' }}</p>
+            <ul>
+              @for (error of inf.errores; track $index) {
+                <li>{{ error.mensaje }}</li>
+              }
+            </ul>
+          </div>
+        }
       }
 
       @if (error()) {
@@ -186,5 +240,36 @@
     }
   } @else {
     <p class="aventura-form__placeholder">Guarda la aventura primero para añadir actos, escenas y variables.</p>
+  }
+
+  @if (importacionPendiente(); as pendiente) {
+    <app-modal (cerrar)="cancelarImportacion()">
+      <h3>¿Sustituir el contenido de la aventura?</h3>
+
+      <p>
+        El paquete <strong>{{ pendiente.archivo.name }}</strong> es válido. Al importarlo, esta aventura quedará
+        igual que el paquete: lo que coincida se actualiza, lo nuevo se crea y se borran los actos, escenas,
+        nodos, finales y variables que no estén en él. También se sustituyen el título y la descripción.
+      </p>
+      <p>Solo cambia la versión en edición: lo que ya esté publicado no se toca hasta que vuelvas a publicar.</p>
+
+      @if (pendiente.informe.advertencias.length) {
+        <div class="status">
+          <p>Avisos del paquete (no impiden importarlo):</p>
+          <ul>
+            @for (aviso of pendiente.informe.advertencias; track $index) {
+              <li>{{ aviso.mensaje }}</li>
+            }
+          </ul>
+        </div>
+      }
+
+      <div class="aventura-form__acciones">
+        <button type="button" (click)="cancelarImportacion()" [disabled]="importando()">Cancelar</button>
+        <button type="button" class="btn--primary" (click)="confirmarImportacion()" [disabled]="importando()">
+          {{ importando() ? 'Importando…' : 'Importar y sustituir' }}
+        </button>
+      </div>
+    </app-modal>
   }
 </div>

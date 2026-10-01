@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
@@ -72,6 +72,26 @@ export class AutorService {
     const formData = new FormData();
     formData.append('paquete', archivo);
     return this.http.post<InformeImportacion>(`${this.baseUrl}/Autor/Campana/${idCampana}/Importar`, formData);
+  }
+
+  /**
+   * Sustituye el contenido de la aventura por el del paquete. Con dryRun solo valida el paquete,
+   * sin tocar nada, para poder pedir confirmación antes de sustituir.
+   */
+  /** Paquete .zip de la aventura (lo contrario de importarEnAventura). */
+  exportarAventura(idAventura: number): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.baseUrl}/Autor/Aventura/${idAventura}/Exportar`, {
+      responseType: 'blob',
+      observe: 'response',
+    });
+  }
+
+  importarEnAventura(idAventura: number, archivo: File, dryRun = false): Observable<InformeImportacion> {
+    const formData = new FormData();
+    formData.append('paquete', archivo);
+    return this.http.post<InformeImportacion>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Importar`, formData, {
+      params: { dryRun },
+    });
   }
 
   subirImagenAventura(idAventura: number, archivo: File): Observable<AventuraAutor> {

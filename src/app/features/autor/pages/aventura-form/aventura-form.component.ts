@@ -7,14 +7,15 @@ import { of } from 'rxjs';
 import { CANTIDAD_DECISION_OPCIONES } from '../../../home/models/universo.model';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { IconoComponent } from '../../../../shared/components/icono/icono.component';
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
 import { CaracteristicasComponent } from '../../components/caracteristicas/caracteristicas.component';
 import { AutorService } from '../../data-access/autor.service';
-import { AventuraAutor, EnumEstadoPublicacion } from '../../models/autor.model';
+import { AventuraAutor, EnumEstadoPublicacion, InformeImportacion } from '../../models/autor.model';
 
 @Component({
   selector: 'app-aventura-form',
-  imports: [ReactiveFormsModule, RouterLink, IconoComponent, ActosEscenasComponent, CaracteristicasComponent, DatePipe],
+  imports: [ReactiveFormsModule, RouterLink, IconoComponent, ModalComponent, ActosEscenasComponent, CaracteristicasComponent, DatePipe],
   templateUrl: './aventura-form.component.html',
   styleUrl: './aventura-form.component.scss',
 })
@@ -217,6 +218,77 @@ export class AventuraFormComponent {
     this.quitarCaratulaAction.run();
   }
 
+  // Importar: primero se valida el paquete sin tocar nada (dryRun) y, si es válido, se pide
+  // confirmación antes de sustituir el contenido de la aventura por el del paquete.
+  protected readonly importacionPendiente = signal<{ archivo: File; informe: InformeImportacion } | null>(null);
+  protected readonly informeImportacion = signal<InformeImportacion | null>(null);
+
+  private readonly validarImportacionAction = asyncAction(
+    (archivo: File) => this.autorService.importarEnAventura(this.idAventura()!, archivo, true),
+    {
+      onSuccess: (informe, archivo) => {
+        if (informe.exito) {
+          this.importacionPendiente.set({ archivo, informe });
+        } else {
+          this.informeImportacion.set(informe);
+        }
+      },
+      defaultErrorMessage: 'No se ha podido leer el paquete.',
+    },
+  );
+
+  private readonly importarAction = asyncAction(
+    (archivo: File) => this.autorService.importarEnAventura(this.idAventura()!, archivo),
+    {
+      onSuccess: (informe) => {
+        this.importacionPendiente.set(null);
+        this.informeImportacion.set(informe);
+        this.aventuraResource.reload();
+      },
+      defaultErrorMessage: 'No se ha podido importar el paquete.',
+    },
+  );
+
+  protected readonly importando = computed(() => this.validarImportacionAction.loading() || this.importarAction.loading());
+  protected readonly errorImportar = computed(() => this.validarImportacionAction.error() ?? this.importarAction.error());
+
+  protected seleccionarPaquete(files: FileList | null): void {
+    const archivo = files?.[0];
+    if (archivo) {
+      this.informeImportacion.set(null);
+      this.validarImportacionAction.run(archivo);
+    }
+  }
+
+  protected confirmarImportacion(): void {
+    const pendiente = this.importacionPendiente();
+    if (pendiente) {
+      this.importarAction.run(pendiente.archivo);
+    }
+  }
+
+  protected cancelarImportacion(): void {
+    if (!this.importarAction.loading()) {
+      this.importacionPendiente.set(null);
+    }
+  }
+
+  private readonly exportarAction = asyncAction(() => this.autorService.exportarAventura(this.idAventura()!), {
+    onSuccess: (respuesta) => {
+      if (respuesta.body) {
+        const nombre = nombreArchivoDescarga(respuesta.headers.get('Content-Disposition')) ?? `aventura-${this.idAventura()}.zip`;
+        descargar(respuesta.body, nombre);
+      }
+    },
+    defaultErrorMessage: 'No se ha podido exportar la aventura.',
+  });
+  protected readonly exportando = this.exportarAction.loading;
+  protected readonly errorExportar = this.exportarAction.error;
+
+  protected exportar(): void {
+    this.exportarAction.run();
+  }
+
   private precargarFormulario(aventura: AventuraAutor): void {
     this.form.patchValue({
       titulo: aventura.titulo,
@@ -228,4 +300,22 @@ export class AventuraFormComponent {
     });
     this.caratulaUrl.set(aventura.caratulaUrl);
   }
+}
+
+/** Nombre del archivo de una cabecera Content-Disposition (filename*=UTF-8''… o filename=…). */
+function nombreArchivoDescarga(cabecera: string | null): string | null {
+  const codificado = cabecera?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
+  if (codificado) {
+    return decodeURIComponent(codificado);
+  }
+  return cabecera?.match(/filename="?([^";]+)"?/i)?.[1] ?? null;
+}
+
+function descargar(contenido: Blob, nombre: string): void {
+  const url = URL.createObjectURL(contenido);
+  const enlace = document.createElement('a');
+  enlace.href = url;
+  enlace.download = nombre;
+  enlace.click();
+  URL.revokeObjectURL(url);
 }

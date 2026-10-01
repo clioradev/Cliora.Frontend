@@ -1,4 +1,4 @@
-import { Component, DestroyRef, ElementRef, HostListener, inject, input, output } from '@angular/core';
+import { Component, DestroyRef, ElementRef, HostListener, afterNextRender, inject, input, output } from '@angular/core';
 
 @Component({
   selector: 'app-modal',
@@ -13,8 +13,10 @@ export class ModalComponent {
   constructor() {
     // Se pinta directamente en el body para que ningún contexto de apilamiento (z-index) ni
     // estilo heredado del sitio donde se abre la deje por detrás del resto de la página.
+    // Se mueve tras el primer render: en el constructor Angular aún no ha insertado el host
+    // en su sitio y, al hacerlo, lo devolvería al lugar original.
     const host = inject<ElementRef<HTMLElement>>(ElementRef).nativeElement;
-    document.body.appendChild(host);
+    afterNextRender(() => document.body.appendChild(host));
     inject(DestroyRef).onDestroy(() => host.remove());
   }
 

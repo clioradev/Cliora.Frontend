@@ -1,0 +1,55 @@
+// Estilos comunes de las páginas informativas (Cliora, ¿Te gusta escribir?).
+:host {
+  display: block;
+  max-width: var(--content-width-md);
+  margin: 0 auto;
+}
+
+.info__cabecera {
+  text-align: center;
+  margin-bottom: var(--space-8);
+}
+
+.info__logo {
+  height: 3rem;
+  margin-bottom: var(--space-4);
+}
+
+.info__entradilla {
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+  margin: 0;
+}
+
+.info__seccion {
+  margin-bottom: var(--space-8);
+
+  h2 {
+    margin-bottom: var(--space-2);
+  }
+
+  p {
+    line-height: 1.6;
+  }
+
+  ul {
+    padding-left: var(--space-6);
+    line-height: 1.6;
+  }
+
+  li + li {
+    margin-top: var(--space-2);
+  }
+}
+
+.info__accion {
+  text-align: center;
+}
+
+.info__cita {
+  margin: var(--space-8) 0;
+  text-align: center;
+  font-style: italic;
+  font-size: var(--text-lg);
+  color: var(--color-text-secondary);
+}

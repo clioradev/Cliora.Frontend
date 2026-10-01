@@ -108,6 +108,15 @@
     }
   }
 
+  &__titulo {
+    display: block;
+    padding: var(--space-1) var(--space-4) var(--space-2);
+    text-align: center;
+    font-size: var(--text-sm);
+    font-weight: 600;
+    color: var(--color-text-secondary);
+  }
+
   &__separador {
     margin: var(--space-2) 0;
     border: 0;

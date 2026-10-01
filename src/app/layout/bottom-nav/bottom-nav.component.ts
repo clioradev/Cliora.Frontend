@@ -11,15 +11,18 @@ interface OpcionMas {
 }
 
 const OPCIONES_USUARIO: OpcionMas[] = [
+  { texto: 'Cliora', ruta: '/cliora' },
+  { texto: '¿Te gusta escribir?', ruta: '/escribir' },
   { texto: 'Preferencias', ruta: '/configuracion/preferencias' },
   { texto: 'Contraseña', ruta: '/configuracion/contrasena' },
 ];
 
+// Van bajo el título "Administración" del desplegable, por eso sin el prefijo "Admin:".
 const OPCIONES_ADMIN: OpcionMas[] = [
-  { texto: 'Admin: Aventuras', ruta: '/admin/aventuras' },
-  { texto: 'Admin: Roles', ruta: '/admin/roles' },
-  { texto: 'Admin: Tipos de universo', ruta: '/admin/tipos-universo' },
-  { texto: 'Admin: Eliminar aventuras', ruta: '/admin/eliminar-aventuras' },
+  { texto: 'Aventuras', ruta: '/admin/aventuras' },
+  { texto: 'Roles', ruta: '/admin/roles' },
+  { texto: 'Tipos de universo', ruta: '/admin/tipos-universo' },
+  { texto: 'Eliminar aventuras', ruta: '/admin/eliminar-aventuras' },
 ];
 
 @Component({
@@ -61,7 +64,7 @@ export class BottomNavComponent {
   protected readonly masActivo = computed(() => {
     this.navegacion();
     const url = this.router.url;
-    return url.startsWith('/configuracion') || url.startsWith('/admin');
+    return ['/cliora', '/escribir', '/configuracion', '/admin'].some((ruta) => url.startsWith(ruta));
   });
 
   constructor() {

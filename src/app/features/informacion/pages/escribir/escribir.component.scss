@@ -1,0 +1,35 @@
+.escribir__formulario {
+  padding: var(--space-6);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background: var(--color-surface);
+}
+
+.escribir__pie {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.escribir__contador {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+
+  &--excedido {
+    color: var(--color-danger);
+  }
+}
+
+.status {
+  color: var(--color-text-secondary);
+
+  &--ok {
+    color: var(--color-success);
+  }
+
+  &--error {
+    color: var(--color-danger);
+  }
+}

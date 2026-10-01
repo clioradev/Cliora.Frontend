@@ -44,7 +44,7 @@
           <circle cx="12" cy="12" r="2" fill="currentColor" />
           <circle cx="19" cy="12" r="2" fill="currentColor" />
         </svg>
-        <span class="bottom-nav__label">Más…</span>
+        <span class="bottom-nav__label">Más</span>
       </button>
 
       @if (menuAbierto()) {
@@ -57,6 +57,7 @@
 
           @if (opcionesAdmin().length > 0) {
             <hr class="mas-menu__separador" />
+            <span class="mas-menu__titulo">Administración</span>
             @for (opcion of opcionesAdmin(); track opcion.ruta) {
               <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
                 {{ opcion.texto }}

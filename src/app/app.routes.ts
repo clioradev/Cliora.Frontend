@@ -49,6 +49,18 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'cliora',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/informacion/pages/cliora/cliora.component').then((m) => m.ClioraComponent),
+      },
+      {
+        path: 'escribir',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/informacion/pages/escribir/escribir.component').then((m) => m.EscribirComponent),
+      },
+      {
         path: 'configuracion',
         canActivate: [authGuard],
         children: [

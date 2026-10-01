@@ -1,0 +1,88 @@
+<header class="info__cabecera">
+  <h1>¿Te gusta escribir?</h1>
+  <p class="info__entradilla">
+    Las historias de Cliora las escriben personas. Si tienes una en la cabeza, aquí puedes darle vida.
+  </p>
+</header>
+
+<section class="info__seccion">
+  <h2>Qué hace un autor</h2>
+  <p>
+    Un autor crea su propio universo, lo divide en campañas y escribe sus aventuras. Pero en Cliora no basta con
+    contar lo que pasa: también decides qué puede hacer el lector en cada momento y qué ocurre según lo que elija.
+  </p>
+  <ul>
+    <li>Escribes la historia en <strong>nodos</strong>: fragmentos de texto, con imágenes o audio si quieres, que terminan en una decisión.</li>
+    <li>Defines las <strong>opciones</strong> de cada nodo y a dónde lleva cada una.</li>
+    <li>Creas <strong>características</strong> (valor, cordura, la confianza de un personaje…) y <strong>eventos</strong> (cosas que han pasado) que la historia va recordando.</li>
+    <li>Puedes hacer que una opción solo aparezca si se cumplen ciertas condiciones, o que su resultado dependa de una <strong>tirada de dados</strong>.</li>
+    <li>Escribes uno o varios <strong>finales</strong>, y decides qué camino lleva a cada uno.</li>
+  </ul>
+</section>
+
+<section class="info__seccion">
+  <h2>Sin programar nada</h2>
+  <p>
+    Todo se hace desde el editor de autor, en la propia web: actos, escenas, nodos, opciones, características y
+    finales. Mientras escribes puedes jugar tu aventura tal y como la verá el lector, para comprobar que cada
+    camino funciona y que la historia se sostiene.
+  </p>
+</section>
+
+<section class="info__seccion">
+  <h2>De tu borrador al catálogo</h2>
+  <p>
+    Cuando tu aventura esté lista, solicitas su publicación. El equipo de Cliora la lee, la prueba y, si todo está
+    en orden, la publica para que cualquiera pueda jugarla. Después puedes seguir mejorándola: tus cambios se
+    preparan en una versión nueva sin afectar a quien ya la está jugando.
+  </p>
+</section>
+
+<section class="info__seccion">
+  <h2>Qué buscamos</h2>
+  <p>
+    Historias en las que las decisiones importen de verdad: que tengan consecuencias, que se recuerden más adelante
+    y que lleven a finales distintos. Da igual el género; lo que cuenta es que el lector sienta que la historia es
+    suya.
+  </p>
+</section>
+
+<section class="info__seccion escribir__formulario">
+  <h2>Cuéntanos</h2>
+
+  @if (esAutor()) {
+    <p>
+      Ya tienes el rol de autor: puedes empezar a escribir desde el <a routerLink="/autor">panel de autor</a>. Si
+      quieres contarnos algo, también puedes usar este formulario.
+    </p>
+  } @else {
+    <p>
+      Si te interesa ser autor en Cliora, escríbenos: qué te gustaría escribir, qué géneros te atraen o si ya tienes
+      alguna historia empezada. Te responderemos al correo de tu cuenta.
+    </p>
+  }
+
+  @if (enviado()) {
+    <p class="status status--ok">¡Gracias! Hemos recibido tu mensaje y te responderemos pronto.</p>
+    <button type="button" (click)="escribirOtro()">Escribir otro mensaje</button>
+  } @else {
+    <app-area-texto
+      [formControl]="mensaje"
+      [rows]="6"
+      placeholder="Cuéntanos qué te gustaría escribir…"
+      tituloEditor="Tu mensaje"
+    />
+    <div class="escribir__pie">
+      <span class="escribir__contador" [class.escribir__contador--excedido]="caracteres() > maxLength">
+        {{ caracteres() }} / {{ maxLength }}
+      </span>
+      <button type="button" class="btn--primary" [disabled]="!puedeEnviar() || enviando()" (click)="enviar()">
+        {{ enviando() ? 'Enviando…' : 'Enviar' }}
+      </button>
+    </div>
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+  }
+</section>

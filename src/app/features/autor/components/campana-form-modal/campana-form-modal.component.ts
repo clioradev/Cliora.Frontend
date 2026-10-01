@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { asyncAction } from '../../../../core/utils/async-action';
@@ -7,7 +8,7 @@ import { CampanaAutor } from '../../models/autor.model';
 
 @Component({
   selector: 'app-campana-form-modal',
-  imports: [ModalComponent, ReactiveFormsModule],
+  imports: [AreaTextoComponent, ModalComponent, ReactiveFormsModule],
   templateUrl: './campana-form-modal.component.html',
   styleUrl: './campana-form-modal.component.scss',
 })

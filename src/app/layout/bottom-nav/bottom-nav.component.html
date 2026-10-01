@@ -30,21 +30,46 @@
       </a>
     }
 
-    <a class="bottom-nav__item" routerLink="/configuracion" routerLinkActive="bottom-nav__item--active">
-      <svg viewBox="0 0 24 24" aria-hidden="true">
-        <circle
-          cx="12"
-          cy="12"
-          r="8"
-          pathLength="100"
-          fill="none"
-          stroke="currentColor"
-          stroke-width="3"
-          stroke-dasharray="6.25 6.25"
-        />
-        <circle cx="12" cy="12" r="3.4" fill="none" stroke="currentColor" stroke-width="1.8" />
-      </svg>
-      <span class="bottom-nav__label">Configuración</span>
-    </a>
+    <div class="bottom-nav__mas">
+      <button
+        type="button"
+        class="bottom-nav__item"
+        [class.bottom-nav__item--active]="masActivo() || menuAbierto()"
+        aria-haspopup="menu"
+        [attr.aria-expanded]="menuAbierto()"
+        (click)="toggleMenu()"
+      >
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="5" cy="12" r="2" fill="currentColor" />
+          <circle cx="12" cy="12" r="2" fill="currentColor" />
+          <circle cx="19" cy="12" r="2" fill="currentColor" />
+        </svg>
+        <span class="bottom-nav__label">Más…</span>
+      </button>
+
+      @if (menuAbierto()) {
+        <div class="mas-menu" role="menu">
+          @for (opcion of opcionesUsuario; track opcion.ruta) {
+            <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
+              {{ opcion.texto }}
+            </a>
+          }
+
+          @if (opcionesAdmin().length > 0) {
+            <hr class="mas-menu__separador" />
+            @for (opcion of opcionesAdmin(); track opcion.ruta) {
+              <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
+                {{ opcion.texto }}
+              </a>
+            }
+          }
+
+          <hr class="mas-menu__separador" />
+          <button type="button" class="mas-menu__item mas-menu__item--peligro" role="menuitem" (click)="cerrarSesion()">
+            Cerrar sesión
+          </button>
+        </div>
+      }
+    </div>
   </div>
 </nav>

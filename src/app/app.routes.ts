@@ -51,10 +51,6 @@ export const routes: Routes = [
       {
         path: 'configuracion',
         canActivate: [authGuard],
-        loadComponent: () =>
-          import('./features/configuracion/pages/configuracion-shell/configuracion-shell.component').then(
-            (m) => m.ConfiguracionShellComponent,
-          ),
         children: [
           { path: '', redirectTo: 'preferencias', pathMatch: 'full' },
           {
@@ -69,13 +65,6 @@ export const routes: Routes = [
             loadComponent: () =>
               import('./features/configuracion/pages/cambiar-password/cambiar-password.component').then(
                 (m) => m.CambiarPasswordComponent,
-              ),
-          },
-          {
-            path: 'sesion',
-            loadComponent: () =>
-              import('./features/configuracion/pages/cerrar-sesion/cerrar-sesion.component').then(
-                (m) => m.CerrarSesionComponent,
               ),
           },
         ],

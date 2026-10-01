@@ -9,7 +9,7 @@
 
     <label>
       Texto a mostrar
-      <textarea formControlName="descripcion" rows="4"></textarea>
+      <app-area-texto formControlName="descripcion" [rows]="4" tituloEditor="Texto de la escena" />
     </label>
 
     @if (error()) {

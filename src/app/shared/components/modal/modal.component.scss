@@ -24,6 +24,24 @@
     max-width: max(var(--content-width-md), min(80vw, calc(var(--content-width-lg) * 0.8)));
   }
 
+  &--completo {
+    width: 80vw;
+    max-width: none;
+    height: 90vh;
+    display: flex;
+    flex-direction: column;
+    padding: var(--space-6);
+    overflow: hidden;
+  }
+
+  // En móvil el 80% deja muy poco sitio: se aprovecha todo el ancho disponible.
+  @media (max-width: 600px) {
+    &--completo {
+      width: 100%;
+      padding: var(--space-4);
+    }
+  }
+
   &__cerrar {
     position: absolute;
     top: var(--space-2);

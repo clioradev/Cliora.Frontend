@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +9,7 @@ import { CatTipoUniversoAdmin } from '../../models/admin.model';
 
 @Component({
   selector: 'app-tipos-universo',
-  imports: [ReactiveFormsModule, IconoComponent],
+  imports: [AreaTextoComponent, ReactiveFormsModule, IconoComponent],
   templateUrl: './tipos-universo.component.html',
   styleUrl: './tipos-universo.component.scss',
 })

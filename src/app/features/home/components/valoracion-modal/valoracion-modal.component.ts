@@ -1,6 +1,8 @@
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { FormsModule } from '@angular/forms';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { StarRatingInputComponent } from '../../../../shared/components/star-rating-input/star-rating-input.component';
 import { ValoracionService } from '../../data-access/valoracion.service';
@@ -8,7 +10,7 @@ import { GuardarValoracionRequest } from '../../models/valoracion.model';
 
 @Component({
   selector: 'app-valoracion-modal',
-  imports: [ModalComponent, StarRatingInputComponent],
+  imports: [AreaTextoComponent, FormsModule, ModalComponent, StarRatingInputComponent],
   templateUrl: './valoracion-modal.component.html',
   styleUrl: './valoracion-modal.component.scss',
 })
@@ -37,10 +39,6 @@ export class ValoracionModalComponent {
         this.comentario.set(mia.comentario ?? '');
       }
     });
-  }
-
-  protected onComentarioInput(event: Event): void {
-    this.comentario.set((event.target as HTMLTextAreaElement).value);
   }
 
   private readonly guardarAction = asyncAction(

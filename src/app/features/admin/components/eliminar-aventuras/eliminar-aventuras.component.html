@@ -1,0 +1,53 @@
+<h1>Admin: Eliminar aventuras</h1>
+
+<p class="eliminar-aventuras__aviso">
+  Borra una aventura y todo su rastro: versiones, contenido, partidas de los jugadores y valoraciones.
+  No se puede deshacer.
+</p>
+
+<label class="eliminar-aventuras__buscador">
+  Filtrar por título, campaña, universo o autor
+  <input type="text" [value]="filtro()" (input)="onFiltroInput($event)" />
+</label>
+
+@if (cargando()) {
+  <p>Cargando…</p>
+} @else if (aventuras().length === 0) {
+  <p>No hay aventuras{{ filtro().trim() ? ' que coincidan con el filtro' : '' }}.</p>
+} @else {
+  <ul class="aventura-list">
+    @for (aventura of aventuras(); track aventura.idAventura) {
+      <li class="aventura-list__item">
+        @if (aventura.caratulaUrl) {
+          <img class="aventura-list__caratula" [src]="aventura.caratulaUrl" alt="" />
+        } @else {
+          <div class="aventura-list__caratula aventura-list__caratula--vacia">
+            {{ aventura.tieneCaratula ? '…' : 'Sin carátula' }}
+          </div>
+        }
+
+        <div class="aventura-list__info">
+          <span class="aventura-list__titulo">{{ aventura.tituloAventura }}</span>
+          <span class="aventura-list__detalle">{{ aventura.tituloUniverso }} · {{ aventura.tituloCampana }}</span>
+          <span class="aventura-list__detalle">{{ aventura.emailAutor ?? 'Sin autor' }}</span>
+          <span class="aventura-list__detalle">{{ estados(aventura) || 'Sin versiones' }}</span>
+          <span class="aventura-list__detalle">
+            {{ aventura.cantidadPartidas }} partidas · {{ aventura.cantidadValoraciones }} valoraciones
+          </span>
+        </div>
+
+        <button type="button" class="btn--rojo" (click)="aventuraAEliminar.set(aventura)">Eliminar por completo</button>
+      </li>
+    }
+  </ul>
+}
+
+@if (aventuraAEliminar(); as aventura) {
+  <app-confirmar-eliminar-modal
+    [titulo]="'Eliminar «' + aventura.tituloAventura + '» por completo'"
+    [mensaje]="mensajeConfirmacion(aventura)"
+    [accion]="eliminar"
+    (cerrado)="aventuraAEliminar.set(null)"
+    (eliminado)="onEliminada()"
+  />
+}

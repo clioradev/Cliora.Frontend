@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { Component, effect, inject, input, output } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { asyncAction } from '../../../../core/utils/async-action';
@@ -7,7 +8,7 @@ import { EventoAutor } from '../../models/autor.model';
 
 @Component({
   selector: 'app-evento-form-modal',
-  imports: [ModalComponent, ReactiveFormsModule],
+  imports: [AreaTextoComponent, ModalComponent, ReactiveFormsModule],
   templateUrl: './evento-form-modal.component.html',
   styleUrl: './evento-form-modal.component.scss',
 })

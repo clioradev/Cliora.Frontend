@@ -2,23 +2,19 @@ import { Component, inject, signal } from '@angular/core';
 import { rxResource, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { debounceTime, distinctUntilChanged, of } from 'rxjs';
 import { Usuario } from '../../../../core/auth/usuario.model';
-import { EditarRolesModalComponent } from '../../components/editar-roles-modal/editar-roles-modal.component';
-import { SolicitudesPublicacionComponent } from '../../components/solicitudes-publicacion/solicitudes-publicacion.component';
-import { TiposUniversoComponent } from '../../components/tipos-universo/tipos-universo.component';
 import { AdminService } from '../../data-access/admin.service';
+import { EditarRolesModalComponent } from '../editar-roles-modal/editar-roles-modal.component';
 
 const LONGITUD_MINIMA_BUSQUEDA = 2;
 
 @Component({
-  selector: 'app-panel-admin',
-  imports: [EditarRolesModalComponent, SolicitudesPublicacionComponent, TiposUniversoComponent],
-  templateUrl: './panel-admin.component.html',
-  styleUrl: './panel-admin.component.scss',
+  selector: 'app-roles',
+  imports: [EditarRolesModalComponent],
+  templateUrl: './roles.component.html',
+  styleUrl: './roles.component.scss',
 })
-export class PanelAdminComponent {
+export class RolesComponent {
   private readonly adminService = inject(AdminService);
-
-  protected readonly tabActiva = signal<'aventuras' | 'roles' | 'tiposUniverso'>('aventuras');
 
   protected readonly query = signal('');
   private readonly queryDebounced = toSignal(

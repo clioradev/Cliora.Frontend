@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import { Usuario } from '../../../core/auth/usuario.model';
 import {
+  AventuraAdmin,
   CatTipoUniversoAdmin,
   GuardarCatTipoUniversoRequest,
   Rol,
@@ -66,5 +67,13 @@ export class AdminService {
 
   detenerPrevisualizacionVersion(idVersionAventura: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Previsualizar`);
+  }
+
+  obtenerAventuras(): Observable<AventuraAdmin[]> {
+    return this.http.get<AventuraAdmin[]>(`${this.baseUrl}/Admin/Aventura`);
+  }
+
+  eliminarAventura(idAventura: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Admin/Aventura/${idAventura}`);
   }
 }

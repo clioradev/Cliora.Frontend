@@ -1,0 +1,89 @@
+:host {
+  display: block;
+}
+
+.eliminar-aventuras__aviso {
+  color: var(--color-danger, #c0392b);
+  margin-top: 0;
+}
+
+.eliminar-aventuras__buscador {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+}
+
+.aventura-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.aventura-list__item {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  border: 1px solid var(--border-color, currentColor);
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-3);
+}
+
+.aventura-list__caratula {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: var(--radius-md, 8px);
+  flex-shrink: 0;
+}
+
+.aventura-list__caratula--vacia {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  font-size: 0.75em;
+  opacity: 0.6;
+  background: color-mix(in srgb, currentColor 8%, transparent);
+}
+
+.aventura-list__info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.aventura-list__titulo {
+  font-weight: 600;
+}
+
+.aventura-list__detalle {
+  font-size: 0.85em;
+  opacity: 0.75;
+}
+
+.btn--rojo {
+  flex-shrink: 0;
+  font: inherit;
+  padding: var(--space-2) var(--space-3);
+  border: 1px solid var(--color-danger, #c0392b);
+  border-radius: var(--radius-md, 8px);
+  background: var(--color-danger, #c0392b);
+  color: #fff;
+  cursor: pointer;
+}
+
+@media (max-width: 600px) {
+  .aventura-list__item {
+    flex-wrap: wrap;
+  }
+
+  .btn--rojo {
+    width: 100%;
+  }
+}

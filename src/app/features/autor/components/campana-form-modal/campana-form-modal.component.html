@@ -9,7 +9,7 @@
 
     <label>
       Descripción
-      <textarea formControlName="descripcion" rows="4"></textarea>
+      <app-area-texto formControlName="descripcion" [rows]="4" tituloEditor="Descripción de la campaña" />
     </label>
 
     @if (error()) {

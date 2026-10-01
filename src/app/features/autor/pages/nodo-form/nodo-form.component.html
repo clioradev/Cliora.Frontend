@@ -112,7 +112,7 @@
         <legend>Textos</legend>
         @for (contenido of contenidos.controls; track $index; let index = $index) {
           <div class="nodo-form__contenido" [formGroupName]="index">
-            <textarea formControlName="texto" rows="8"></textarea>
+            <app-area-texto formControlName="texto" [rows]="8" tituloEditor="Texto del nodo" />
 
             @if (contenido.get('imagenUrl')?.value || contenido.get('audioUrl')?.value) {
               <div class="nodo-form__contenido-adjuntos">

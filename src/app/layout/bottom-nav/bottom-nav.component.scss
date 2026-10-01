@@ -22,6 +22,7 @@
     display: flex;
     flex-direction: column;
     align-items: center;
+    justify-content: center;
     gap: var(--space-1);
     flex: 1;
     border: 0;
@@ -50,6 +51,67 @@
   &__label {
     display: none;
     font-size: var(--text-sm);
+  }
+
+  &__mas {
+    position: relative;
+    display: flex;
+    flex: 1;
+
+    > .bottom-nav__item {
+      width: 100%;
+    }
+  }
+}
+
+// Desplegable de "Más…": se abre hacia arriba, alineado a la derecha del botón (es el último del menú).
+.mas-menu {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--space-3));
+  min-width: 15rem;
+  max-width: calc(100vw - 2 * var(--space-3));
+  max-height: calc(100vh - 8rem);
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  padding: var(--space-2) 0;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-md);
+
+  &__item {
+    display: block;
+    width: 100%;
+    padding: var(--space-2) var(--space-4);
+    border: 0;
+    background: transparent;
+    color: inherit;
+    font: inherit;
+    text-align: left;
+    text-decoration: none;
+    cursor: pointer;
+
+    &:hover {
+      background: color-mix(in srgb, currentColor 8%, transparent);
+    }
+
+    &--active {
+      color: var(--color-primary);
+      font-weight: 600;
+    }
+
+    &--peligro {
+      color: var(--color-danger);
+      font-weight: 600;
+    }
+  }
+
+  &__separador {
+    margin: var(--space-2) 0;
+    border: 0;
+    border-top: 1px solid var(--color-border);
   }
 }
 

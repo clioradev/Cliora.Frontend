@@ -12,12 +12,14 @@
 
     <app-star-rating-input [value]="puntuacion()" (valueChange)="puntuacion.set($event)" />
 
-    <textarea
+    <app-area-texto
       class="valoracion-modal__comentario"
       placeholder="Comentario (opcional)"
-      [value]="comentario()"
-      (input)="onComentarioInput($event)"
-    ></textarea>
+      tituloEditor="Comentario"
+      [rows]="3"
+      [ngModel]="comentario()"
+      (ngModelChange)="comentario.set($event)"
+    />
 
     @if (guardarError()) {
       <p class="status status--error">{{ guardarError() }}</p>

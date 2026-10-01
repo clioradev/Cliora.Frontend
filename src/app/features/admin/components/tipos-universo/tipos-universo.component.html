@@ -1,3 +1,5 @@
+<h1>Admin: Tipos de universo</h1>
+
 <form class="tipo-universo-form" [formGroup]="form" (ngSubmit)="crear()">
   <label>
     Nombre
@@ -6,7 +8,7 @@
 
   <label>
     Descripción
-    <textarea formControlName="descripcion" rows="2"></textarea>
+    <app-area-texto formControlName="descripcion" [rows]="2" tituloEditor="Descripción del tipo de universo" />
   </label>
 
   @if (errorCrear()) {

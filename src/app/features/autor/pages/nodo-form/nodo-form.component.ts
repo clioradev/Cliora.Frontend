@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { NgTemplateOutlet } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -32,7 +33,7 @@ type Rama = 'resultado' | 'resultadoFracaso';
 
 @Component({
   selector: 'app-nodo-form',
-  imports: [
+  imports: [AreaTextoComponent, 
     ReactiveFormsModule,
     NgTemplateOutlet,
     IconoComponent,

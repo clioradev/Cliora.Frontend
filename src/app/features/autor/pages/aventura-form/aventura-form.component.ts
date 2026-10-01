@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { DatePipe } from '@angular/common';
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
@@ -15,7 +16,7 @@ import { AventuraAutor, EnumEstadoPublicacion, InformeImportacion } from '../../
 
 @Component({
   selector: 'app-aventura-form',
-  imports: [ReactiveFormsModule, RouterLink, IconoComponent, ModalComponent, ActosEscenasComponent, CaracteristicasComponent, DatePipe],
+  imports: [AreaTextoComponent, ReactiveFormsModule, RouterLink, IconoComponent, ModalComponent, ActosEscenasComponent, CaracteristicasComponent, DatePipe],
   templateUrl: './aventura-form.component.html',
   styleUrl: './aventura-form.component.scss',
 })

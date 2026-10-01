@@ -1,0 +1,38 @@
+<div class="area-texto">
+  <textarea
+    class="area-texto__campo"
+    [rows]="rows()"
+    [placeholder]="placeholder()"
+    [value]="valor()"
+    [disabled]="deshabilitado()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  ></textarea>
+  <button
+    type="button"
+    class="area-texto__ampliar"
+    title="Ampliar"
+    aria-label="Editar en grande"
+    [disabled]="deshabilitado()"
+    (click)="abrirEditor()"
+  >
+    <app-icono nombre="ampliar" />
+  </button>
+</div>
+
+@if (editorAbierto()) {
+  <app-modal ancho="completo" [cerrarAlPulsarFondo]="false" (cerrar)="cancelar()">
+    <h3 class="area-texto-editor__titulo">{{ tituloEditor() }}</h3>
+    <textarea
+      #editor
+      class="area-texto-editor__campo"
+      [placeholder]="placeholder()"
+      [value]="borrador()"
+      (input)="onBorradorInput($event)"
+    ></textarea>
+    <div class="area-texto-editor__acciones">
+      <button type="button" (click)="cancelar()">Cancelar</button>
+      <button type="button" class="btn--primary" (click)="aplicar()">Guardar</button>
+    </div>
+  </app-modal>
+}

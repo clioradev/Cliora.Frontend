@@ -65,7 +65,7 @@ export class FinalComponent {
       }
       const idVersionAventura = Number(this.idVersionAventuraQuery);
       this.adminService.detenerPrevisualizacionVersion(idVersionAventura).subscribe();
-      void this.router.navigate(['/admin']);
+      void this.router.navigate(['/admin/aventuras']);
       return;
     }
 

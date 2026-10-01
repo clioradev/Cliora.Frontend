@@ -15,6 +15,19 @@ export interface GuardarCatTipoUniversoRequest {
   descripcion: string | null;
 }
 
+export interface AventuraAdmin {
+  idAventura: number;
+  tituloAventura: string;
+  tieneCaratula: boolean;
+  caratulaUrl: string | null;
+  tituloCampana: string;
+  tituloUniverso: string;
+  emailAutor: string | null;
+  estadosVersiones: string[];
+  cantidadPartidas: number;
+  cantidadValoraciones: number;
+}
+
 export interface SolicitudPublicacionAdmin {
   idVersionAventura: number;
   version: number;

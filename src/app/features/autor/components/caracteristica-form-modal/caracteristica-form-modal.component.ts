@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { Component, effect, inject, input, output } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +9,7 @@ import { CaracteristicaAutor } from '../../models/autor.model';
 
 @Component({
   selector: 'app-caracteristica-form-modal',
-  imports: [ModalComponent, ReactiveFormsModule],
+  imports: [AreaTextoComponent, ModalComponent, ReactiveFormsModule],
   templateUrl: './caracteristica-form-modal.component.html',
   styleUrl: './caracteristica-form-modal.component.scss',
 })

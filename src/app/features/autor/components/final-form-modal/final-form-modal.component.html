@@ -9,7 +9,7 @@
 
     <label>
       Texto
-      <textarea formControlName="texto" rows="6"></textarea>
+      <app-area-texto formControlName="texto" [rows]="6" tituloEditor="Texto del final" />
     </label>
 
     @if (error()) {

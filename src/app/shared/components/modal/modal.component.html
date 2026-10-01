@@ -1,5 +1,10 @@
 <div class="modal-backdrop" (click)="onBackdropClick()">
-  <div class="modal" [class.modal--amplio]="ancho() === 'amplio'" (click)="$event.stopPropagation()">
+  <div
+    class="modal"
+    [class.modal--amplio]="ancho() === 'amplio'"
+    [class.modal--completo]="ancho() === 'completo'"
+    (click)="$event.stopPropagation()"
+  >
     <button type="button" class="modal__cerrar" (click)="cerrar.emit()" aria-label="Cerrar">×</button>
     <ng-content></ng-content>
   </div>

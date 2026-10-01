@@ -1,3 +1,4 @@
+import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { Component, computed, effect, inject, input, output, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -8,7 +9,7 @@ import { CatTipoUniversoAutor, UniversoAutor } from '../../models/autor.model';
 
 @Component({
   selector: 'app-universo-form-modal',
-  imports: [ModalComponent, ReactiveFormsModule],
+  imports: [AreaTextoComponent, ModalComponent, ReactiveFormsModule],
   templateUrl: './universo-form-modal.component.html',
   styleUrl: './universo-form-modal.component.scss',
 })

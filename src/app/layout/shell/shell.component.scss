@@ -8,10 +8,10 @@
 }
 
 .shell--publico {
-  // La pantalla pública (portal y sus modales) está diseñada sobre la paleta
-  // clara; se fuerza aquí para que la cabecera y los márgenes del shell no
-  // queden oscuros mientras la tarjeta del portal es clara (ver portal.component.scss).
-  @include tokens.paleta-clara;
+  // La pantalla pública (portal y sus modales) va siempre en tema oscuro; se
+  // fuerza aquí para que no herede el tema claro que pudiera quedar en <html>
+  // del último usuario que cerró sesión (ver portal.component.scss).
+  @include tokens.paleta-oscura;
   background: var(--color-bg);
   color: var(--color-text);
 }

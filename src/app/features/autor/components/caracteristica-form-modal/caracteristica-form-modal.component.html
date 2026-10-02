@@ -23,8 +23,31 @@
 
     <label>
       Valor inicial
-      <input type="number" formControlName="valorInicial" />
+      <select formControlName="origenValor">
+        <option [value]="origenNumero">Un número</option>
+        @for (grupo of gruposAnteriores(); track grupo.ordenAventura) {
+          <optgroup [label]="'Heredar de #' + grupo.ordenAventura + ' ' + grupo.tituloAventura">
+            @for (anterior of grupo.caracteristicas; track anterior.idCaracteristica) {
+              <option [value]="anterior.idCaracteristica">{{ anterior.nombre }}</option>
+            }
+          </optgroup>
+        }
+        @if (anteriorFueraDeLista(); as id) {
+          <option [value]="id">Característica de una versión anterior</option>
+        }
+      </select>
     </label>
+
+    @if (heredaValor()) {
+      <p class="caracteristica-form-modal__ayuda">
+        Empieza con el valor que el personaje tenía en esa característica al acabar la aventura anterior.
+      </p>
+    } @else {
+      <label>
+        Número
+        <input type="number" formControlName="valorInicial" />
+      </label>
+    }
 
     <label class="caracteristica-form-modal__checkbox">
       <input type="checkbox" formControlName="visible" />

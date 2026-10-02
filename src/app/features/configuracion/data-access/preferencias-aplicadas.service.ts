@@ -43,7 +43,7 @@ export class PreferenciasAplicadasService {
     } else if (preferencias.tema === 2) {
       raiz.setAttribute('data-theme', 'dark');
     } else {
-      raiz.removeAttribute('data-theme');
+      raiz.setAttribute('data-theme', 'system');
     }
 
     raiz.style.setProperty('--font-reading', TIPOGRAFIA_FUENTES[preferencias.tipografia] ?? TIPOGRAFIA_FUENTES[1]);
@@ -63,6 +63,24 @@ export class PreferenciasAplicadasService {
 
     raiz.toggleAttribute('data-alto-contraste', preferencias.altoContraste);
     raiz.toggleAttribute('data-reducir-animaciones', preferencias.reducirAnimaciones);
+  }
+
+  /** Vuelve a los valores por defecto (tema oscuro) al quedarse sin sesión. */
+  restablecer(): void {
+    const raiz = document.documentElement;
+
+    raiz.removeAttribute('data-theme');
+    for (const propiedad of [
+      '--font-reading',
+      '--text-reading',
+      '--line-height-reading',
+      '--content-width-reading',
+      '--color-bg',
+    ]) {
+      raiz.style.removeProperty(propiedad);
+    }
+    raiz.removeAttribute('data-alto-contraste');
+    raiz.removeAttribute('data-reducir-animaciones');
   }
 
   private resolverEsOscuro(tema: number): boolean {

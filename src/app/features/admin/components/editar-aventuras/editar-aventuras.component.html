@@ -1,11 +1,15 @@
-<h1>Admin: Eliminar aventuras</h1>
+<h1>Admin: Editar aventuras</h1>
 
-<p class="eliminar-aventuras__aviso">
-  Borra una aventura y todo su rastro: versiones, contenido, partidas de los jugadores y valoraciones.
-  No se puede deshacer.
+<p class="editar-aventuras__ayuda">
+  «Editar textos» corrige erratas directamente en la versión publicada, sin crear una versión nueva ni tocar la
+  estructura.
+</p>
+<p class="editar-aventuras__aviso">
+  «Eliminar por completo» borra una aventura y todo su rastro: versiones, contenido, partidas de los jugadores y
+  valoraciones. No se puede deshacer.
 </p>
 
-<label class="eliminar-aventuras__buscador">
+<label class="editar-aventuras__buscador">
   Filtrar por título, campaña, universo o autor
   <input type="text" [value]="filtro()" (input)="onFiltroInput($event)" />
 </label>
@@ -36,7 +40,12 @@
           </span>
         </div>
 
-        <button type="button" class="btn--rojo" (click)="aventuraAEliminar.set(aventura)">Eliminar por completo</button>
+        <div class="aventura-list__acciones">
+          @if (tienePublicada(aventura)) {
+            <a class="btn--primary" [routerLink]="['/admin/editar-aventuras', aventura.idAventura]">Editar textos</a>
+          }
+          <button type="button" class="btn--rojo" (click)="aventuraAEliminar.set(aventura)">Eliminar por completo</button>
+        </div>
       </li>
     }
   </ul>

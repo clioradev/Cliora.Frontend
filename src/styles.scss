@@ -196,34 +196,26 @@ input[type='range'] {
 }
 
 // Marca: alterna entre el logo claro/oscuro según el tema activo
-// (mismo criterio de especificidad que _tokens.scss para dark/light/sistema).
+// (mismo criterio que _tokens.scss: oscuro por defecto, claro solo por Preferencias).
 .marca-claro,
 .marca-oscuro {
   display: block;
   width: auto;
 }
 
-.marca-oscuro {
+.marca-claro {
   display: none;
 }
 
-@media (prefers-color-scheme: dark) {
-  .marca-claro {
-    display: none;
-  }
+@media (prefers-color-scheme: light) {
+  :root[data-theme='system'] {
+    .marca-claro {
+      display: block;
+    }
 
-  .marca-oscuro {
-    display: block;
-  }
-}
-
-:root[data-theme='dark'] {
-  .marca-claro {
-    display: none;
-  }
-
-  .marca-oscuro {
-    display: block;
+    .marca-oscuro {
+      display: none;
+    }
   }
 }
 
@@ -234,5 +226,17 @@ input[type='range'] {
 
   .marca-oscuro {
     display: none;
+  }
+}
+
+// Pantallas públicas (sin sesión): siempre en tema oscuro, aunque quede en
+// <html> el tema claro del último usuario (ver shell.component.scss).
+:root .shell--publico {
+  .marca-claro {
+    display: none;
+  }
+
+  .marca-oscuro {
+    display: block;
   }
 }

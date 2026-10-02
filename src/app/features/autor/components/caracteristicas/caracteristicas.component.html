@@ -16,7 +16,9 @@
             @for (caracteristica of lista; track caracteristica.idCaracteristica) {
               <li class="caracteristica-list__item">
                 <span class="caracteristica-list__nombre">{{ caracteristica.nombre }}</span>
-                <span class="caracteristica-list__valor">Inicial: {{ caracteristica.valorInicial }}</span>
+                <span class="caracteristica-list__valor">
+                  {{ caracteristica.idCaracteristicaAnterior ? 'Hereda de una aventura anterior' : 'Inicial: ' + caracteristica.valorInicial }}
+                </span>
                 <div class="caracteristica-list__acciones">
                   <button type="button" class="btn-icono" (click)="editarCaracteristica(caracteristica)" [attr.aria-label]="'Editar característica ' + caracteristica.nombre" title="Editar">
                     <app-icono nombre="editar" />

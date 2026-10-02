@@ -468,11 +468,12 @@ $sombra-lomo-lateral:
     gap: var(--space-3);
   }
 
-  // En pantalla ancha, cada filtro ocupa un tercio de la fila (también si falta alguno).
+  // En pantalla ancha, cada control ocupa un cuarto de la fila (también si falta alguno).
   &__texto,
   &__cantidad-decision,
+  &__orden,
   &__tipos {
-    flex: 0 0 calc((100% - 2 * var(--space-3)) / 3);
+    flex: 0 0 calc((100% - 3 * var(--space-3)) / 4);
     min-width: 0;
   }
 }
@@ -526,6 +527,7 @@ $sombra-lomo-lateral:
 
   .buscador__texto,
   .buscador__cantidad-decision,
+  .buscador__orden,
   .buscador__tipos {
     flex: 1 1 auto;
   }

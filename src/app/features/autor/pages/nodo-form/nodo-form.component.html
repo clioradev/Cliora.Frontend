@@ -443,6 +443,15 @@
                         }
                       </select>
                     </label>
+                    <label class="tirada-fila__caracteristica">
+                      Modificador
+                      <select formControlName="idCaracteristicaModificador">
+                        <option [value]="null">Sin modificador</option>
+                        @for (car of caracteristicas(); track car.idCaracteristica) {
+                          <option [value]="car.idCaracteristica">{{ car.nombre }}</option>
+                        }
+                      </select>
+                    </label>
                     <label class="tirada-fila__dificultad">
                       Dificultad
                       <input type="number" formControlName="dificultad" />

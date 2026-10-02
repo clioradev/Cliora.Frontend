@@ -44,6 +44,12 @@
           (limpiado)="clearTags()"
         />
       }
+
+      <select class="buscador__orden" [value]="orden()" (change)="onOrdenChange($event)" aria-label="Ordenar universos">
+        @for (opcion of ordenOpciones; track opcion.valor) {
+          <option [value]="opcion.valor">Ordenar: {{ opcion.etiqueta }}</option>
+        }
+      </select>
     </div>
   </div>
 }

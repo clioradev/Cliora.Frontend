@@ -6,6 +6,7 @@ import {
   ActoAutor,
   AventuraAutor,
   CampanaAutor,
+  CaracteristicaAnteriorAutor,
   CaracteristicaAutor,
   CatTipoCaracteristicaAutor,
   CatTipoUniversoAutor,
@@ -270,6 +271,10 @@ export class AutorService {
 
   eliminarCaracteristica(idCaracteristica: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/Autor/Caracteristica/${idCaracteristica}`);
+  }
+
+  getCaracteristicasAnteriores(idAventura: number): Observable<CaracteristicaAnteriorAutor[]> {
+    return this.http.get<CaracteristicaAnteriorAutor[]>(`${this.baseUrl}/Autor/Aventura/${idAventura}/CaracteristicaAnterior`);
   }
 
   getTiposCaracteristica(): Observable<CatTipoCaracteristicaAutor[]> {

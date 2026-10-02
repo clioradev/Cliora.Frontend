@@ -2,13 +2,13 @@
 @use 'tokens';
 
 .portal {
-  // El portal está diseñado sobre la paleta clara ("papel"); se fuerza aquí
+  // El portal va siempre en tema oscuro; se fuerza aquí
   // para que no dependa de las preferencias de tema del sistema o del usuario.
   // Se redeclaran color/background explícitamente (no basta con las variables)
   // porque el <body> ya resolvió las suyas con el tema del sistema antes de
   // llegar aquí, y esa resolución se hereda tal cual a los hijos que no la
   // vuelvan a fijar.
-  @include tokens.paleta-clara;
+  @include tokens.paleta-oscura;
   color: var(--color-text);
   background: var(--color-bg);
 }

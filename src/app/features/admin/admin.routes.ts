@@ -19,10 +19,16 @@ export const ADMIN_ROUTES: Routes = [
       import('./components/tipos-universo/tipos-universo.component').then((m) => m.TiposUniversoComponent),
   },
   {
-    path: 'eliminar-aventuras',
+    path: 'editar-aventuras',
     loadComponent: () =>
-      import('./components/eliminar-aventuras/eliminar-aventuras.component').then(
-        (m) => m.EliminarAventurasComponent,
+      import('./components/editar-aventuras/editar-aventuras.component').then(
+        (m) => m.EditarAventurasComponent,
       ),
   },
+  {
+    path: 'editar-aventuras/:idAventura',
+    loadComponent: () =>
+      import('./components/corregir-textos/corregir-textos.component').then((m) => m.CorregirTextosComponent),
+  },
+  { path: 'eliminar-aventuras', redirectTo: 'editar-aventuras', pathMatch: 'full' },
 ];

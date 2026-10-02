@@ -5,10 +5,12 @@ import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import { Usuario } from '../../../core/auth/usuario.model';
 import {
   AventuraAdmin,
+  CambioTexto,
   CatTipoUniversoAdmin,
   GuardarCatTipoUniversoRequest,
   Rol,
   SolicitudPublicacionAdmin,
+  TextosAventura,
 } from '../models/admin.model';
 
 @Injectable({ providedIn: 'root' })
@@ -75,5 +77,13 @@ export class AdminService {
 
   eliminarAventura(idAventura: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/Admin/Aventura/${idAventura}`);
+  }
+
+  obtenerTextosAventura(idAventura: number): Observable<TextosAventura> {
+    return this.http.get<TextosAventura>(`${this.baseUrl}/Admin/Aventura/${idAventura}/Textos`);
+  }
+
+  corregirTextosAventura(idAventura: number, cambios: CambioTexto[]): Observable<TextosAventura> {
+    return this.http.put<TextosAventura>(`${this.baseUrl}/Admin/Aventura/${idAventura}/Textos`, { cambios });
   }
 }

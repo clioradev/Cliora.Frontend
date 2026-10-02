@@ -4,11 +4,19 @@
   </h3>
 
   <p class="resultado-tirada__desglose">
-    Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos
-    @if (resultado().nombreCaracteristica) {
-      + {{ resultado().nombreCaracteristica }} {{ resultado().valorCaracteristica }}
+    @switch (resultado().tipoTirada) {
+      @case (TIPO_TIRADA_D20) {
+        d20: {{ dadosTexto() }}{{ sumandosTexto() }} = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+      }
+      @case (TIPO_TIRADA_PORCENTAJE) {
+        d100: {{ resultado().total }}. Necesitabas {{ resultado().objetivo }} o menos
+        ({{ objetivoPorcentajeTexto() }}).
+      }
+      @default {
+        Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos{{ sumandosTexto() }}
+        = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+      }
     }
-    = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
   </p>
 
   <button type="button" class="btn--primary" (click)="aceptar.emit()">Aceptar</button>

@@ -6,6 +6,7 @@ import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { AutorService } from '../../data-access/autor.service';
 import { CatTipoUniversoAutor, UniversoAutor } from '../../models/autor.model';
+import { TIPO_TIRADA_ACIERTOS_4D6, TIPO_TIRADA_OPCIONES } from '../../../home/models/universo.model';
 
 @Component({
   selector: 'app-universo-form-modal',
@@ -27,7 +28,14 @@ export class UniversoFormModalComponent {
   protected readonly form = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.maxLength(200)]],
     descripcion: [''],
+    tipoTirada: [TIPO_TIRADA_ACIERTOS_4D6],
   });
+
+  protected readonly tipoTiradaOpciones = TIPO_TIRADA_OPCIONES;
+  private readonly tipoTiradaElegido = signal(TIPO_TIRADA_ACIERTOS_4D6);
+  protected readonly ayudaTipoTirada = computed(
+    () => TIPO_TIRADA_OPCIONES.find((o) => o.valor === this.tipoTiradaElegido())?.ayuda ?? '',
+  );
 
   private readonly _universoActual = signal<UniversoAutor | null>(null);
   protected readonly universoActual = computed(() => this._universoActual() ?? this.universo());
@@ -39,11 +47,17 @@ export class UniversoFormModalComponent {
   protected readonly tiposCatalogo = this.tiposCatalogoResource.value;
 
   constructor() {
+    this.form.controls.tipoTirada.valueChanges.subscribe((valor) => this.tipoTiradaElegido.set(Number(valor)));
+
     effect(() => {
       const universo = this.universo();
       this._universoActual.set(universo);
       if (universo) {
-        this.form.patchValue({ titulo: universo.titulo, descripcion: universo.descripcion ?? '' });
+        this.form.patchValue({
+          titulo: universo.titulo,
+          descripcion: universo.descripcion ?? '',
+          tipoTirada: universo.tipoTirada ?? TIPO_TIRADA_ACIERTOS_4D6,
+        });
       }
     });
   }
@@ -76,11 +90,11 @@ export class UniversoFormModalComponent {
   }
 
   private readonly guardarAction = asyncAction(
-    (titulo: string, descripcion: string | null) => {
+    (titulo: string, descripcion: string | null, tipoTirada: number) => {
       const actual = this.universo();
       return actual
-        ? this.autorService.actualizarUniverso(actual.idUniverso, { titulo, descripcion })
-        : this.autorService.crearUniverso({ titulo, descripcion });
+        ? this.autorService.actualizarUniverso(actual.idUniverso, { titulo, descripcion, tipoTirada })
+        : this.autorService.crearUniverso({ titulo, descripcion, tipoTirada });
     },
     {
       onSuccess: (universo) => this.guardado.emit(universo),
@@ -95,7 +109,7 @@ export class UniversoFormModalComponent {
       return;
     }
 
-    const { titulo, descripcion } = this.form.getRawValue();
-    this.guardarAction.run(titulo, descripcion.trim() || null);
+    const { titulo, descripcion, tipoTirada } = this.form.getRawValue();
+    this.guardarAction.run(titulo, descripcion.trim() || null, Number(tipoTirada));
   }
 }

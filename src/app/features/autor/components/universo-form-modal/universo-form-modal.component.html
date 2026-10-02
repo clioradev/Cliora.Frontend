@@ -12,6 +12,16 @@
       <app-area-texto formControlName="descripcion" [rows]="4" tituloEditor="Descripción del universo" />
     </label>
 
+    <label>
+      Sistema de tiradas
+      <select formControlName="tipoTirada">
+        @for (opcion of tipoTiradaOpciones; track opcion.valor) {
+          <option [ngValue]="opcion.valor">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+      <small class="universo-form-modal__ayuda">{{ ayudaTipoTirada() }}</small>
+    </label>
+
     @if (error()) {
       <p class="status status--error">{{ error() }}</p>
     }

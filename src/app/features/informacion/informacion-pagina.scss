@@ -1,8 +1,7 @@
 // Estilos comunes de las páginas informativas (Cliora, ¿Te gusta escribir?).
+// Ocupan el ancho completo del contenido, igual que la lista de universos.
 :host {
   display: block;
-  max-width: var(--content-width-md);
-  margin: 0 auto;
 }
 
 .info__cabecera {

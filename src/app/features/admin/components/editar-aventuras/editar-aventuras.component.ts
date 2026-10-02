@@ -1,5 +1,6 @@
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
 import { AdminService } from '../../data-access/admin.service';
@@ -13,12 +14,12 @@ const NOMBRE_ESTADO: Record<string, string> = {
 };
 
 @Component({
-  selector: 'app-eliminar-aventuras',
-  imports: [ConfirmarEliminarModalComponent],
-  templateUrl: './eliminar-aventuras.component.html',
-  styleUrl: './eliminar-aventuras.component.scss',
+  selector: 'app-editar-aventuras',
+  imports: [ConfirmarEliminarModalComponent, RouterLink],
+  templateUrl: './editar-aventuras.component.html',
+  styleUrl: './editar-aventuras.component.scss',
 })
-export class EliminarAventurasComponent {
+export class EditarAventurasComponent {
   private readonly adminService = inject(AdminService);
 
   private readonly aventurasResource = rxResource({
@@ -49,6 +50,11 @@ export class EliminarAventurasComponent {
 
   protected estados(aventura: AventuraAdmin): string {
     return aventura.estadosVersiones.map((e) => NOMBRE_ESTADO[e] ?? e).join(' · ');
+  }
+
+  // Los textos solo se corrigen sobre la versión publicada.
+  protected tienePublicada(aventura: AventuraAdmin): boolean {
+    return aventura.estadosVersiones.includes('Publicada');
   }
 
   protected mensajeConfirmacion(aventura: AventuraAdmin): string {

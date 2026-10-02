@@ -37,12 +37,19 @@ export interface Nodo {
 
 export interface TiradaResultado {
   exito: boolean;
+  /** Sistema de tiradas del universo: ver TIPO_TIRADA_* en universo.model. */
+  tipoTirada: number;
   dados: number[];
   aciertos: number;
   nombreCaracteristica: string;
   valorCaracteristica: number;
+  nombreModificador: string | null;
+  valorModificador: number;
+  /** 4d6 y D20: suma final. Porcentaje: el d100 sacado. */
   total: number;
   dificultad: number;
+  /** 4d6 y D20: la dificultad (éxito si total ≥ objetivo). Porcentaje: característica + modificador − dificultad (éxito si total ≤ objetivo). */
+  objetivo: number;
 }
 
 export interface ElegirOpcionResponse {

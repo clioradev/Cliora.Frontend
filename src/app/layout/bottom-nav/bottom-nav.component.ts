@@ -22,7 +22,7 @@ const OPCIONES_ADMIN: OpcionMas[] = [
   { texto: 'Aventuras', ruta: '/admin/aventuras' },
   { texto: 'Roles', ruta: '/admin/roles' },
   { texto: 'Tipos de universo', ruta: '/admin/tipos-universo' },
-  { texto: 'Eliminar aventuras', ruta: '/admin/eliminar-aventuras' },
+  { texto: 'Editar aventuras', ruta: '/admin/editar-aventuras' },
 ];
 
 @Component({

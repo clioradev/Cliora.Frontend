@@ -34,12 +34,12 @@ export class ConfiguracionComponent {
   protected readonly loading = this.preferenciasResource.isLoading;
   protected readonly error = computed(() => this.preferenciasResource.error() !== undefined);
 
-  protected readonly tema = signal(3);
+  protected readonly tema = signal(2);
   protected readonly tipografia = signal(1);
   protected readonly tamanoFuente = signal(2);
   protected readonly espaciadoLineas = signal(2);
   protected readonly anchoLectura = signal(2);
-  protected readonly intensidadFondo = signal(0);
+  protected readonly intensidadFondo = signal(100);
   protected readonly altoContraste = signal(false);
   protected readonly reducirAnimaciones = signal(false);
 

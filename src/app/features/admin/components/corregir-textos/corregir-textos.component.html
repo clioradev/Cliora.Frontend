@@ -1,0 +1,299 @@
+<div class="corregir">
+  <div class="corregir__cabecera">
+    <a class="btn-icono" routerLink="/admin/editar-aventuras" aria-label="Volver" title="Volver">
+      <app-icono nombre="volver" />
+    </a>
+    <h1>Editar textos{{ textos() ? ': ' + textos()!.titulo : '' }}</h1>
+  </div>
+
+  @if (cargando() && !textos()) {
+    <p>Cargando…</p>
+  } @else if (errorCarga()) {
+    <p class="status status--error">No se han podido cargar los textos. ¿Tiene la aventura una versión publicada?</p>
+  } @else if (textos(); as t) {
+    <p class="corregir__aviso">
+      Estás corrigiendo la versión publicada (v{{ t.version }}). Al guardar, los jugadores verán el texto corregido
+      al momento; no se crea una versión nueva y la estructura no se toca.
+    </p>
+    @if (t.tieneVersionEnEdicion) {
+      <p class="corregir__aviso">
+        El autor tiene una versión en edición: la corrección también se le aplica, pero solo en los textos que no
+        haya cambiado él.
+      </p>
+    }
+
+    <nav class="corregir__tabs">
+      <button type="button" [class.corregir__tab--activa]="pestana() === 'datos'" (click)="pestana.set('datos')">
+        Datos
+      </button>
+      <button type="button" [class.corregir__tab--activa]="pestana() === 'contenido'" (click)="pestana.set('contenido')">
+        Actos y escenas
+      </button>
+      <button type="button" [class.corregir__tab--activa]="pestana() === 'finales'" (click)="pestana.set('finales')">
+        Finales
+      </button>
+      <button type="button" [class.corregir__tab--activa]="pestana() === 'variables'" (click)="pestana.set('variables')">
+        Variables y eventos
+      </button>
+    </nav>
+
+    @switch (pestana()) {
+      @case ('datos') {
+        <div class="corregir__campos">
+          <label [class.corregir__campo--modificado]="modificado('Aventura', t.idAventura, 'Titulo')">
+            Título
+            <input
+              type="text"
+              maxlength="200"
+              [value]="valor('Aventura', t.idAventura, 'Titulo', t.titulo)"
+              (input)="editar('Aventura', t.idAventura, 'Titulo', t.titulo, $any($event.target).value)"
+            />
+          </label>
+          <label [class.corregir__campo--modificado]="modificado('Aventura', t.idAventura, 'Descripcion')">
+            Descripción
+            <app-area-texto
+              [rows]="5"
+              tituloEditor="Descripción de la aventura"
+              [ngModel]="valor('Aventura', t.idAventura, 'Descripcion', t.descripcion)"
+              (ngModelChange)="editar('Aventura', t.idAventura, 'Descripcion', t.descripcion, $event)"
+            />
+          </label>
+        </div>
+      }
+
+      @case ('contenido') {
+        @for (acto of t.actos; track acto.idActo) {
+          <section class="corregir__bloque">
+            <span class="corregir__codigo">{{ acto.codigo }}</span>
+            <div class="corregir__campos">
+              <label [class.corregir__campo--modificado]="modificado('Acto', acto.idActo, 'Titulo')">
+                Título del acto
+                <input
+                  type="text"
+                  maxlength="200"
+                  [value]="valor('Acto', acto.idActo, 'Titulo', acto.titulo)"
+                  (input)="editar('Acto', acto.idActo, 'Titulo', acto.titulo, $any($event.target).value)"
+                />
+              </label>
+              <label [class.corregir__campo--modificado]="modificado('Acto', acto.idActo, 'Descripcion')">
+                Descripción del acto
+                <app-area-texto
+                  [rows]="2"
+                  tituloEditor="Descripción del acto"
+                  [ngModel]="valor('Acto', acto.idActo, 'Descripcion', acto.descripcion)"
+                  (ngModelChange)="editar('Acto', acto.idActo, 'Descripcion', acto.descripcion, $event)"
+                />
+              </label>
+            </div>
+
+            @for (escena of acto.escenas; track escena.idEscena) {
+              <section class="corregir__bloque corregir__bloque--escena">
+                <span class="corregir__codigo">{{ escena.codigo }}</span>
+                <div class="corregir__campos">
+                  <label [class.corregir__campo--modificado]="modificado('Escena', escena.idEscena, 'Titulo')">
+                    Título de la escena
+                    <input
+                      type="text"
+                      maxlength="200"
+                      [value]="valor('Escena', escena.idEscena, 'Titulo', escena.titulo)"
+                      (input)="editar('Escena', escena.idEscena, 'Titulo', escena.titulo, $any($event.target).value)"
+                    />
+                  </label>
+                  <label [class.corregir__campo--modificado]="modificado('Escena', escena.idEscena, 'Descripcion')">
+                    Descripción de la escena
+                    <app-area-texto
+                      [rows]="2"
+                      tituloEditor="Descripción de la escena"
+                      [ngModel]="valor('Escena', escena.idEscena, 'Descripcion', escena.descripcion)"
+                      (ngModelChange)="editar('Escena', escena.idEscena, 'Descripcion', escena.descripcion, $event)"
+                    />
+                  </label>
+                </div>
+
+                @if (escena.nodos.length > 0) {
+                  <ul class="corregir__nodos">
+                    @for (nodo of escena.nodos; track nodo.idNodo) {
+                      <li class="corregir__nodo">
+                        <span class="corregir__nodo-titulo">
+                          {{ valor('Nodo', nodo.idNodo, 'Titulo', nodo.titulo) }}
+                          <span class="corregir__codigo">{{ nodo.codigo }}</span>
+                        </span>
+                        @if (cambiosEnNodo(nodo); as n) {
+                          <span class="corregir__pendientes">{{ n }} sin guardar</span>
+                        }
+                        <button type="button" (click)="nodoAbierto.set(nodo)">Editar textos</button>
+                      </li>
+                    }
+                  </ul>
+                }
+              </section>
+            }
+          </section>
+        } @empty {
+          <p>Esta versión no tiene actos.</p>
+        }
+      }
+
+      @case ('finales') {
+        @for (final of t.finales; track final.idFinal) {
+          <section class="corregir__bloque">
+            <span class="corregir__codigo">{{ final.codigo }}</span>
+            <div class="corregir__campos">
+              <label [class.corregir__campo--modificado]="modificado('Final', final.idFinal, 'Titulo')">
+                Título
+                <input
+                  type="text"
+                  maxlength="200"
+                  [value]="valor('Final', final.idFinal, 'Titulo', final.titulo)"
+                  (input)="editar('Final', final.idFinal, 'Titulo', final.titulo, $any($event.target).value)"
+                />
+              </label>
+              <label [class.corregir__campo--modificado]="modificado('Final', final.idFinal, 'Texto')">
+                Texto
+                <app-area-texto
+                  [rows]="4"
+                  tituloEditor="Texto del final"
+                  [ngModel]="valor('Final', final.idFinal, 'Texto', final.texto)"
+                  (ngModelChange)="editar('Final', final.idFinal, 'Texto', final.texto, $event)"
+                />
+              </label>
+            </div>
+          </section>
+        } @empty {
+          <p>Esta versión no tiene finales.</p>
+        }
+      }
+
+      @case ('variables') {
+        <h2>Variables</h2>
+        @for (variable of t.caracteristicas; track variable.id) {
+          <section class="corregir__bloque">
+            <span class="corregir__codigo">{{ variable.codigo }}</span>
+            <div class="corregir__campos">
+              <label [class.corregir__campo--modificado]="modificado('Caracteristica', variable.id, 'Nombre')">
+                Nombre
+                <input
+                  type="text"
+                  maxlength="150"
+                  [value]="valor('Caracteristica', variable.id, 'Nombre', variable.nombre)"
+                  (input)="editar('Caracteristica', variable.id, 'Nombre', variable.nombre, $any($event.target).value)"
+                />
+              </label>
+              <label [class.corregir__campo--modificado]="modificado('Caracteristica', variable.id, 'Descripcion')">
+                Descripción
+                <app-area-texto
+                  [rows]="2"
+                  tituloEditor="Descripción de la variable"
+                  [ngModel]="valor('Caracteristica', variable.id, 'Descripcion', variable.descripcion)"
+                  (ngModelChange)="editar('Caracteristica', variable.id, 'Descripcion', variable.descripcion, $event)"
+                />
+              </label>
+            </div>
+          </section>
+        } @empty {
+          <p>Esta versión no tiene variables.</p>
+        }
+
+        <h2>Eventos</h2>
+        @for (evento of t.eventos; track evento.id) {
+          <section class="corregir__bloque">
+            <span class="corregir__codigo">{{ evento.codigo }}</span>
+            <div class="corregir__campos">
+              <label [class.corregir__campo--modificado]="modificado('Evento', evento.id, 'Nombre')">
+                Nombre
+                <input
+                  type="text"
+                  maxlength="150"
+                  [value]="valor('Evento', evento.id, 'Nombre', evento.nombre)"
+                  (input)="editar('Evento', evento.id, 'Nombre', evento.nombre, $any($event.target).value)"
+                />
+              </label>
+              <label [class.corregir__campo--modificado]="modificado('Evento', evento.id, 'Descripcion')">
+                Descripción
+                <app-area-texto
+                  [rows]="2"
+                  tituloEditor="Descripción del evento"
+                  [ngModel]="valor('Evento', evento.id, 'Descripcion', evento.descripcion)"
+                  (ngModelChange)="editar('Evento', evento.id, 'Descripcion', evento.descripcion, $event)"
+                />
+              </label>
+            </div>
+          </section>
+        } @empty {
+          <p>Esta versión no tiene eventos.</p>
+        }
+      }
+    }
+
+    <div class="corregir__barra">
+      <span class="corregir__barra-estado">
+        @if (errorGuardar()) {
+          <span class="status--error">{{ errorGuardar() }}</span>
+        } @else if (cantidadCambios() > 0) {
+          {{ cantidadCambios() }} {{ cantidadCambios() === 1 ? 'cambio sin guardar' : 'cambios sin guardar' }}
+        } @else if (guardadoOk()) {
+          Correcciones guardadas.
+        } @else {
+          Sin cambios.
+        }
+      </span>
+      <button type="button" (click)="descartar()" [disabled]="cantidadCambios() === 0 || guardando()">Descartar</button>
+      <button type="button" class="btn--primary" (click)="guardar()" [disabled]="cantidadCambios() === 0 || guardando()">
+        {{ guardando() ? 'Guardando…' : 'Guardar' }}
+      </button>
+    </div>
+  }
+
+  @if (nodoAbierto(); as nodo) {
+    <app-modal ancho="amplio" [cerrarAlPulsarFondo]="false" (cerrar)="nodoAbierto.set(null)">
+      <h3>Nodo <span class="corregir__codigo">{{ nodo.codigo }}</span></h3>
+
+      <div class="corregir__campos">
+        <label [class.corregir__campo--modificado]="modificado('Nodo', nodo.idNodo, 'Titulo')">
+          Título del nodo
+          <input
+            type="text"
+            maxlength="200"
+            [value]="valor('Nodo', nodo.idNodo, 'Titulo', nodo.titulo)"
+            (input)="editar('Nodo', nodo.idNodo, 'Titulo', nodo.titulo, $any($event.target).value)"
+          />
+        </label>
+
+        @for (contenido of nodo.contenidos; track contenido.idContenidoNodo; let i = $index) {
+          <label [class.corregir__campo--modificado]="modificado('ContenidoNodo', contenido.idContenidoNodo, 'Texto')">
+            Texto {{ i + 1 }}
+            <app-area-texto
+              [rows]="6"
+              tituloEditor="Texto del nodo"
+              [ngModel]="valor('ContenidoNodo', contenido.idContenidoNodo, 'Texto', contenido.texto)"
+              (ngModelChange)="editar('ContenidoNodo', contenido.idContenidoNodo, 'Texto', contenido.texto, $event)"
+            />
+          </label>
+        }
+
+        @for (opcion of nodo.opciones; track opcion.idOpcion) {
+          <label [class.corregir__campo--modificado]="modificado('Opcion', opcion.idOpcion, 'Texto')">
+            Opción <span class="corregir__codigo">{{ opcion.codigo }}</span>
+            <app-area-texto
+              [rows]="2"
+              tituloEditor="Texto de la opción"
+              [ngModel]="valor('Opcion', opcion.idOpcion, 'Texto', opcion.texto)"
+              (ngModelChange)="editar('Opcion', opcion.idOpcion, 'Texto', opcion.texto, $event)"
+            />
+          </label>
+        }
+      </div>
+
+      @if (errorGuardar()) {
+        <p class="status status--error">{{ errorGuardar() }}</p>
+      }
+
+      <div class="corregir__acciones-modal">
+        <button type="button" (click)="nodoAbierto.set(null)">Cerrar</button>
+        <button type="button" class="btn--primary" (click)="guardar()" [disabled]="cantidadCambios() === 0 || guardando()">
+          {{ guardando() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+    </app-modal>
+  }
+</div>

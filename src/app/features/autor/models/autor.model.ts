@@ -87,6 +87,7 @@ export interface UniversoAutor {
   idUniverso: number;
   titulo: string;
   descripcion: string | null;
+  tipoTirada: number;
   campanas: CampanaAutor[];
   tipos: UniversoTipoAutor[];
 }
@@ -94,6 +95,7 @@ export interface UniversoAutor {
 export interface GuardarUniversoRequest {
   titulo: string;
   descripcion: string | null;
+  tipoTirada: number;
 }
 
 export interface GuardarCampanaRequest {
@@ -172,6 +174,7 @@ export interface OpcionArbol {
   texto: string;
   gruposCondicion: GrupoCondicionAutor[];
   idCaracteristicaTirada: number | null;
+  idCaracteristicaModificador: number | null;
   dificultad: number | null;
   resultadoVisible: boolean;
   resultado: ResultadoAutor | null;
@@ -214,6 +217,21 @@ export interface CaracteristicaAutor {
   descripcion: string | null;
   valorInicial: number;
   visible: boolean;
+  idCaracteristicaAnterior: number | null;
+  // Aventura y código de la característica de la que hereda: identifican la opción del desplegable
+  // aunque esa aventura se haya republicado (otra fila, mismo código).
+  idAventuraAnterior: number | null;
+  codigoCaracteristicaAnterior: string | null;
+}
+
+/** Característica de una aventura anterior de la campaña de la que se puede heredar el valor inicial. */
+export interface CaracteristicaAnteriorAutor {
+  idCaracteristica: number;
+  codigo: string;
+  nombre: string;
+  idAventura: number;
+  tituloAventura: string;
+  ordenAventura: number;
 }
 
 export interface CatTipoCaracteristicaAutor {
@@ -277,6 +295,7 @@ export interface GuardarOpcionRequest {
   texto: string;
   gruposCondicion: GuardarGrupoCondicionRequest[];
   idCaracteristicaTirada: number | null;
+  idCaracteristicaModificador: number | null;
   dificultad: number | null;
   resultadoVisible: boolean;
   resultado: GuardarResultadoRequest;
@@ -300,6 +319,7 @@ export interface GuardarCaracteristicaRequest {
   descripcion: string | null;
   valorInicial: number;
   visible: boolean;
+  idCaracteristicaAnterior: number | null;
 }
 
 export interface ErrorImportacion {

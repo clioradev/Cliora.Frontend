@@ -10,7 +10,14 @@ import { NivelValoracion, ResenasModalComponent } from '../../components/resenas
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
 import { UniversoService } from '../../data-access/universo.service';
-import { Aventura, CANTIDAD_DECISION_OPCIONES, Campana, Universo } from '../../models/universo.model';
+import {
+  Aventura,
+  CANTIDAD_DECISION_OPCIONES,
+  Campana,
+  ORDEN_UNIVERSOS_OPCIONES,
+  OrdenUniversos,
+  Universo,
+} from '../../models/universo.model';
 
 // Medidas de la estantería en rem (deben coincidir con universo-list.component.scss): ancho preferido
 // del libro abierto, ancho de un lomo y separación entre elementos.
@@ -84,6 +91,8 @@ export class UniversoListComponent {
   protected readonly selectedTags = signal(new Set<string>());
   protected readonly selectedCantidadDecision = signal<number | null>(null);
   protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
+  protected readonly orden = signal<OrdenUniversos>('reciente');
+  protected readonly ordenOpciones = ORDEN_UNIVERSOS_OPCIONES;
 
   private readonly indicesAventura = signal(new Map<number, number>());
   private readonly anchosEstanteria = signal(new Map<number, number>());
@@ -103,7 +112,9 @@ export class UniversoListComponent {
     const tags = this.selectedTags();
     const cantidadDecision = this.selectedCantidadDecision();
 
-    return this.universos()
+    // Se ordena antes de filtrar para que el orden dependa del universo completo y no de las
+    // aventuras que deje ver el filtro.
+    return this.ordenarUniversos(this.universos(), this.orden())
       .filter((universo) => tags.size === 0 || universo.tipos.some((tag) => tags.has(tag)))
       .map((universo) => this.filtrarUniverso(universo, termino, cantidadDecision))
       .filter((universo): universo is Universo => universo !== null);
@@ -191,6 +202,10 @@ export class UniversoListComponent {
     this.selectedCantidadDecision.set(valor === '' ? null : Number(valor));
   }
 
+  protected onOrdenChange(event: Event): void {
+    this.orden.set((event.target as HTMLSelectElement).value as OrdenUniversos);
+  }
+
   protected verOpiniones(nivel: NivelValoracion, id: number, titulo: string): void {
     this.opinionesAbiertas.set({ nivel, id, titulo });
   }
@@ -257,6 +272,34 @@ export class UniversoListComponent {
     const mapa = new Map(this.indicesAventura());
     mapa.set(campana.idCampana, indice);
     this.indicesAventura.set(mapa);
+  }
+
+  // Primero los universos empezados que aún tienen aventuras por terminar; dentro de cada grupo,
+  // por el criterio elegido: más reciente (última aventura publicada) o mejor valoración media.
+  private ordenarUniversos(universos: Universo[], orden: OrdenUniversos): Universo[] {
+    return [...universos].sort((a, b) => {
+      const prioridad = Number(this.estaEmpezadoConPendientes(b)) - Number(this.estaEmpezadoConPendientes(a));
+      if (prioridad !== 0) {
+        return prioridad;
+      }
+
+      const criterio =
+        orden === 'valoracion'
+          ? (b.puntuacionMedia ?? -1) - (a.puntuacionMedia ?? -1)
+          : this.marcaTiempo(b.fechaPublicacion) - this.marcaTiempo(a.fechaPublicacion);
+      return criterio !== 0 ? criterio : b.idUniverso - a.idUniverso;
+    });
+  }
+
+  private estaEmpezadoConPendientes(universo: Universo): boolean {
+    const aventuras = universo.campanas.flatMap((c) => c.aventuras);
+    return (
+      aventuras.some((a) => a.estadoPartida !== null) && aventuras.some((a) => a.estadoPartida !== 'Finalizada')
+    );
+  }
+
+  private marcaTiempo(fecha: string | null): number {
+    return fecha ? new Date(fecha).getTime() : 0;
   }
 
   private filtrarUniverso(universo: Universo, termino: string, cantidadDecision: number | null): Universo | null {

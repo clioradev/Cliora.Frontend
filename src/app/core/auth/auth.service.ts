@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { computed, inject, Injectable, signal } from '@angular/core';
-import { catchError, map, Observable, of, tap } from 'rxjs';
+import { catchError, finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { API_BASE_URL } from '../api/api-base-url.token';
 import { LoginResponse } from './login-response.model';
 import { Usuario } from './usuario.model';
@@ -12,6 +12,7 @@ export class AuthService {
 
   private readonly _accessToken = signal<string | null>(null);
   private readonly _currentUser = signal<Usuario | null>(null);
+  private refreshEnCurso: Observable<LoginResponse> | null = null;
 
   readonly accessToken = this._accessToken.asReadonly();
   readonly currentUser = this._currentUser.asReadonly();
@@ -74,11 +75,21 @@ export class AuthService {
       );
   }
 
-  /** Usado por el interceptor para el reintento tras un 401. */
+  /**
+   * Usado por el interceptor para el reintento tras un 401. Si llegan varios 401 a la vez (p. ej. tras
+   * un rato leyendo sin tocar nada, la primera pantalla que se carga lanza varias peticiones), todas
+   * esperan a la misma renovación: el refresh token se rota en cada uso, así que una segunda llamada
+   * en paralelo llevaría el token ya revocado, fallaría y cerraría la sesión.
+   */
   refresh(): Observable<LoginResponse> {
-    return this.http
+    this.refreshEnCurso ??= this.http
       .post<LoginResponse>(`${this.baseUrl}/Permiso/Refresh`, null, { withCredentials: true })
-      .pipe(tap((response) => this.setSession(response)));
+      .pipe(
+        tap((response) => this.setSession(response)),
+        finalize(() => (this.refreshEnCurso = null)),
+        shareReplay(1),
+      );
+    return this.refreshEnCurso;
   }
 
   clearSession(): void {

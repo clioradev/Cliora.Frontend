@@ -4,6 +4,8 @@ import { RouterLink } from '@angular/router';
 import { MultiSelectComponent } from '../../../../shared/components/multi-select/multi-select.component';
 import { TextoRecortadoComponent } from '../../../../shared/components/texto-recortado/texto-recortado.component';
 import { AnchoObservadoDirective } from '../../../../shared/directives/ancho-observado.directive';
+import { PrecioPipe } from '../../../../shared/pipes/precio.pipe';
+import { CarritoService } from '../../../tienda/data-access/carrito.service';
 import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
@@ -45,6 +47,7 @@ interface ContextoAventura {
     MultiSelectComponent,
     TextoRecortadoComponent,
     AnchoObservadoDirective,
+    PrecioPipe,
   ],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
@@ -52,6 +55,7 @@ interface ContextoAventura {
 export class UniversoListComponent {
   private readonly universoService = inject(UniversoService);
   private readonly partidaService = inject(PartidaService);
+  protected readonly carrito = inject(CarritoService);
 
   private readonly universosResource = rxResource({
     stream: () => this.universoService.getUniversos(),
@@ -160,6 +164,37 @@ export class UniversoListComponent {
       return guardado;
     }
     return this.indiceInicial(campana);
+  }
+
+  // Una aventura continúa la anterior: si la anterior (que no sea un libro) también está bloqueada
+  // y no va en el carrito, se añade con ella. Los libros se compran sueltos.
+  protected anadirAventuraAlCarrito(campana: Campana, aventura: Aventura): void {
+    let anadidas = 0;
+    if (!aventura.esLibro) {
+      const indice = campana.aventuras.findIndex((a) => a.idAventura === aventura.idAventura);
+      for (const anterior of campana.aventuras.slice(0, indice)) {
+        if (anterior.bloqueada && !anterior.esLibro && !this.carrito.contieneAventura(anterior.idAventura)) {
+          this.carrito.anadirAventura(anterior.idAventura);
+          anadidas++;
+        }
+      }
+    }
+    this.carrito.anadirAventura(aventura.idAventura);
+    this.carrito.avisar(anadidas > 0 ? '¡Aventuras añadidas!' : '¡Aventura añadida!');
+  }
+
+  protected anadirCampanaAlCarrito(campana: Campana): void {
+    // La campaña ya incluye sus aventuras sueltas: se quitan para no mostrarlas dos veces.
+    for (const aventura of campana.aventuras) {
+      this.carrito.quitarAventura(aventura.idAventura);
+    }
+    this.carrito.anadirCampana(campana.idCampana);
+    this.carrito.avisar('¡Campaña añadida!');
+  }
+
+  // Una aventura también está "en el carrito" si va dentro de su campaña entera.
+  protected enCarrito(campana: Campana, aventura: Aventura): boolean {
+    return this.carrito.contieneCampana(campana.idCampana) || this.carrito.contieneAventura(aventura.idAventura);
   }
 
   protected hueCaratula(aventura: Aventura): number {

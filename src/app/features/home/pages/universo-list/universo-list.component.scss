@@ -89,13 +89,66 @@
 
   &__header {
     display: flex;
+    flex-wrap: wrap;
+    align-items: center;
     justify-content: center;
+    gap: var(--space-2);
     text-align: center;
 
     h3 {
       margin: 0;
       font-size: var(--text-md);
     }
+  }
+
+  // Candado del título: precio de comprar de golpe las aventuras que faltan de la campaña; se
+  // añade con su botón de carrito.
+  &__candado {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-1) var(--space-1) var(--space-1) var(--space-2);
+    border: 1px solid var(--color-border);
+    border-radius: 999px;
+    background: var(--color-surface);
+    font-size: var(--text-sm);
+
+    img {
+      width: 1.4rem;
+      height: 1.4rem;
+    }
+  }
+
+  &__anadir {
+    width: 1.75rem;
+    height: 1.75rem;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    border-radius: 50%;
+    background: var(--color-primary);
+    color: #fff;
+
+    svg {
+      width: 1rem;
+      height: 1rem;
+    }
+
+    &:hover:not(:disabled) {
+      background: var(--color-primary-hover);
+    }
+  }
+
+  &__en-carrito {
+    padding-right: var(--space-2);
+    color: var(--color-success);
+  }
+
+  &__precio s {
+    color: var(--color-text-secondary);
+    margin-right: var(--space-1);
   }
 
   &__descripcion {
@@ -184,6 +237,12 @@ $sombra-lomo-lateral:
     flex: 1 1 auto;
     min-height: 0;
     width: 100%;
+  }
+
+  &__candado {
+    flex: 0 0 auto;
+    width: 1.5rem;
+    height: 1.5rem;
   }
 
   // Estado de juego (independiente de si es un libro): mismo tratamiento que --libro pero con un
@@ -284,6 +343,7 @@ $sombra-lomo-lateral:
   }
 
   &__caratula {
+    position: relative;
     width: 100%;
     aspect-ratio: 2 / 3;
     background: linear-gradient(135deg, hsl(var(--hue) 45% 42%), hsl(calc(var(--hue) + 35) 45% 28%));
@@ -303,6 +363,36 @@ $sombra-lomo-lateral:
     width: 80%;
     object-fit: contain;
     opacity: 1;
+  }
+
+  // Cadena con candado sobre la portada de una aventura de pago. Solo informa: se añade al carrito
+  // con su botón, para no hacerlo sin querer.
+  &__cadena {
+    position: absolute;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.35);
+    pointer-events: none;
+
+    img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+    }
+  }
+
+  &__precio {
+    font-weight: 600;
+
+    s {
+      font-weight: 400;
+      color: var(--color-text-secondary);
+      margin-right: var(--space-1);
+    }
+  }
+
+  &__en-carrito {
+    font-size: var(--text-sm);
+    color: var(--color-success);
   }
 
   &__lomo-central {

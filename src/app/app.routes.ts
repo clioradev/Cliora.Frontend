@@ -82,6 +82,12 @@ export const routes: Routes = [
         ],
       },
       {
+        path: 'carrito',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/tienda/pages/carrito/carrito.component').then((m) => m.CarritoComponent),
+      },
+      {
         path: 'autor',
         canActivate: [authGuard, rolGuard('Autor')],
         loadChildren: () => import('./features/autor/autor.routes').then((m) => m.AUTOR_ROUTES),

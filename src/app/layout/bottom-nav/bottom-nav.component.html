@@ -18,6 +18,24 @@
       <span class="bottom-nav__label">Universos</span>
     </a>
 
+    @if (cantidadCarrito() > 0) {
+      <a class="bottom-nav__item bottom-nav__item--carrito" routerLink="/carrito" routerLinkActive="bottom-nav__item--active">
+        @if (burbujaCarrito(); as burbuja) {
+          <span class="bottom-nav__burbuja" role="status">{{ burbuja.texto }}</span>
+        }
+        <span class="bottom-nav__icono-carrito">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path
+              d="M7 4h-2l-1 2v1h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2h-11.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7c.09-.16.14-.35.14-.54 0-.55-.45-1-1-1h-14.42l-.94-2z"
+              fill="currentColor"
+            />
+          </svg>
+          <span class="bottom-nav__badge">{{ cantidadCarrito() }}</span>
+        </span>
+        <span class="bottom-nav__label">Carrito</span>
+      </a>
+    }
+
     @if (mostrarAutor()) {
       <a class="bottom-nav__item" routerLink="/autor" routerLinkActive="bottom-nav__item--active">
         <svg viewBox="0 0 24 24" aria-hidden="true">

@@ -1,9 +1,12 @@
-import { Component, computed, effect, ElementRef, inject, signal } from '@angular/core';
+import { Component, computed, DestroyRef, effect, ElementRef, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
 import { PartidaService } from '../../features/home/data-access/partida.service';
+import { CarritoService } from '../../features/tienda/data-access/carrito.service';
+
+const DURACION_BURBUJA_MS = 2500;
 
 interface OpcionMas {
   texto: string;
@@ -23,6 +26,8 @@ const OPCIONES_ADMIN: OpcionMas[] = [
   { texto: 'Roles', ruta: '/admin/roles' },
   { texto: 'Tipos de universo', ruta: '/admin/tipos-universo' },
   { texto: 'Editar aventuras', ruta: '/admin/editar-aventuras' },
+  { texto: 'Precios', ruta: '/admin/precios' },
+  { texto: 'Parámetros', ruta: '/admin/parametros' },
 ];
 
 @Component({
@@ -56,6 +61,12 @@ export class BottomNavComponent {
 
   protected readonly continuarDestino = computed(() => this.continuarResource.value() ?? null);
   protected readonly mostrarAutor = computed(() => this.authService.tieneRol('Autor'));
+  private readonly carritoService = inject(CarritoService);
+  protected readonly cantidadCarrito = this.carritoService.cantidad;
+
+  // Burbuja "¡Aventura añadida!" sobre el carrito durante unos segundos tras añadir algo.
+  protected readonly burbujaCarrito = signal<{ id: number; texto: string } | null>(null);
+  private temporizadorBurbuja: ReturnType<typeof setTimeout> | undefined;
 
   protected readonly opcionesUsuario = OPCIONES_USUARIO;
   protected readonly opcionesAdmin = computed(() => (this.authService.tieneRol('Administrador') ? OPCIONES_ADMIN : []));
@@ -73,6 +84,17 @@ export class BottomNavComponent {
       this.navegacion();
       this.menuAbierto.set(false);
     });
+
+    effect(() => {
+      const aviso = this.carritoService.aviso();
+      if (!aviso) {
+        return;
+      }
+      clearTimeout(this.temporizadorBurbuja);
+      this.burbujaCarrito.set(aviso);
+      this.temporizadorBurbuja = setTimeout(() => this.burbujaCarrito.set(null), DURACION_BURBUJA_MS);
+    });
+    inject(DestroyRef).onDestroy(() => clearTimeout(this.temporizadorBurbuja));
   }
 
   protected onContinuar(): void {

@@ -1,0 +1,7 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <!-- Provisional: se sustituirá por el icono definitivo del candado de campaña. -->
+  <path d="M20 30v-8a12 12 0 0 1 24 0v8" fill="none" stroke="#d9ab5c" stroke-width="6"/>
+  <rect x="12" y="29" width="40" height="30" rx="5" fill="#d9ab5c" stroke="#7a5a26" stroke-width="2"/>
+  <circle cx="32" cy="41" r="4.5" fill="#3b2c14"/>
+  <path d="M30 43h4l1.5 9h-7z" fill="#3b2c14"/>
+</svg>

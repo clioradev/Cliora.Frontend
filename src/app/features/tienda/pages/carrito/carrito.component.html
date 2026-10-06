@@ -1,0 +1,143 @@
+<h1>Carrito</h1>
+
+@if (compraRealizada(); as compra) {
+  <div class="compra-ok" role="status">
+    <h2>¡Compra completada!</h2>
+    <p>Has pagado {{ compra.total | precio }}. Ya puedes jugar tus aventuras.</p>
+    <a class="btn--primary" routerLink="/">Ir a los universos</a>
+  </div>
+} @else if (carritoService.cantidad() === 0) {
+  <p class="status">Tu carrito está vacío. Pulsa el candado de una aventura o de una campaña para añadirla.</p>
+  <a routerLink="/">Ir a los universos</a>
+} @else if (cargando() && !presupuesto()) {
+  <p class="status">Calculando…</p>
+} @else if (error()) {
+  <p class="status status--error">No se ha podido calcular el precio del carrito.</p>
+} @else if (presupuesto(); as p) {
+  @if (p.rechazados.length > 0) {
+    <ul class="rechazados">
+      @for (rechazado of p.rechazados; track $index) {
+        <li class="rechazados__item">
+          <span>{{ rechazado.motivo }}</span>
+          <button type="button" (click)="quitarRechazado(rechazado)">Quitar</button>
+        </li>
+      }
+    </ul>
+  }
+
+  @for (grupo of campanas(); track grupo.idCampana) {
+    <section class="grupo">
+      <header class="grupo__cabecera">
+        <h2>Campaña «{{ grupo.tituloCampana }}»</h2>
+        <button
+          type="button"
+          class="btn-icono btn-icono--peligro"
+          (click)="carritoService.quitarCampana(grupo.idCampana)"
+          aria-label="Quitar la campaña del carrito"
+          title="Quitar"
+        >
+          ✕
+        </button>
+      </header>
+      <ul class="lineas">
+        @for (linea of grupo.lineas; track linea.idAventura) {
+          <li class="lineas__item">
+            <span>{{ linea.tituloAventura }}</span>
+            <span class="lineas__importe">
+              <s>{{ linea.importe + linea.descuentoCampana | precio }}</s>
+              {{ linea.importe | precio }}
+            </span>
+          </li>
+        }
+      </ul>
+      <p class="grupo__subtotal">
+        Ahorras {{ grupo.totalSinDescuento - grupo.total | precio }} por comprar la campaña entera.
+      </p>
+    </section>
+  }
+
+  @if (sueltas().length > 0) {
+    <section class="grupo">
+      <header class="grupo__cabecera">
+        <h2>Aventuras</h2>
+      </header>
+      <ul class="lineas">
+        @for (linea of sueltas(); track linea.idAventura) {
+          <li class="lineas__item">
+            <span>
+              {{ linea.tituloAventura }}
+              <span class="lineas__campana">{{ linea.tituloCampana }}</span>
+            </span>
+            <span class="lineas__importe">
+              @if (linea.descuento > 0) {
+                <s>{{ linea.precioBase | precio }}</s>
+              }
+              {{ linea.importe | precio }}
+            </span>
+            <button
+              type="button"
+              class="btn-icono btn-icono--peligro"
+              (click)="carritoService.quitarAventura(linea.idAventura)"
+              aria-label="Quitar del carrito"
+              title="Quitar"
+            >
+              ✕
+            </button>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  @if (p.lineas.length > 0) {
+    <p class="total">Total: <strong>{{ p.total | precio }}</strong> <span class="total__iva">(IVA incluido)</span></p>
+
+    <div class="devoluciones">
+      <h2>Devoluciones</h2>
+      <p>
+        Puedes devolver cada aventura y recuperar lo que pagaste por ella mientras no hayas jugado más del
+        {{ p.umbralDevolucion }}&nbsp;% de la aventura. En cuanto lo superes deja de poder devolverse, aunque luego la
+        reinicies.
+      </p>
+      @if (campanas().length > 0) {
+        <p>
+          Una campaña comprada entera se devuelve entera, y solo mientras no hayas superado el
+          {{ p.umbralDevolucion }}&nbsp;% de ninguna de sus aventuras.
+        </p>
+      }
+    </div>
+
+    <label class="condiciones">
+      <input type="checkbox" [checked]="aceptaCondiciones()" (change)="onAceptaCondiciones($event)" />
+      <span>
+        Quiero empezar a jugar en cuanto pague y entiendo que podré devolver cada aventura mientras no haya superado el
+        {{ p.umbralDevolucion }}&nbsp;% de ella.
+      </span>
+    </label>
+
+    @if (errorComprar()) {
+      <p class="status status--error">{{ errorComprar() }}</p>
+    }
+
+    @if (p.pagoSimulado) {
+      <p class="aviso-simulado">
+        <strong>Pago de prueba:</strong> todavía no hay pasarela de pago, así que no se cobra nada. La compra se registra
+        como si hubieras pagado.
+      </p>
+      <button
+        type="button"
+        class="btn--primary pagar"
+        [disabled]="!aceptaCondiciones() || comprando() || p.rechazados.length > 0"
+        (click)="comprar()"
+      >
+        {{ comprando() ? 'Pagando…' : 'Pagar ' + (p.total | precio) + ' (simulado)' }}
+      </button>
+      @if (p.rechazados.length > 0) {
+        <p class="status">Quita del carrito lo que no se puede comprar para continuar.</p>
+      }
+    } @else {
+      <button type="button" class="btn--primary pagar" disabled>Pagar {{ p.total | precio }}</button>
+      <p class="status">Los pagos estarán disponibles muy pronto.</p>
+    }
+  }
+}

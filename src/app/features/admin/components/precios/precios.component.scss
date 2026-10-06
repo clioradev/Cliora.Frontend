@@ -1,0 +1,107 @@
+:host {
+  display: block;
+}
+
+.ayuda {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.universo {
+  margin-bottom: var(--space-6);
+
+  h2 {
+    margin-bottom: var(--space-2);
+  }
+
+  h3 {
+    margin: var(--space-4) 0 var(--space-2);
+    font-size: var(--text-md);
+  }
+}
+
+.aventuras {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  &__item {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: var(--space-3);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  &__info {
+    flex: 1 1 14rem;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+  }
+
+  &__titulo {
+    font-weight: 600;
+  }
+
+  &__etiquetas {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-1);
+  }
+
+  &__final {
+    min-width: 4.5rem;
+    padding-bottom: var(--space-2);
+    font-weight: 600;
+  }
+
+  &__mensaje {
+    flex-basis: 100%;
+    font-size: var(--text-sm);
+    color: var(--color-success);
+
+    &--error {
+      color: var(--color-danger);
+    }
+  }
+}
+
+.etiqueta {
+  font-size: var(--text-xs);
+  padding: 0 var(--space-2);
+  border: 1px solid var(--color-border);
+  border-radius: 999px;
+  color: var(--color-text-secondary);
+
+  &--libro {
+    border-color: var(--color-accent);
+    color: var(--color-accent);
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  font-size: var(--text-sm);
+
+  input {
+    width: 13rem;
+  }
+
+  &--corto input {
+    width: 6rem;
+  }
+}
+
+.status--error {
+  color: var(--color-danger);
+}

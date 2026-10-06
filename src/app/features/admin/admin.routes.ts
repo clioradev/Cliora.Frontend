@@ -31,4 +31,12 @@ export const ADMIN_ROUTES: Routes = [
       import('./components/corregir-textos/corregir-textos.component').then((m) => m.CorregirTextosComponent),
   },
   { path: 'eliminar-aventuras', redirectTo: 'editar-aventuras', pathMatch: 'full' },
+  {
+    path: 'precios',
+    loadComponent: () => import('./components/precios/precios.component').then((m) => m.PreciosComponent),
+  },
+  {
+    path: 'parametros',
+    loadComponent: () => import('./components/parametros/parametros.component').then((m) => m.ParametrosComponent),
+  },
 ];

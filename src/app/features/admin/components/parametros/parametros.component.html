@@ -1,0 +1,32 @@
+<h1>Admin: Parámetros</h1>
+
+@if (errorValidacion()) {
+  <p class="status status--error">{{ errorValidacion() }}</p>
+}
+@if (errorGuardar()) {
+  <p class="status status--error">{{ errorGuardar() }}</p>
+}
+
+@if (cargando() && parametros().length === 0) {
+  <p>Cargando…</p>
+} @else {
+  <ul class="parametros">
+    @for (parametro of parametros(); track parametro.codigo) {
+      <li class="parametros__item">
+        <label class="parametros__campo">
+          <span class="parametros__nombre">{{ nombre(parametro) }}</span>
+          @if (parametro.descripcion) {
+            <span class="parametros__descripcion">{{ parametro.descripcion }}</span>
+          }
+          <input #valor type="text" inputmode="decimal" [value]="valorTexto(parametro)" />
+        </label>
+        <button type="button" class="btn--primary" (click)="guardar(parametro, valor.value)" [disabled]="guardando()">
+          Guardar
+        </button>
+        @if (guardado() === parametro.codigo) {
+          <span class="parametros__guardado">Guardado.</span>
+        }
+      </li>
+    }
+  </ul>
+}

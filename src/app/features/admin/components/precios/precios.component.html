@@ -1,0 +1,95 @@
+<h1>Admin: Precios</h1>
+
+<p class="ayuda">
+  Precios en € con IVA. Sin precio o a 0 € la aventura es gratis, y la primera de cada campaña lo es siempre. El
+  descuento es un importe fijo en € que se resta del precio. Al poner precio a una aventura, quien ya la había empezado
+  la conserva como comprada a 0 €.
+</p>
+
+@if (errorGuardar()) {
+  <p class="status status--error">{{ errorGuardar() }}</p>
+}
+
+@if (cargando() && universos().length === 0) {
+  <p>Cargando…</p>
+} @else {
+  @for (universo of universos(); track universo.idUniverso) {
+    <section class="universo">
+      <h2>{{ universo.titulo }}</h2>
+
+      @for (campana of universo.campanas; track campana.idCampana) {
+        <h3>{{ campana.titulo }}</h3>
+        <ul class="aventuras">
+          @for (aventura of campana.aventuras; track aventura.idAventura) {
+            <li class="aventuras__item">
+              <div class="aventuras__info">
+                <span class="aventuras__titulo">{{ aventura.orden }}. {{ aventura.tituloAventura }}</span>
+                <span class="aventuras__etiquetas">
+                  @if (aventura.esLibro) {
+                    <span class="etiqueta etiqueta--libro">Libro</span>
+                  }
+                  @if (aventura.esPrimera) {
+                    <span class="etiqueta">Primera: siempre gratis</span>
+                  }
+                  @if (!aventura.visible) {
+                    <span class="etiqueta">No publicada</span>
+                  }
+                  @if (aventura.cantidadCompras > 0) {
+                    <span class="etiqueta">{{ aventura.cantidadCompras }} compras</span>
+                  }
+                </span>
+              </div>
+
+              <label class="campo">
+                <span>Precio</span>
+                <input
+                  #precio
+                  type="text"
+                  inputmode="decimal"
+                  [value]="escribirImporte(aventura.precio)"
+                  [placeholder]="placeholderPrecio(aventura)"
+                />
+              </label>
+
+              <label class="campo campo--corto">
+                <span>Descuento</span>
+                <input
+                  #descuento
+                  type="text"
+                  inputmode="decimal"
+                  [value]="aventura.descuento > 0 ? escribirImporte(aventura.descuento) : ''"
+                  placeholder="0"
+                />
+              </label>
+
+              <span class="aventuras__final">
+                @if (aventura.esPrimera) {
+                  Gratis
+                } @else if (precioFinal(aventura); as final) {
+                  {{ final | precio }}
+                } @else {
+                  Gratis
+                }
+              </span>
+
+              <button
+                type="button"
+                class="btn--primary"
+                (click)="guardar(aventura, precio.value, descuento.value)"
+                [disabled]="guardando() && filaEnCurso() === aventura.idAventura"
+              >
+                Guardar
+              </button>
+
+              @if (errorValidacion()?.idAventura === aventura.idAventura) {
+                <span class="aventuras__mensaje aventuras__mensaje--error">{{ errorValidacion()?.mensaje }}</span>
+              } @else if (filaGuardada() === aventura.idAventura) {
+                <span class="aventuras__mensaje">Guardado.</span>
+              }
+            </li>
+          }
+        </ul>
+      }
+    </section>
+  }
+}

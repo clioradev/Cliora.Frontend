@@ -17,6 +17,13 @@ export interface Aventura {
   duracion: number | null;
   esLibro: boolean;
   enlaceCompra: string | null;
+  /** Lo que cuesta suelta (con su descuento); null si es gratis. */
+  precio: number | null;
+  /** Precio antes del descuento, solo si tiene descuento. */
+  precioSinDescuento: number | null;
+  /** De pago y sin comprar: se muestra con candado. */
+  bloqueada: boolean;
+  comprada: boolean;
 }
 
 export interface OpcionEnum {
@@ -60,6 +67,12 @@ export interface Campana {
   aventuras: Aventura[];
   puntuacionMedia: number | null;
   ultimaValoracion: UltimaValoracion | null;
+  /** Alguna aventura está bloqueada: el título lleva candado. */
+  bloqueada: boolean;
+  /** Lo que cuestan de golpe las aventuras bloqueadas, con el descuento de campaña. */
+  precioCampana: number | null;
+  /** Lo que costarían esas mismas aventuras sueltas. */
+  precioCampanaSinDescuento: number | null;
 }
 
 export interface Universo {

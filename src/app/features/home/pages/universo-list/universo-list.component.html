@@ -95,6 +95,35 @@
             <article class="campana-card">
               <header class="campana-card__header">
                 <h3>{{ campana.titulo }}</h3>
+                @if (campana.bloqueada) {
+                  <span class="campana-card__candado" title="Campaña entera">
+                    <img src="/media/tienda/candado.svg" alt="De pago" />
+                    @if (carrito.contieneCampana(campana.idCampana)) {
+                      <a class="campana-card__en-carrito" routerLink="/carrito">En el carrito</a>
+                    } @else {
+                      <span class="campana-card__precio">
+                        @if (campana.precioCampanaSinDescuento !== campana.precioCampana) {
+                          <s>{{ campana.precioCampanaSinDescuento | precio }}</s>
+                        }
+                        {{ campana.precioCampana | precio }}
+                      </span>
+                      <button
+                        type="button"
+                        class="campana-card__anadir"
+                        (click)="anadirCampanaAlCarrito(campana)"
+                        [attr.aria-label]="'Añadir al carrito la campaña ' + campana.titulo"
+                        title="Añadir la campaña entera al carrito"
+                      >
+                        <svg viewBox="0 0 24 24" aria-hidden="true">
+                          <path
+                            d="M7 4h-2l-1 2v1h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2h-11.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7c.09-.16.14-.35.14-.54 0-.55-.45-1-1-1h-14.42l-.94-2z"
+                            fill="currentColor"
+                          />
+                        </svg>
+                      </button>
+                    }
+                  </span>
+                }
               </header>
 
               @if (campana.descripcion) {
@@ -126,6 +155,9 @@
                         @if (a.caratulaUrl) {
                           <img class="libro-lomo__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
                         }
+                        @if (a.bloqueada) {
+                          <img class="libro-lomo__candado" src="/media/tienda/candado.svg" alt="De pago" />
+                        }
                         <span class="libro-lomo__titulo"><span class="lomo-texto">{{ a.titulo }}</span></span>
                       </button>
                     }
@@ -143,6 +175,13 @@
                             <img class="libro-abierto__img" [src]="aventura.caratulaUrl" [alt]="aventura.titulo" />
                           } @else {
                             <img class="libro-abierto__icono" src="/media/logos/Cliora-icono-reducido.png" alt="" />
+                          }
+
+                          @if (aventura.bloqueada) {
+                            <!-- Solo indica que es de pago: se añade con el botón del carrito, para no hacerlo sin querer. -->
+                            <div class="libro-abierto__cadena">
+                              <img src="/media/tienda/cadena-candado.svg" alt="Aventura de pago" />
+                            </div>
                           }
                         </div>
                       </div>
@@ -207,6 +246,33 @@
                                   <path d="M8 5v14l11-7z" fill="currentColor" />
                                 </svg>
                               </a>
+                            </div>
+                          } @else if (aventura.bloqueada) {
+                            <span class="libro-abierto__precio">
+                              @if (aventura.precioSinDescuento !== null) {
+                                <s>{{ aventura.precioSinDescuento | precio }}</s>
+                              }
+                              {{ aventura.precio | precio }}
+                            </span>
+                            <div class="libro-abierto__acciones">
+                              @if (enCarrito(campana, aventura)) {
+                                <a class="libro-abierto__en-carrito" routerLink="/carrito">En el carrito</a>
+                              } @else {
+                                <button
+                                  type="button"
+                                  class="libro-abierto__accion"
+                                  (click)="anadirAventuraAlCarrito(campana, aventura)"
+                                  aria-label="Añadir al carrito"
+                                  title="Añadir al carrito"
+                                >
+                                  <svg viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                      d="M7 4h-2l-1 2v1h2l3.6 7.59-1.35 2.44c-.16.28-.25.61-.25.97 0 1.1.9 2 2 2h12v-2h-11.42c-.14 0-.25-.11-.25-.25l.03-.12.9-1.63h7.45c.75 0 1.41-.41 1.75-1.03l3.86-7c.09-.16.14-.35.14-.54 0-.55-.45-1-1-1h-14.42l-.94-2z"
+                                      fill="currentColor"
+                                    />
+                                  </svg>
+                                </button>
+                              }
                             </div>
                           } @else if (aventura.puedeEmpezarPartida) {
                             <div class="libro-abierto__acciones">
@@ -311,6 +377,9 @@
                         }
                         @if (a.caratulaUrl) {
                           <img class="libro-lomo__img" [src]="a.caratulaUrl" [alt]="a.titulo" />
+                        }
+                        @if (a.bloqueada) {
+                          <img class="libro-lomo__candado" src="/media/tienda/candado.svg" alt="De pago" />
                         }
                         <span class="libro-lomo__titulo"><span class="lomo-texto">{{ a.titulo }}</span></span>
                       </button>

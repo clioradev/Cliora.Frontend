@@ -8,6 +8,9 @@ import {
   CambioTexto,
   CatTipoUniversoAdmin,
   GuardarCatTipoUniversoRequest,
+  GuardarPrecioRequest,
+  ParametroAdmin,
+  PrecioAventuraAdmin,
   Rol,
   SolicitudPublicacionAdmin,
   TextosAventura,
@@ -52,8 +55,24 @@ export class AdminService {
     return this.http.get<SolicitudPublicacionAdmin[]>(`${this.baseUrl}/Admin/SolicitudPublicacion`);
   }
 
-  publicarVersion(idVersionAventura: number): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Publicar`, {});
+  publicarVersion(idVersionAventura: number, precio: GuardarPrecioRequest): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Publicar`, precio);
+  }
+
+  obtenerPrecios(): Observable<PrecioAventuraAdmin[]> {
+    return this.http.get<PrecioAventuraAdmin[]>(`${this.baseUrl}/Admin/Precio`);
+  }
+
+  guardarPrecio(idAventura: number, precio: GuardarPrecioRequest): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/Admin/Aventura/${idAventura}/Precio`, precio);
+  }
+
+  obtenerParametros(): Observable<ParametroAdmin[]> {
+    return this.http.get<ParametroAdmin[]>(`${this.baseUrl}/Admin/Parametro`);
+  }
+
+  guardarParametro(codigo: string, valor: number): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/Admin/Parametro/${codigo}`, { valor });
   }
 
   rechazarVersion(idVersionAventura: number): Observable<void> {

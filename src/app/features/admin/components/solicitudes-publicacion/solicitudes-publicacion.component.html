@@ -46,11 +46,45 @@
           }
         </div>
 
+        <div class="solicitud-list__precio">
+          <label>
+            <span>Precio (€)</span>
+            <input
+              #precio
+              type="text"
+              inputmode="decimal"
+              [value]="precioPropuesto(solicitud)"
+              [placeholder]="solicitud.esPrimera ? 'Primera: gratis' : 'Gratis'"
+            />
+          </label>
+          <label>
+            <span>Descuento (€)</span>
+            <input
+              #descuento
+              type="text"
+              inputmode="decimal"
+              [value]="solicitud.descuento > 0 ? escribirImporte(solicitud.descuento) : ''"
+              placeholder="0"
+            />
+          </label>
+          @if (solicitud.esPrimera) {
+            <span class="solicitud-list__nota">Es la primera de su campaña: será gratis aunque tenga precio.</span>
+          }
+          @if (errorPrecio()?.idVersionAventura === solicitud.idVersionAventura) {
+            <span class="status status--error">{{ errorPrecio()?.mensaje }}</span>
+          }
+        </div>
+
         <div class="solicitud-list__acciones">
           <button type="button" (click)="previsualizar(solicitud)" [disabled]="accionEnCurso(solicitud)">
             Previsualizar
           </button>
-          <button type="button" class="btn--primary" (click)="publicar(solicitud)" [disabled]="accionEnCurso(solicitud)">
+          <button
+            type="button"
+            class="btn--primary"
+            (click)="publicar(solicitud, precio.value, descuento.value)"
+            [disabled]="accionEnCurso(solicitud)"
+          >
             Publicar
           </button>
           <button type="button" class="btn--peligro" (click)="rechazar(solicitud)" [disabled]="accionEnCurso(solicitud)">

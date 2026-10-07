@@ -52,6 +52,13 @@
     >
       Variables
     </button>
+    <button
+      type="button"
+      [class.aventura-form__tab--activa]="tabActiva() === 'alertas'"
+      (click)="tabActiva.set('alertas')"
+    >
+      Revisar alertas
+    </button>
   </nav>
 
   @if (cargando()) {
@@ -78,31 +85,31 @@
               }
             </select>
           </label>
-
-          <label class="campo-duracion">
-            Duración actual (min)
-            <input type="number" formControlName="duracion" min="0" [disabled]="!idAventura()" />
-          </label>
-
-          <div class="campo-calcular">
-            <span class="campo-calcular__etiqueta">Calcular</span>
-            <button
-              type="button"
-              class="btn-icono btn-icono--primary"
-              (click)="calcularDuracion()"
-              [disabled]="!idAventura() || calculandoDuracion()"
-              [attr.aria-label]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
-              [attr.title]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
-            >
-              <app-icono nombre="calcular" />
-            </button>
-          </div>
         } @else {
           <label class="campo-enlace-compra">
             Enlace de compra (Amazon)
             <input type="url" formControlName="enlaceCompra" placeholder="https://…" [disabled]="!idAventura()" />
           </label>
         }
+
+        <label class="campo-duracion">
+          Duración actual (min)
+          <input type="number" formControlName="duracion" min="0" [disabled]="!idAventura()" />
+        </label>
+
+        <div class="campo-calcular">
+          <span class="campo-calcular__etiqueta">Calcular</span>
+          <button
+            type="button"
+            class="btn-icono btn-icono--primary"
+            (click)="calcularDuracion()"
+            [disabled]="!idAventura() || calculandoDuracion()"
+            [attr.aria-label]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
+            [attr.title]="calculandoDuracion() ? 'Calculando…' : 'Calcular duración'"
+          >
+            <app-icono nombre="calcular" />
+          </button>
+        </div>
       </div>
 
       @if (errorDuracion()) {
@@ -235,6 +242,8 @@
   } @else if (idAventura(); as id) {
     @if (tabActiva() === 'contenido') {
       <app-actos-escenas [idAventura]="id" [actos]="aventura()?.actos ?? []" (cambiado)="recargarContenido()" />
+    } @else if (tabActiva() === 'alertas') {
+      <app-revisar-alertas [idAventura]="id" />
     } @else {
       <app-caracteristicas [idAventura]="id" [esLibro]="esLibro()" />
     }

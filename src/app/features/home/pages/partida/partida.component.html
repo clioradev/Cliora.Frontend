@@ -4,13 +4,41 @@
   <p class="status status--error">No se ha podido cargar el nodo.</p>
 } @else if (nodo(); as n) {
   <div class="nodo__cabecera">
-    @if (preview()) {
-      <button type="button" class="nodo__boton-editor" (click)="volverAlEditor()">← Volver al editor</button>
-    }
+    <div class="nodo__cabecera-izquierda">
+      @if (esRevisor()) {
+        <button
+          type="button"
+          class="btn-icono btn-icono--peligro"
+          [class.nodo__boton-alerta--informada]="alertasEnNodo() !== null"
+          (click)="informarErrorAbierto.set(true)"
+          aria-label="Informar de error"
+          title="Informar de error"
+        >
+          <app-icono nombre="alerta" />
+        </button>
+      }
+      @if (preview()) {
+        <button type="button" class="nodo__boton-editor" (click)="volverAlEditor()">← Volver al editor</button>
+      }
+    </div>
     @if (!n.esLibro) {
       <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
     }
   </div>
+
+  @if (alertasEnNodo(); as total) {
+    <p class="status">
+      Error informado. {{ total === 1 ? 'Eres el primer revisor que avisa en este nodo.' : total + ' revisores han avisado en este nodo.' }}
+    </p>
+  }
+
+  @if (informarErrorAbierto()) {
+    <app-informar-error-modal
+      [idNodo]="n.idNodo"
+      (informado)="onErrorInformado($event)"
+      (cerrado)="informarErrorAbierto.set(false)"
+    />
+  }
 
   @if (n.escenaDescripcion) {
     <p class="nodo__escena">{{ n.escenaDescripcion }}</p>
@@ -80,7 +108,13 @@
   }
 
   <div class="nodo__stats">
-    <p class="nodo__jugadores">{{ n.jugadoresEnEsteNodo }} lectores han pasado por aquí</p>
+    <!-- «X lectores han pasado por aquí» (n.jugadoresEnEsteNodo) oculto a propósito mientras haya pocos
+         usuarios: con 0 o 1 queda triste. El servidor lo sigue enviando; basta con volver a pintarlo. -->
+    @if (n.codigoNodo) {
+      <p class="nodo__codigos" title="Nodo anterior / nodo actual (solo administradores)">
+        {{ n.codigoNodoAnterior ?? '—' }} / {{ n.codigoNodo }}
+      </p>
+    }
     @if (n.porcentajeProgreso !== null) {
       <p class="nodo__progreso">{{ n.porcentajeProgreso }}% leído</p>
     }

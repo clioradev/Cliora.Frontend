@@ -1,0 +1,31 @@
+<app-modal (cerrar)="cerrado.emit()" [cerrarAlPulsarFondo]="false">
+  <h3>Informar de error</h3>
+
+  <p class="informar-error__ayuda">
+    Se guardará este nodo, el anterior y tus características y eventos actuales para que el autor pueda reproducirlo.
+  </p>
+
+  <app-area-texto
+    class="informar-error__comentario"
+    placeholder="¿Qué has visto mal? (opcional)"
+    tituloEditor="Informar de error"
+    [rows]="4"
+    [ngModel]="comentario()"
+    (ngModelChange)="comentario.set($event)"
+  />
+
+  @if (demasiadoLargo()) {
+    <p class="status status--error">El comentario no puede pasar de {{ longitudMaxima }} caracteres.</p>
+  }
+
+  @if (error()) {
+    <p class="status status--error">{{ error() }}</p>
+  }
+
+  <div class="informar-error__acciones">
+    <button type="button" (click)="cerrado.emit()" [disabled]="enviando()">Cancelar</button>
+    <button type="button" class="btn--primary" (click)="enviar()" [disabled]="enviando() || demasiadoLargo()">
+      {{ enviando() ? 'Enviando…' : 'Enviar' }}
+    </button>
+  </div>
+</app-modal>

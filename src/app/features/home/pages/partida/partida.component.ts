@@ -1,17 +1,20 @@
 import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { AdminService } from '../../../admin/data-access/admin.service';
 import { AutorService } from '../../../autor/data-access/autor.service';
 import { FichaPersonajeModalComponent } from '../../components/ficha-personaje-modal/ficha-personaje-modal.component';
+import { InformarErrorModalComponent } from '../../components/informar-error-modal/informar-error-modal.component';
 import { ResultadoTiradaModalComponent } from '../../components/resultado-tirada-modal/resultado-tirada-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
 import { Opcion, TiradaResultado } from '../../models/partida.model';
 
 @Component({
   selector: 'app-partida',
-  imports: [ResultadoTiradaModalComponent, FichaPersonajeModalComponent],
+  imports: [ResultadoTiradaModalComponent, FichaPersonajeModalComponent, InformarErrorModalComponent, IconoComponent],
   templateUrl: './partida.component.html',
   styleUrl: './partida.component.scss',
 })
@@ -21,6 +24,7 @@ export class PartidaComponent {
   private readonly partidaService = inject(PartidaService);
   private readonly autorService = inject(AutorService);
   private readonly adminService = inject(AdminService);
+  private readonly authService = inject(AuthService);
 
   private readonly paramMap = toSignal(this.route.paramMap, { requireSync: true });
   private readonly queryParamMap = toSignal(this.route.queryParamMap, { requireSync: true });
@@ -52,6 +56,18 @@ export class PartidaComponent {
 
   protected readonly personajeAbierto = signal(false);
 
+  // «Informar de error», solo para revisores: el botón abre un modal con comentario opcional y el
+  // servidor guarda el nodo, el anterior y una captura de características y eventos. Volver a
+  // informar en el mismo nodo solo actualiza la alerta.
+  protected readonly esRevisor = computed(() => this.authService.tieneRol('Revisor'));
+  protected readonly informarErrorAbierto = signal(false);
+  protected readonly alertasEnNodo = signal<number | null>(null);
+
+  protected onErrorInformado(numeroAlertas: number): void {
+    this.informarErrorAbierto.set(false);
+    this.alertasEnNodo.set(numeroAlertas);
+  }
+
   // Imágenes lo bastante pequeñas (< 60% del ancho del bloque de contenido) como para que el texto
   // fluya a su lado en vez de partir el nodo en bloques separados - ver onImagenCargada().
   protected readonly imagenesFlotantes = signal(new Set<number>());
@@ -60,6 +76,7 @@ export class PartidaComponent {
     effect(() => {
       this.nodo();
       this.imagenesFlotantes.set(new Set());
+      this.alertasEnNodo.set(null);
     });
   }
 

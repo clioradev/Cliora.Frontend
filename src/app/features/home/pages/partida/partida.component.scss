@@ -37,8 +37,19 @@
     }
   }
 
-  &__boton-editor {
+  &__cabecera-izquierda {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
     margin-right: auto;
+  }
+
+  &__boton-alerta--informada {
+    color: var(--color-danger);
+    border-color: var(--color-danger);
+  }
+
+  &__boton-editor {
     background: var(--color-surface);
     border: 1px solid var(--color-secondary);
     color: var(--color-text);
@@ -152,18 +163,25 @@
 
   &__stats {
     display: flex;
-    justify-content: space-between;
+    justify-content: flex-end;
     gap: var(--space-2);
     margin-top: var(--space-4);
   }
 
   &__progreso,
-  &__jugadores {
+  &__codigos {
     margin: 0;
     font-style: italic;
     color: var(--color-text-secondary);
     font-size: var(--text-xs);
     line-height: 1.4;
+  }
+
+  // A la izquierda, donde iba «X lectores han pasado por aquí»; el % sigue a la derecha.
+  &__codigos {
+    margin-right: auto;
+    font-family: monospace;
+    font-style: normal;
   }
 }
 

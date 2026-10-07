@@ -14,9 +14,11 @@ export type NombreIcono =
   | 'imagen'
   | 'audio'
   | 'buscar'
-  | 'ampliar';
+  | 'ampliar'
+  | 'alerta';
 
 const PATHS: Record<NombreIcono, string> = {
+  alerta: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm1 15h-2v-2h2v2zm0-4h-2V7h2v6z',
   ampliar: 'M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z',
   editar:
     'M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04a.996.996 0 000-1.41l-2.34-2.34a.996.996 0 00-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z',

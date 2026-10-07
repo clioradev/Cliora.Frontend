@@ -11,12 +11,13 @@ import { IconoComponent } from '../../../../shared/components/icono/icono.compon
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
 import { CaracteristicasComponent } from '../../components/caracteristicas/caracteristicas.component';
+import { RevisarAlertasComponent } from '../../components/revisar-alertas/revisar-alertas.component';
 import { AutorService } from '../../data-access/autor.service';
 import { AventuraAutor, EnumEstadoPublicacion, InformeImportacion } from '../../models/autor.model';
 
 @Component({
   selector: 'app-aventura-form',
-  imports: [AreaTextoComponent, ReactiveFormsModule, RouterLink, IconoComponent, ModalComponent, ActosEscenasComponent, CaracteristicasComponent, DatePipe],
+  imports: [AreaTextoComponent, ReactiveFormsModule, RouterLink, IconoComponent, ModalComponent, ActosEscenasComponent, CaracteristicasComponent, RevisarAlertasComponent, DatePipe],
   templateUrl: './aventura-form.component.html',
   styleUrl: './aventura-form.component.scss',
 })
@@ -27,8 +28,8 @@ export class AventuraFormComponent {
   private readonly fb = inject(FormBuilder);
 
   protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
-  protected readonly tabActiva = signal<'datos' | 'contenido' | 'caracteristicas'>(
-    this.route.snapshot.queryParamMap.get('tab') === 'contenido' ? 'contenido' : 'datos',
+  protected readonly tabActiva = signal<'datos' | 'contenido' | 'caracteristicas' | 'alertas'>(
+    tabInicial(this.route.snapshot.queryParamMap.get('tab')),
   );
 
   protected readonly idAventura = computed(() => {
@@ -301,6 +302,10 @@ export class AventuraFormComponent {
     });
     this.caratulaUrl.set(aventura.caratulaUrl);
   }
+}
+
+function tabInicial(tab: string | null): 'datos' | 'contenido' | 'alertas' {
+  return tab === 'contenido' || tab === 'alertas' ? tab : 'datos';
 }
 
 /** Nombre del archivo de una cabecera Content-Disposition (filename*=UTF-8''… o filename=…). */

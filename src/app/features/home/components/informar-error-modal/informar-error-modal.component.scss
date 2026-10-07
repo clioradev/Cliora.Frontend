@@ -1,0 +1,27 @@
+.status {
+  color: var(--color-text-secondary);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+h3 {
+  margin-top: 0;
+}
+
+.informar-error__ayuda {
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+}
+
+.informar-error__comentario {
+  display: block;
+  margin-bottom: var(--space-4);
+}
+
+.informar-error__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-3);
+}

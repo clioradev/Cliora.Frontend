@@ -33,6 +33,9 @@ export interface Nodo {
   porcentajeProgreso: number | null;
   jugadoresEnEsteNodo: number;
   jugadoresTotalesAventura: number;
+  /** Solo llegan para administradores (null para el resto). */
+  codigoNodo: string | null;
+  codigoNodoAnterior: string | null;
 }
 
 export interface TiradaResultado {

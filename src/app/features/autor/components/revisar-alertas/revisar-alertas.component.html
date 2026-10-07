@@ -1,0 +1,97 @@
+<div class="alertas">
+  @if (errorCerrar()) {
+    <p class="status status--error">{{ errorCerrar() }}</p>
+  }
+
+  @if (cargando() && !nodos()) {
+    <p>Cargando…</p>
+  } @else if (errorCarga()) {
+    <p class="status status--error">No se han podido cargar las alertas.</p>
+  } @else if (nodos(); as lista) {
+    @if (lista.length === 0) {
+      <p>No hay alertas abiertas en esta aventura.</p>
+    } @else {
+      @for (item of lista; track item.nodo.idNodo) {
+        <section class="alerta-nodo">
+          <div class="alerta-nodo__cabecera">
+            <div class="alerta-nodo__titulo">
+              <span class="alerta-nodo__ruta">{{ item.actoTitulo }} › {{ item.escenaTitulo }} · versión {{ item.version }}</span>
+              <h3>{{ item.nodo.titulo }} <code>{{ item.nodo.codigo }}</code></h3>
+            </div>
+            <span class="alerta-nodo__contador" [title]="item.numeroAlertas + ' revisores han avisado en este nodo'">
+              {{ item.numeroAlertas }} {{ item.numeroAlertas === 1 ? 'alerta' : 'alertas' }}
+            </span>
+            @if (item.idNodoEdicion; as idNodoEdicion) {
+              <a [routerLink]="['/autor/aventura', idAventura(), 'nodo', idNodoEdicion]">Abrir en el editor</a>
+            }
+            <button type="button" class="btn--primary" (click)="cerrar(item.nodo.idNodo)" [disabled]="cerrando()">
+              Cerrar alertas
+            </button>
+          </div>
+
+          @for (alerta of item.alertas; track alerta.idAlertaNodo) {
+            <details class="alerta">
+              <summary>
+                {{ alerta.nombreUsuario }} · {{ alerta.fecha | date: 'short' }} · viene de
+                @if (alerta.nodoOrigen; as origen) {
+                  @if (origen.eliminado) {
+                    <em>un nodo ya eliminado</em>
+                  } @else {
+                    <strong>{{ origen.titulo }}</strong> <code>{{ origen.codigo }}</code>
+                  }
+                } @else {
+                  <em>el inicio de la aventura</em>
+                }
+                @if (alerta.comentario) {
+                  <span class="alerta__comentario">{{ alerta.comentario }}</span>
+                }
+              </summary>
+
+              <div class="alerta__captura">
+                <div>
+                  <h4>Características</h4>
+                  @if (alerta.caracteristicas.length === 0) {
+                    <p>Ninguna.</p>
+                  } @else {
+                    <table>
+                      <tbody>
+                        @for (c of alerta.caracteristicas; track c.codigo) {
+                          <tr>
+                            <td>
+                              {{ c.nombre }} <code>{{ c.codigo }}</code>
+                              @if (!c.visible) {
+                                <span class="alerta__oculta">oculta</span>
+                              }
+                            </td>
+                            <td class="alerta__tipo">{{ c.tipo }}</td>
+                            <td class="alerta__valor">{{ c.valor }}</td>
+                          </tr>
+                        }
+                      </tbody>
+                    </table>
+                  }
+                </div>
+
+                <div>
+                  <h4>Eventos ocurridos</h4>
+                  @if (alerta.eventos.length === 0) {
+                    <p>Ninguno.</p>
+                  } @else {
+                    <ul>
+                      @for (e of alerta.eventos; track e.aventura + e.codigo) {
+                        <li>
+                          {{ e.nombre }} <code>{{ e.codigo }}</code>
+                          <span class="alerta__tipo">{{ e.aventura }}</span>
+                        </li>
+                      }
+                    </ul>
+                  }
+                </div>
+              </div>
+            </details>
+          }
+        </section>
+      }
+    }
+  }
+</div>

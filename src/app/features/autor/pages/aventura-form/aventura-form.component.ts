@@ -7,6 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { of } from 'rxjs';
 import { CANTIDAD_DECISION_OPCIONES } from '../../../home/models/universo.model';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { descargar } from '../../../../core/utils/descargar';
 import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
@@ -315,13 +316,4 @@ function nombreArchivoDescarga(cabecera: string | null): string | null {
     return decodeURIComponent(codificado);
   }
   return cabecera?.match(/filename="?([^";]+)"?/i)?.[1] ?? null;
-}
-
-function descargar(contenido: Blob, nombre: string): void {
-  const url = URL.createObjectURL(contenido);
-  const enlace = document.createElement('a');
-  enlace.href = url;
-  enlace.download = nombre;
-  enlace.click();
-  URL.revokeObjectURL(url);
 }

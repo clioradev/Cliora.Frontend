@@ -11,6 +11,12 @@
     @if (lista.length === 0) {
       <p>No hay alertas abiertas en esta aventura.</p>
     } @else {
+      <div class="alertas__acciones">
+        <button type="button" (click)="exportarTodas()" title="Descarga todas las alertas abiertas en un archivo .json">
+          Exportar todas
+        </button>
+      </div>
+
       @for (item of lista; track item.nodo.idNodo) {
         <section class="alerta-nodo">
           <div class="alerta-nodo__cabecera">
@@ -42,6 +48,15 @@
                 } @else {
                   <em>el inicio de la aventura</em>
                 }
+                <!-- preventDefault: el botón está dentro del summary y no debe abrir ni cerrar la alerta. -->
+                <button
+                  type="button"
+                  class="alerta__exportar"
+                  (click)="$event.preventDefault(); exportar(item, alerta)"
+                  title="Descarga esta alerta en un archivo .json"
+                >
+                  Exportar JSON
+                </button>
                 @if (alerta.comentario) {
                   <span class="alerta__comentario">{{ alerta.comentario }}</span>
                 }

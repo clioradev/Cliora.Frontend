@@ -29,6 +29,7 @@ export class UniversoFormModalComponent {
     titulo: ['', [Validators.required, Validators.maxLength(200)]],
     descripcion: [''],
     tipoTirada: [TIPO_TIRADA_ACIERTOS_4D6],
+    esRpg: [true],
   });
 
   protected readonly tipoTiradaOpciones = TIPO_TIRADA_OPCIONES;
@@ -57,6 +58,7 @@ export class UniversoFormModalComponent {
           titulo: universo.titulo,
           descripcion: universo.descripcion ?? '',
           tipoTirada: universo.tipoTirada ?? TIPO_TIRADA_ACIERTOS_4D6,
+          esRpg: universo.esRpg ?? true,
         });
       }
     });
@@ -90,11 +92,11 @@ export class UniversoFormModalComponent {
   }
 
   private readonly guardarAction = asyncAction(
-    (titulo: string, descripcion: string | null, tipoTirada: number) => {
+    (titulo: string, descripcion: string | null, tipoTirada: number, esRpg: boolean) => {
       const actual = this.universo();
       return actual
-        ? this.autorService.actualizarUniverso(actual.idUniverso, { titulo, descripcion, tipoTirada })
-        : this.autorService.crearUniverso({ titulo, descripcion, tipoTirada });
+        ? this.autorService.actualizarUniverso(actual.idUniverso, { titulo, descripcion, tipoTirada, esRpg })
+        : this.autorService.crearUniverso({ titulo, descripcion, tipoTirada, esRpg });
     },
     {
       onSuccess: (universo) => this.guardado.emit(universo),
@@ -109,7 +111,7 @@ export class UniversoFormModalComponent {
       return;
     }
 
-    const { titulo, descripcion, tipoTirada } = this.form.getRawValue();
-    this.guardarAction.run(titulo, descripcion.trim() || null, Number(tipoTirada));
+    const { titulo, descripcion, tipoTirada, esRpg } = this.form.getRawValue();
+    this.guardarAction.run(titulo, descripcion.trim() || null, Number(tipoTirada), esRpg);
   }
 }

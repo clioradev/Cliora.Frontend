@@ -88,6 +88,7 @@ export interface UniversoAutor {
   titulo: string;
   descripcion: string | null;
   tipoTirada: number;
+  esRpg: boolean;
   campanas: CampanaAutor[];
   tipos: UniversoTipoAutor[];
 }
@@ -96,6 +97,7 @@ export interface GuardarUniversoRequest {
   titulo: string;
   descripcion: string | null;
   tipoTirada: number;
+  esRpg: boolean;
 }
 
 export interface GuardarCampanaRequest {
@@ -245,6 +247,18 @@ export interface EventoAutor {
   codigo: string;
   nombre: string;
   descripcion: string | null;
+}
+
+/** Característica o evento que nada usa (ni esta aventura ni las demás de la campaña). */
+export interface VariableSinUsoAutor {
+  id: number;
+  codigo: string;
+  nombre: string;
+}
+
+export interface VariablesSinUsoAutor {
+  caracteristicas: VariableSinUsoAutor[];
+  eventos: VariableSinUsoAutor[];
 }
 
 /** Evento elegible en una condición: de esta aventura o de una anterior de la campaña. */

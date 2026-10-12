@@ -22,6 +22,17 @@
       <small class="universo-form-modal__ayuda">{{ ayudaTipoTirada() }}</small>
     </label>
 
+    <div>
+      <label class="universo-form-modal__checkbox">
+        <input type="checkbox" formControlName="esRpg" />
+        RPG
+      </label>
+      <small class="universo-form-modal__ayuda">
+        Marcado: el lector ve el botón de personaje y el detalle de cada tirada. Desmarcado: no hay botón de
+        personaje y las tiradas solo dicen «¡Éxito!» o «¡Fracaso!».
+      </small>
+    </div>
+
     @if (error()) {
       <p class="status status--error">{{ error() }}</p>
     }

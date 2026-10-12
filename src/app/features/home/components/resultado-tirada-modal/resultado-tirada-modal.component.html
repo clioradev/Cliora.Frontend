@@ -1,23 +1,30 @@
 <app-modal (cerrar)="aceptar.emit()">
   <h3 class="resultado-tirada__titulo" [class.resultado-tirada__titulo--exito]="resultado().exito" [class.resultado-tirada__titulo--fracaso]="!resultado().exito">
-    {{ resultado().exito ? '¡Conseguido!' : 'Fracaso' }}
+    @if (resultado().detallada) {
+      {{ resultado().exito ? '¡Conseguido!' : 'Fracaso' }}
+    } @else {
+      {{ resultado().exito ? '¡Éxito!' : '¡Fracaso!' }}
+    }
   </h3>
 
-  <p class="resultado-tirada__desglose">
-    @switch (resultado().tipoTirada) {
-      @case (TIPO_TIRADA_D20) {
-        d20: {{ dadosTexto() }}{{ sumandosTexto() }} = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+  <!-- Fuera de un universo de rol no se enseñan los números de la tirada. -->
+  @if (resultado().detallada) {
+    <p class="resultado-tirada__desglose">
+      @switch (resultado().tipoTirada) {
+        @case (TIPO_TIRADA_D20) {
+          d20: {{ dadosTexto() }}{{ sumandosTexto() }} = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+        }
+        @case (TIPO_TIRADA_PORCENTAJE) {
+          d100: {{ resultado().total }}. Necesitabas {{ resultado().objetivo }} o menos
+          ({{ objetivoPorcentajeTexto() }}).
+        }
+        @default {
+          Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos{{ sumandosTexto() }}
+          = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
+        }
       }
-      @case (TIPO_TIRADA_PORCENTAJE) {
-        d100: {{ resultado().total }}. Necesitabas {{ resultado().objetivo }} o menos
-        ({{ objetivoPorcentajeTexto() }}).
-      }
-      @default {
-        Dados: {{ dadosTexto() }} (≥4 = acierto) → {{ resultado().aciertos }} aciertos{{ sumandosTexto() }}
-        = {{ resultado().total }}. Dificultad: {{ resultado().dificultad }}.
-      }
-    }
-  </p>
+    </p>
+  }
 
   <button type="button" class="btn--primary" (click)="aceptar.emit()">Aceptar</button>
 </app-modal>

@@ -1,5 +1,17 @@
 <div class="caracteristicas">
   @if (!esLibro()) {
+    <div class="caracteristicas__limpiar">
+      <button type="button" [disabled]="buscandoSinUso()" (click)="limpiar()" title="Eliminar las características y eventos que no se usan">
+        {{ buscandoSinUso() ? 'Buscando…' : 'Limpiar' }}
+      </button>
+      @if (nadaQueLimpiar()) {
+        <span>No hay características ni eventos sin usar.</span>
+      }
+      @if (errorLimpiar()) {
+        <span class="status--error">{{ errorLimpiar() }}</span>
+      }
+    </div>
+
     <section class="caracteristicas__seccion">
       <div class="caracteristicas__header">
         <h3>Características</h3>

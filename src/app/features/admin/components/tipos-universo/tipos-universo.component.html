@@ -1,6 +1,10 @@
 <h1>Admin: Tipos de universo</h1>
 
-<form class="tipo-universo-form" [formGroup]="form" (ngSubmit)="crear()">
+<form class="tipo-universo-form" [formGroup]="form" (ngSubmit)="guardar()">
+  @if (enEdicion(); as tipo) {
+    <h2 class="tipo-universo-form__titulo">Editar «{{ tipo.nombre }}»</h2>
+  }
+
   <label>
     Nombre
     <input type="text" formControlName="nombre" maxlength="50" />
@@ -11,14 +15,23 @@
     <app-area-texto formControlName="descripcion" [rows]="2" tituloEditor="Descripción del tipo de universo" />
   </label>
 
-  @if (errorCrear()) {
-    <p class="status status--error">{{ errorCrear() }}</p>
+  @if (errorGuardar()) {
+    <p class="status status--error">{{ errorGuardar() }}</p>
   }
 
-  <button type="submit" class="btn--primary" [disabled]="form.invalid || creando()">
-    <app-icono nombre="añadir" />
-    {{ creando() ? 'Creando…' : 'Añadir tipo de universo' }}
-  </button>
+  <div class="tipo-universo-form__acciones">
+    @if (enEdicion()) {
+      <button type="button" (click)="cancelarEdicion()">Cancelar</button>
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+        {{ guardando() ? 'Guardando…' : 'Guardar cambios' }}
+      </button>
+    } @else {
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+        <app-icono nombre="añadir" />
+        {{ guardando() ? 'Creando…' : 'Añadir tipo de universo' }}
+      </button>
+    }
+  </div>
 </form>
 
 @if (cargando()) {
@@ -32,7 +45,7 @@
 
   <ul class="tipo-universo-list">
     @for (tipo of tipos(); track tipo.id) {
-      <li class="tipo-universo-list__item">
+      <li class="tipo-universo-list__item" [class.tipo-universo-list__item--editando]="enEdicion()?.id === tipo.id">
         @if (tipo.fondoUrl) {
           <img class="tipo-universo-list__imagen" [src]="tipo.fondoUrl" alt="" />
         } @else {
@@ -41,7 +54,12 @@
           </div>
         }
 
-        <span class="tipo-universo-list__nombre">{{ tipo.nombre }}</span>
+        <div class="tipo-universo-list__texto">
+          <span class="tipo-universo-list__nombre">{{ tipo.nombre }}</span>
+          <small class="tipo-universo-list__uso">
+            {{ tipo.numeroUniversos === 1 ? '1 universo' : tipo.numeroUniversos + ' universos' }}
+          </small>
+        </div>
 
         <input
           #imagenInput
@@ -60,7 +78,29 @@
         >
           <app-icono nombre="subir" />
         </button>
+        <button type="button" class="btn-icono" (click)="editar(tipo)" [attr.aria-label]="'Editar ' + tipo.nombre" title="Editar">
+          <app-icono nombre="editar" />
+        </button>
+        <button
+          type="button"
+          class="btn-icono btn-icono--peligro"
+          (click)="eliminar(tipo)"
+          [attr.aria-label]="'Eliminar ' + tipo.nombre"
+          title="Eliminar"
+        >
+          <app-icono nombre="eliminar" />
+        </button>
       </li>
     }
   </ul>
+}
+
+@if (eliminarModal(); as modal) {
+  <app-confirmar-eliminar-modal
+    [titulo]="modal.titulo"
+    [mensaje]="modal.mensaje"
+    [accion]="modal.accion"
+    (cerrado)="eliminarModal.set(null)"
+    (eliminado)="onEliminado()"
+  />
 }

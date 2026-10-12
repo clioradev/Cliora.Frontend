@@ -7,7 +7,10 @@ export interface Rol {
 export interface CatTipoUniversoAdmin {
   id: number;
   nombre: string;
+  descripcion: string | null;
   fondoUrl: string | null;
+  /** Cuántos universos tienen este tipo (se avisa antes de borrarlo). */
+  numeroUniversos: number;
 }
 
 export interface GuardarCatTipoUniversoRequest {

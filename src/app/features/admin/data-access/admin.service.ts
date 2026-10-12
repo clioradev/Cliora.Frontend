@@ -45,6 +45,14 @@ export class AdminService {
     return this.http.post<CatTipoUniversoAdmin>(`${this.baseUrl}/Admin/CatTipoUniverso`, request);
   }
 
+  actualizarTipoUniverso(id: number, request: GuardarCatTipoUniversoRequest): Observable<CatTipoUniversoAdmin> {
+    return this.http.put<CatTipoUniversoAdmin>(`${this.baseUrl}/Admin/CatTipoUniverso/${id}`, request);
+  }
+
+  eliminarTipoUniverso(id: number): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Admin/CatTipoUniverso/${id}`);
+  }
+
   subirImagenTipoUniverso(id: number, archivo: File): Observable<CatTipoUniversoAdmin> {
     const formData = new FormData();
     formData.append('archivo', archivo);

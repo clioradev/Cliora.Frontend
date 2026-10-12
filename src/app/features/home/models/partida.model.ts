@@ -28,6 +28,8 @@ export interface Nodo {
   contenidos: ContenidoNodo[];
   opciones: Opcion[];
   esLibro: boolean;
+  /** Universo de rol: se puede ver el personaje. */
+  esRpg: boolean;
   puedeVolverAtras: boolean;
   escenaDescripcion: string | null;
   porcentajeProgreso: number | null;
@@ -40,6 +42,8 @@ export interface Nodo {
 
 export interface TiradaResultado {
   exito: boolean;
+  /** false en universos que no son de rol: solo vale `exito`, el resto llega vacío. */
+  detallada: boolean;
   /** Sistema de tiradas del universo: ver TIPO_TIRADA_* en universo.model. */
   tipoTirada: number;
   dados: number[];

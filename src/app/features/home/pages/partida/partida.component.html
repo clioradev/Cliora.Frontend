@@ -21,7 +21,7 @@
         <button type="button" class="nodo__boton-editor" (click)="volverAlEditor()">← Volver al editor</button>
       }
     </div>
-    @if (!n.esLibro) {
+    @if (!n.esLibro && n.esRpg) {
       <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
     }
   </div>

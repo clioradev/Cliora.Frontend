@@ -30,6 +30,7 @@ import {
   NodoArbol,
   NodoAutorResumen,
   UniversoAutor,
+  VariablesSinUsoAutor,
 } from '../models/autor.model';
 
 @Injectable({ providedIn: 'root' })
@@ -299,5 +300,17 @@ export class AutorService {
 
   eliminarEvento(idEvento: number): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/Autor/Evento/${idEvento}`);
+  }
+
+  getVariablesSinUso(idAventura: number): Observable<VariablesSinUsoAutor> {
+    return this.http.get<VariablesSinUsoAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/VariablesSinUso`);
+  }
+
+  /** Borra las variables confirmadas que sigan sin usarse; devuelve las que se han borrado de verdad. */
+  limpiarVariables(idAventura: number, idsCaracteristica: number[], idsEvento: number[]): Observable<VariablesSinUsoAutor> {
+    return this.http.post<VariablesSinUsoAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/LimpiarVariables`, {
+      idsCaracteristica,
+      idsEvento,
+    });
   }
 }

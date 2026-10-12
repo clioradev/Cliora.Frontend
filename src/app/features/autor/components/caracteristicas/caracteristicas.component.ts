@@ -1,10 +1,11 @@
 import { Component, inject, input, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
-import { Observable } from 'rxjs';
+import { Observable, map } from 'rxjs';
+import { asyncAction } from '../../../../core/utils/async-action';
 import { ConfirmarEliminarModalComponent } from '../../../../shared/components/confirmar-eliminar-modal/confirmar-eliminar-modal.component';
 import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { AutorService } from '../../data-access/autor.service';
-import { CaracteristicaAutor, EventoAutor, FinalAutor } from '../../models/autor.model';
+import { CaracteristicaAutor, EventoAutor, FinalAutor, VariableSinUsoAutor, VariablesSinUsoAutor } from '../../models/autor.model';
 import { CaracteristicaFormModalComponent } from '../caracteristica-form-modal/caracteristica-form-modal.component';
 import { EventoFormModalComponent } from '../evento-form-modal/evento-form-modal.component';
 import { FinalFormModalComponent } from '../final-form-modal/final-form-modal.component';
@@ -129,6 +130,56 @@ export class CaracteristicasComponent {
       mensaje: `¿Seguro que quieres eliminar el evento "${evento.nombre}"?`,
       accion: () => this.autorService.eliminarEvento(evento.idEvento),
     });
+  }
+
+  // «Limpiar»: primero se pregunta al servidor qué no se usa (también mira las otras aventuras de la
+  // campaña) y se enseña en la confirmación; al confirmar solo se borra lo que el autor ha visto.
+  private readonly buscarSinUsoAction = asyncAction(() => this.autorService.getVariablesSinUso(this.idAventura()), {
+    onSuccess: (sinUso) => this.confirmarLimpiar(sinUso),
+    defaultErrorMessage: 'No se han podido buscar las variables sin usar.',
+  });
+  protected readonly buscandoSinUso = this.buscarSinUsoAction.loading;
+  protected readonly errorLimpiar = this.buscarSinUsoAction.error;
+  protected readonly nadaQueLimpiar = signal(false);
+
+  protected limpiar(): void {
+    this.nadaQueLimpiar.set(false);
+    this.buscarSinUsoAction.run();
+  }
+
+  private confirmarLimpiar(sinUso: VariablesSinUsoAutor): void {
+    const { caracteristicas, eventos } = sinUso;
+    if (caracteristicas.length === 0 && eventos.length === 0) {
+      this.nadaQueLimpiar.set(true);
+      return;
+    }
+
+    const partes = [
+      this.describirSinUso(caracteristicas, 'característica', 'características'),
+      this.describirSinUso(eventos, 'evento', 'eventos'),
+    ].filter((parte) => parte !== null);
+    this.eliminarModal.set({
+      titulo: 'Limpiar variables sin usar',
+      mensaje:
+        `Se eliminarán ${partes.join(' y ')}. Ninguna condición, efecto ni tirada las usa, ` +
+        'ni en esta aventura ni en las demás de la campaña.',
+      accion: () =>
+        this.autorService
+          .limpiarVariables(
+            this.idAventura(),
+            caracteristicas.map((c) => c.id),
+            eventos.map((e) => e.id),
+          )
+          .pipe(map(() => undefined)),
+    });
+  }
+
+  private describirSinUso(lista: VariableSinUsoAutor[], singular: string, plural: string): string | null {
+    if (lista.length === 0) {
+      return null;
+    }
+    const nombres = lista.map((v) => `"${v.nombre}"`).join(', ');
+    return `${lista.length} ${lista.length === 1 ? singular : plural} (${nombres})`;
   }
 
   protected cerrarEliminarModal(): void {

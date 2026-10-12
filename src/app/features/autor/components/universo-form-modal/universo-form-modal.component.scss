@@ -42,6 +42,12 @@ label {
   opacity: 0.7;
 }
 
+.universo-form-modal__checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+
 .universo-form-modal__ayuda {
   font-size: var(--text-sm);
   color: var(--color-text-secondary);

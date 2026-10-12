@@ -32,6 +32,8 @@ export interface AlertaNodo {
   comentario: string | null;
   /** null: la alerta se dio en el nodo inicial. */
   nodoOrigen: NodoReferencia | null;
+  /** Ids de los nodos en los que se decidió, en orden, del inicial al de origen (vacío en el inicial). */
+  recorrido: number[];
   caracteristicas: CapturaCaracteristica[];
   eventos: CapturaEvento[];
 }

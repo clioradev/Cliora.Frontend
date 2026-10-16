@@ -16,6 +16,21 @@ const TICS_CALLADO = 2;
 /** Velocidad por defecto (en %): algo más lenta que la del navegador, que se hace rápida para narrar. */
 export const VELOCIDAD_LECTURA_POR_DEFECTO = 85;
 
+const CLAVE_VOZ = 'cliora.vozLectura';
+
+export interface VozDisponible {
+  id: string;
+  nombre: string;
+}
+
+function leerVozGuardada(): string | null {
+  try {
+    return localStorage.getItem(CLAVE_VOZ);
+  } catch {
+    return null;
+  }
+}
+
 /**
  * Lectura en voz alta con la síntesis de voz del navegador (Web Speech API): usa las voces que
  * tenga instaladas el dispositivo, sin servidor ni coste. La pausa no usa speechSynthesis.pause()
@@ -32,6 +47,13 @@ export class LectorVozService {
 
   /** En %, 100 es la velocidad normal del navegador. La fija la preferencia del usuario. */
   readonly velocidad = signal(VELOCIDAD_LECTURA_POR_DEFECTO);
+
+  /**
+   * Voces en castellano de este dispositivo, la recomendada primero. Cada dispositivo tiene las
+   * suyas, así que la elegida se guarda en el dispositivo y no en la cuenta.
+   */
+  readonly voces = signal<VozDisponible[]>([]);
+  readonly idVozElegida = signal<string | null>(leerVozGuardada());
 
   private frases: string[] = [];
   private indice = 0;
@@ -169,13 +191,33 @@ export class LectorVozService {
     this.vigilancia = undefined;
   }
 
-  // Primero el acento de España y, dentro de él, las voces naturales (suelen llevarlo en el nombre).
+  /** Cambia la voz de este dispositivo; null = la automática. */
+  cambiarVoz(idVoz: string | null): void {
+    this.idVozElegida.set(idVoz);
+    try {
+      if (idVoz) {
+        localStorage.setItem(CLAVE_VOZ, idVoz);
+      } else {
+        localStorage.removeItem(CLAVE_VOZ);
+      }
+    } catch {
+      // Sin almacenamiento (modo privado…): vale para esta sesión.
+    }
+    this.elegirVoz();
+  }
+
+  // La elegida por el usuario si sigue instalada; si no, primero el acento de España y, dentro de
+  // él, las voces naturales (suelen llevarlo en el nombre).
   private elegirVoz(): void {
-    const voces = this.sintesis!.getVoices().filter((v) => v.lang.toLowerCase().startsWith('es'));
     const puntuar = (v: SpeechSynthesisVoice) =>
       (v.lang.toLowerCase().replace('_', '-') === 'es-es' ? 2 : 0) +
       (/natural|neural|online|google|premium|enhanced|mejorad/i.test(v.name) ? 1 : 0);
-    this.voz = voces.sort((a, b) => puntuar(b) - puntuar(a))[0] ?? null;
+    const voces = this.sintesis!.getVoices()
+      .filter((v) => v.lang.toLowerCase().startsWith('es'))
+      .sort((a, b) => puntuar(b) - puntuar(a) || a.name.localeCompare(b.name));
+
+    this.voces.set(voces.map((v) => ({ id: v.voiceURI, nombre: `${v.name} (${v.lang})` })));
+    this.voz = voces.find((v) => v.voiceURI === this.idVozElegida()) ?? voces[0] ?? null;
   }
 }
 

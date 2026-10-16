@@ -120,6 +120,14 @@ export class ConfiguracionComponent {
     this.aplicarEnVivo();
   }
 
+  protected readonly voces = this.lector.voces;
+  protected readonly vozElegida = this.lector.idVozElegida;
+
+  protected onVozChange(event: Event): void {
+    this.lector.cambiarVoz((event.target as HTMLSelectElement).value || null);
+    this.probarVoz();
+  }
+
   protected probarVoz(): void {
     this.lector.leer(['Así sonará la narración de tus aventuras. Puedes cambiar la velocidad cuando quieras.']);
   }

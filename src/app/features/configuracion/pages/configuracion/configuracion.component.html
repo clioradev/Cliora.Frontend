@@ -80,6 +80,17 @@
 
   @if (lecturaDisponible) {
     <div class="campo">
+      <label for="vozLectura">Voz de la lectura (en este dispositivo)</label>
+      <select id="vozLectura" (change)="onVozChange($event)">
+        <option value="" [selected]="!vozElegida()">Automática (recomendada)</option>
+        @for (voz of voces(); track voz.id) {
+          <option [value]="voz.id" [selected]="voz.id === vozElegida()">{{ voz.nombre }}</option>
+        }
+      </select>
+      <p class="mensaje">Cada dispositivo tiene sus voces: la elegida se guarda en este al momento, sin pulsar Guardar.</p>
+    </div>
+
+    <div class="campo">
       <label for="velocidadLectura">Velocidad de la lectura en voz alta</label>
       <div class="campo__fila">
         <select id="velocidadLectura" (change)="onVelocidadLecturaChange($event)">

@@ -47,3 +47,20 @@
     min-width: 0;
   }
 }
+
+// Ayuda debajo de su campo (también bajo las casillas, que van en fila), igual en móvil y escritorio.
+.campo--checkbox {
+  flex-wrap: wrap;
+
+  .mensaje {
+    flex-basis: 100%;
+  }
+}
+
+.campo__ayuda {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-size: var(--text-sm);
+  font-style: italic;
+}

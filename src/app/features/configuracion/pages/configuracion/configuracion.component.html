@@ -87,7 +87,7 @@
           <option [value]="voz.id" [selected]="voz.id === vozElegida()">{{ voz.nombre }}</option>
         }
       </select>
-      <p class="mensaje">Cada dispositivo tiene sus voces: la elegida se guarda en este al momento, sin pulsar Guardar.</p>
+      <p class="campo__ayuda">Cada dispositivo tiene sus voces: la elegida se guarda en este al momento, sin pulsar Guardar.</p>
     </div>
 
     <div class="campo">
@@ -109,7 +109,7 @@
       Lectura automática: al entrar en un nodo, leerlo en voz alta
     </label>
     @if (!lecturaDisponible) {
-      <p class="mensaje">Este navegador no puede leer en voz alta.</p>
+      <p class="campo__ayuda">Este navegador no puede leer en voz alta.</p>
     }
   </div>
 
@@ -124,12 +124,15 @@
       Manos libres: lee el nodo y sus opciones y elige por voz
     </label>
     @if (lecturaDisponible && reconocimientoDisponible) {
-      <p class="mensaje">
+      <p class="campo__ayuda">
         Di «Elijo la primera», «Elijo la segunda»… También «Continuar» (tiradas y libros), «Repetir» y, al final,
-        «Finalizar». La pantalla tiene que estar encendida y el navegador pedirá permiso para el micrófono.
+        «Finalizar». La pantalla tiene que estar encendida.
       </p>
+      @if (errorMicrofono(); as error) {
+        <p class="mensaje mensaje--error">{{ error }}</p>
+      }
     } @else {
-      <p class="mensaje">Este navegador no puede reconocer la voz. Prueba con Chrome, Edge o Safari.</p>
+      <p class="campo__ayuda">Este navegador no puede reconocer la voz. Prueba con Chrome, Edge o Safari.</p>
     }
   </div>
 

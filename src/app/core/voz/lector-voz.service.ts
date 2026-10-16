@@ -13,8 +13,8 @@ const VIGILANCIA_MS = 1000;
 const TICS_MANTENER_VIVA = 10;
 const TICS_CALLADO = 2;
 
-/** Velocidad por defecto (en %): algo más lenta que la del navegador, que se hace rápida para narrar. */
-export const VELOCIDAD_LECTURA_POR_DEFECTO = 85;
+/** Velocidad por defecto (en %): la normal del navegador. */
+export const VELOCIDAD_LECTURA_POR_DEFECTO = 100;
 
 const CLAVE_VOZ = 'cliora.vozLectura';
 

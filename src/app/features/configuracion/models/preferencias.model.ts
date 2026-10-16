@@ -18,8 +18,8 @@ export interface Preferencias {
 export const VELOCIDAD_LECTURA_OPCIONES: OpcionEnum[] = [
   { valor: 60, etiqueta: 'Muy lenta' },
   { valor: 75, etiqueta: 'Lenta' },
-  { valor: 85, etiqueta: 'Pausada (por defecto)' },
-  { valor: 100, etiqueta: 'Normal' },
+  { valor: 85, etiqueta: 'Pausada' },
+  { valor: 100, etiqueta: 'Normal (por defecto)' },
   { valor: 115, etiqueta: 'Rápida' },
   { valor: 130, etiqueta: 'Muy rápida' },
 ];

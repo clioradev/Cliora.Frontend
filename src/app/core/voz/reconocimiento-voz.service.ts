@@ -109,6 +109,23 @@ export class ReconocimientoVozService {
     this.arrancar(reconocimiento);
   }
 
+  /**
+   * Pide permiso para el micro sin ponerse a escuchar (al activar el modo manos libres), para que
+   * no salte en mitad de una aventura. El permiso es el mismo que usa el reconocimiento de voz.
+   */
+  async pedirPermiso(): Promise<boolean> {
+    if (!navigator.mediaDevices?.getUserMedia) {
+      return true;
+    }
+    try {
+      const flujo = await navigator.mediaDevices.getUserMedia({ audio: true });
+      flujo.getTracks().forEach((pista) => pista.stop());
+      return true;
+    } catch {
+      return false;
+    }
+  }
+
   detener(): void {
     const reconocimiento = this.reconocimiento;
     this.reconocimiento = null;

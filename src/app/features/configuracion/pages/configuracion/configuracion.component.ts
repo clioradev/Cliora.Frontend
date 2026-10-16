@@ -51,7 +51,9 @@ export class ConfiguracionComponent {
   protected readonly velocidadLecturaOpciones = VELOCIDAD_LECTURA_OPCIONES;
   private readonly lector = inject(LectorVozService);
   protected readonly lecturaDisponible = this.lector.disponible;
-  protected readonly reconocimientoDisponible = inject(ReconocimientoVozService).disponible;
+  private readonly reconocimiento = inject(ReconocimientoVozService);
+  protected readonly reconocimientoDisponible = this.reconocimiento.disponible;
+  protected readonly errorMicrofono = signal<string | null>(null);
 
   constructor() {
     effect(() => {
@@ -110,8 +112,20 @@ export class ConfiguracionComponent {
     this.aplicarEnVivo();
   }
 
-  protected onManosLibresChange(event: Event): void {
-    this.manosLibres.set((event.target as HTMLInputElement).checked);
+  // Al marcarlo se pide ya el permiso del micro; sin él no se puede activar.
+  protected async onManosLibresChange(event: Event): Promise<void> {
+    const casilla = event.target as HTMLInputElement;
+    this.errorMicrofono.set(null);
+
+    if (casilla.checked && !(await this.reconocimiento.pedirPermiso())) {
+      casilla.checked = false;
+      this.errorMicrofono.set(
+        'Sin permiso para el micrófono no se puede elegir por voz. Actívalo en los ajustes del navegador para esta web.',
+      );
+      return;
+    }
+
+    this.manosLibres.set(casilla.checked);
     this.aplicarEnVivo();
   }
 

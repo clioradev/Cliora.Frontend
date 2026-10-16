@@ -37,3 +37,13 @@
     color: var(--color-danger);
   }
 }
+
+.campo__fila {
+  display: flex;
+  gap: var(--space-2);
+
+  select {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+}

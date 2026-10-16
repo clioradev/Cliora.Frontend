@@ -143,7 +143,8 @@ export class PartidaComponent {
 
     const parrafos = [nodo.escenaDescripcion, ...nodo.contenidos.map((c) => c.texto)].filter((t): t is string => !!t);
     if (this.manosLibres() && !nodo.esLibro) {
-      parrafos.push('Opciones.', ...nodo.opciones.map((opcion, i) => this.textoOpcion(opcion, i)));
+      // En un solo párrafo: se lee en menos locuciones (menos pausas y menos cortes en Chrome).
+      parrafos.push(['Opciones.', ...nodo.opciones.map((opcion, i) => this.textoOpcion(opcion, i))].join(' '));
     }
     this.lector.leer(parrafos, () => this.escucharSiManosLibres());
   }

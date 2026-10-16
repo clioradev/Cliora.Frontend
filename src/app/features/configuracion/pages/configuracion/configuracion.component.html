@@ -78,6 +78,20 @@
     </label>
   </div>
 
+  @if (lecturaDisponible) {
+    <div class="campo">
+      <label for="velocidadLectura">Velocidad de la lectura en voz alta</label>
+      <div class="campo__fila">
+        <select id="velocidadLectura" (change)="onVelocidadLecturaChange($event)">
+          @for (opcion of velocidadLecturaOpciones; track opcion.valor) {
+            <option [value]="opcion.valor" [selected]="opcion.valor === velocidadLectura()">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+        <button type="button" (click)="probarVoz()">Probar</button>
+      </div>
+    </div>
+  }
+
   <div class="campo campo--checkbox">
     <label>
       <input type="checkbox" [checked]="lecturaAutomatica()" (change)="onLecturaAutomaticaChange($event)" />

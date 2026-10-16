@@ -11,7 +11,18 @@ export interface Preferencias {
   lecturaAutomatica: boolean;
   /** Lee el nodo y sus opciones y escucha la elección por voz («Elijo la primera»). */
   manosLibres: boolean;
+  /** Velocidad de la lectura en voz alta, en % de la normal del navegador. */
+  velocidadLectura: number;
 }
+
+export const VELOCIDAD_LECTURA_OPCIONES: OpcionEnum[] = [
+  { valor: 60, etiqueta: 'Muy lenta' },
+  { valor: 75, etiqueta: 'Lenta' },
+  { valor: 85, etiqueta: 'Pausada (por defecto)' },
+  { valor: 100, etiqueta: 'Normal' },
+  { valor: 115, etiqueta: 'Rápida' },
+  { valor: 130, etiqueta: 'Muy rápida' },
+];
 
 export interface OpcionEnum {
   valor: number;

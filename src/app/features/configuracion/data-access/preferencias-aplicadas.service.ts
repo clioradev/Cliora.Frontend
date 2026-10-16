@@ -1,4 +1,5 @@
-import { Injectable, signal } from '@angular/core';
+import { inject, Injectable, signal } from '@angular/core';
+import { LectorVozService, VELOCIDAD_LECTURA_POR_DEFECTO } from '../../../core/voz/lector-voz.service';
 import { Preferencias } from '../models/preferencias.model';
 
 const TIPOGRAFIA_FUENTES: Record<number, string> = {
@@ -39,10 +40,13 @@ export class PreferenciasAplicadasService {
   readonly lecturaAutomatica = signal(false);
   readonly manosLibres = signal(false);
 
+  private readonly lector = inject(LectorVozService);
+
   aplicar(preferencias: Preferencias): void {
     const raiz = document.documentElement;
     this.lecturaAutomatica.set(preferencias.lecturaAutomatica);
     this.manosLibres.set(preferencias.manosLibres);
+    this.lector.velocidad.set(preferencias.velocidadLectura || VELOCIDAD_LECTURA_POR_DEFECTO);
 
     if (preferencias.tema === 1) {
       raiz.setAttribute('data-theme', 'light');
@@ -76,6 +80,7 @@ export class PreferenciasAplicadasService {
     const raiz = document.documentElement;
     this.lecturaAutomatica.set(false);
     this.manosLibres.set(false);
+    this.lector.velocidad.set(VELOCIDAD_LECTURA_POR_DEFECTO);
 
     raiz.removeAttribute('data-theme');
     for (const propiedad of [

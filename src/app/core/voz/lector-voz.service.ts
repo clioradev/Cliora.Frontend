@@ -3,8 +3,18 @@ import { Injectable, signal } from '@angular/core';
 export type EstadoLector = 'parado' | 'leyendo' | 'pausado';
 
 // Chrome corta las locuciones de más de unos 15 segundos: se lee frase a frase y las muy largas se
-// parten por una coma o un espacio.
-const LARGO_MAXIMO = 220;
+// parten por una coma o un espacio (con margen para las velocidades lentas).
+const LARGO_MAXIMO = 150;
+
+// Cada segundo se vigila la lectura: si el navegador se ha callado sin avisar (pasa en Chrome), se
+// sigue con la frase siguiente; y en escritorio se hace pausa/reanudar cada 10 s, el remedio
+// conocido para que Chrome no corte (en Android la pausa falla, allí no se hace).
+const VIGILANCIA_MS = 1000;
+const TICS_MANTENER_VIVA = 10;
+const TICS_CALLADO = 2;
+
+/** Velocidad por defecto (en %): algo más lenta que la del navegador, que se hace rápida para narrar. */
+export const VELOCIDAD_LECTURA_POR_DEFECTO = 85;
 
 /**
  * Lectura en voz alta con la síntesis de voz del navegador (Web Speech API): usa las voces que
@@ -20,12 +30,22 @@ export class LectorVozService {
   /** El navegador no deja hablar hasta que el usuario toque la página (p. ej. tras un F5). */
   readonly bloqueado = signal(false);
 
+  /** En %, 100 es la velocidad normal del navegador. La fija la preferencia del usuario. */
+  readonly velocidad = signal(VELOCIDAD_LECTURA_POR_DEFECTO);
+
   private frases: string[] = [];
   private indice = 0;
   private alTerminar: (() => void) | null = null;
   // Cada locución lleva su turno: los eventos de una frase ya cancelada no deben mover la lectura actual.
   private turno = 0;
   private voz: SpeechSynthesisVoice | null = null;
+  // Chrome libera la locución si nadie la referencia y entonces nunca avisa de que ha terminado:
+  // la lectura se quedaba parada a medio texto.
+  private locucionActual: SpeechSynthesisUtterance | null = null;
+  private vigilancia: ReturnType<typeof setInterval> | undefined;
+  private tics = 0;
+  private ticsCallado = 0;
+  private readonly esAndroid = typeof navigator !== 'undefined' && /android/i.test(navigator.userAgent);
 
   constructor() {
     if (this.sintesis) {
@@ -50,6 +70,7 @@ export class LectorVozService {
     this.bloqueado.set(false);
     this.estado.set('leyendo');
     this.decirFraseActual();
+    this.vigilar();
   }
 
   pausar(): void {
@@ -57,6 +78,7 @@ export class LectorVozService {
       return;
     }
     this.turno++;
+    this.dejarDeVigilar();
     this.sintesis?.cancel();
     this.estado.set('pausado');
   }
@@ -67,11 +89,14 @@ export class LectorVozService {
     }
     this.estado.set('leyendo');
     this.decirFraseActual();
+    this.vigilar();
   }
 
   parar(): void {
     this.turno++;
+    this.dejarDeVigilar();
     this.sintesis?.cancel();
+    this.locucionActual = null;
     this.frases = [];
     this.indice = 0;
     this.alTerminar = null;
@@ -82,21 +107,14 @@ export class LectorVozService {
     const turno = ++this.turno;
     const locucion = new SpeechSynthesisUtterance(this.frases[this.indice]);
     locucion.lang = this.voz?.lang ?? 'es-ES';
+    locucion.rate = this.velocidad() / 100;
     if (this.voz) {
       locucion.voice = this.voz;
     }
 
     locucion.onend = () => {
-      if (turno !== this.turno) {
-        return;
-      }
-      this.indice++;
-      if (this.indice < this.frases.length) {
-        this.decirFraseActual();
-      } else {
-        const alTerminar = this.alTerminar;
-        this.parar();
-        alTerminar?.();
+      if (turno === this.turno) {
+        this.siguienteFrase();
       }
     };
     locucion.onerror = (evento) => {
@@ -106,7 +124,49 @@ export class LectorVozService {
       }
     };
 
+    this.locucionActual = locucion;
+    this.ticsCallado = 0;
     this.sintesis!.speak(locucion);
+  }
+
+  private siguienteFrase(): void {
+    this.indice++;
+    if (this.indice < this.frases.length) {
+      this.decirFraseActual();
+    } else {
+      const alTerminar = this.alTerminar;
+      this.parar();
+      alTerminar?.();
+    }
+  }
+
+  private vigilar(): void {
+    this.dejarDeVigilar();
+    this.tics = 0;
+    this.vigilancia = setInterval(() => {
+      const sintesis = this.sintesis!;
+      if (this.estado() !== 'leyendo') {
+        return;
+      }
+
+      // Callado sin haber avisado del final: se da la frase por leída.
+      this.ticsCallado = sintesis.speaking || sintesis.pending ? 0 : this.ticsCallado + 1;
+      if (this.ticsCallado >= TICS_CALLADO) {
+        this.turno++;
+        this.siguienteFrase();
+        return;
+      }
+
+      if (!this.esAndroid && ++this.tics % TICS_MANTENER_VIVA === 0 && sintesis.speaking) {
+        sintesis.pause();
+        sintesis.resume();
+      }
+    }, VIGILANCIA_MS);
+  }
+
+  private dejarDeVigilar(): void {
+    clearInterval(this.vigilancia);
+    this.vigilancia = undefined;
   }
 
   // Primero el acento de España y, dentro de él, las voces naturales (suelen llevarlo en el nombre).

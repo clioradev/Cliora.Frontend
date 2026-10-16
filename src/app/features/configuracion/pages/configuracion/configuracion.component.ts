@@ -1,7 +1,7 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { asyncAction } from '../../../../core/utils/async-action';
-import { LectorVozService } from '../../../../core/voz/lector-voz.service';
+import { LectorVozService, VELOCIDAD_LECTURA_POR_DEFECTO } from '../../../../core/voz/lector-voz.service';
 import { ReconocimientoVozService } from '../../../../core/voz/reconocimiento-voz.service';
 import { PreferenciasAplicadasService } from '../../data-access/preferencias-aplicadas.service';
 import { PreferenciasService } from '../../data-access/preferencias.service';
@@ -12,6 +12,7 @@ import {
   TAMANO_FUENTE_OPCIONES,
   TEMA_OPCIONES,
   TIPOGRAFIA_OPCIONES,
+  VELOCIDAD_LECTURA_OPCIONES,
 } from '../../models/preferencias.model';
 
 @Component({
@@ -46,7 +47,10 @@ export class ConfiguracionComponent {
   protected readonly reducirAnimaciones = signal(false);
   protected readonly lecturaAutomatica = signal(false);
   protected readonly manosLibres = signal(false);
-  protected readonly lecturaDisponible = inject(LectorVozService).disponible;
+  protected readonly velocidadLectura = signal(VELOCIDAD_LECTURA_POR_DEFECTO);
+  protected readonly velocidadLecturaOpciones = VELOCIDAD_LECTURA_OPCIONES;
+  private readonly lector = inject(LectorVozService);
+  protected readonly lecturaDisponible = this.lector.disponible;
   protected readonly reconocimientoDisponible = inject(ReconocimientoVozService).disponible;
 
   constructor() {
@@ -111,6 +115,15 @@ export class ConfiguracionComponent {
     this.aplicarEnVivo();
   }
 
+  protected onVelocidadLecturaChange(event: Event): void {
+    this.velocidadLectura.set(Number((event.target as HTMLSelectElement).value));
+    this.aplicarEnVivo();
+  }
+
+  protected probarVoz(): void {
+    this.lector.leer(['Así sonará la narración de tus aventuras. Puedes cambiar la velocidad cuando quieras.']);
+  }
+
   private readonly guardarAction = asyncAction(
     (dto: Preferencias) => this.preferenciasService.actualizarPreferencias(dto),
     {
@@ -137,6 +150,7 @@ export class ConfiguracionComponent {
       reducirAnimaciones: this.reducirAnimaciones(),
       lecturaAutomatica: this.lecturaAutomatica(),
       manosLibres: this.manosLibres(),
+      velocidadLectura: this.velocidadLectura(),
     });
   }
 
@@ -152,6 +166,7 @@ export class ConfiguracionComponent {
       reducirAnimaciones: this.reducirAnimaciones(),
       lecturaAutomatica: this.lecturaAutomatica(),
       manosLibres: this.manosLibres(),
+      velocidadLectura: this.velocidadLectura(),
     });
   }
 
@@ -166,5 +181,6 @@ export class ConfiguracionComponent {
     this.reducirAnimaciones.set(preferencias.reducirAnimaciones);
     this.lecturaAutomatica.set(preferencias.lecturaAutomatica);
     this.manosLibres.set(preferencias.manosLibres);
+    this.velocidadLectura.set(preferencias.velocidadLectura || VELOCIDAD_LECTURA_POR_DEFECTO);
   }
 }

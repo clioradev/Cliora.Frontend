@@ -1,6 +1,6 @@
-<h1>Admin: Roles</h1>
+<h1>Admin: Usuarios</h1>
 
-<label class="roles__buscador">
+<label class="usuarios__buscador">
   Buscar usuario por email
   <input type="text" placeholder="Escribe al menos 2 caracteres…" [value]="query()" (input)="onQueryInput($event)" />
 </label>
@@ -19,13 +19,27 @@
           <span class="usuario-list__email">{{ usuario.email }}</span>
           <span class="usuario-list__nombre">{{ usuario.nombre }}</span>
           <span class="usuario-list__roles">{{ usuario.roles.length > 0 ? usuario.roles.join(', ') : 'Lector' }}</span>
+          @if (usuario.aventurasGratis > 0) {
+            <span class="usuario-list__gratis">🎁 {{ usuario.aventurasGratis }} {{ usuario.aventurasGratis === 1 ? 'aventura gratis' : 'aventuras gratis' }}</span>
+          }
         </div>
-        <button type="button" (click)="editarRoles(usuario)">Editar roles</button>
+        <div class="usuario-list__acciones">
+          <button type="button" (click)="editarRoles(usuario)">Editar roles</button>
+          <button type="button" (click)="editarAventurasGratis(usuario)">Aventuras gratis</button>
+        </div>
       </li>
     }
   </ul>
 }
 
 @if (rolesModal(); as usuario) {
-  <app-editar-roles-modal [usuario]="usuario" (cerrado)="cerrarRolesModal()" (guardado)="onRolesActualizados()" />
+  <app-editar-roles-modal [usuario]="usuario" (cerrado)="cerrarRolesModal()" (guardado)="onUsuarioActualizado()" />
+}
+
+@if (aventurasGratisModal(); as usuario) {
+  <app-aventuras-gratis-modal
+    [usuario]="usuario"
+    (cerrado)="cerrarAventurasGratisModal()"
+    (guardado)="onUsuarioActualizado()"
+  />
 }

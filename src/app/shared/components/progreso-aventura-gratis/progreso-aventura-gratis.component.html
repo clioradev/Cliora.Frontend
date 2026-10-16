@@ -1,0 +1,37 @@
+<div class="regalo" [class.regalo--ganada]="progreso().ganadaAhora">
+  @if (progreso().ganadaAhora) {
+    <p class="regalo__titulo">🎁 ¡Te has ganado una aventura gratis!</p>
+    <p class="regalo__detalle">Se descontará sola en tu próxima compra.</p>
+  } @else {
+    <p class="regalo__titulo">🎁 Valora {{ progreso().valoracionesNecesarias }} aventuras y te regalamos otra</p>
+  }
+
+  <div
+    class="regalo__rayitas"
+    role="progressbar"
+    [attr.aria-valuenow]="encendidas()"
+    aria-valuemin="0"
+    [attr.aria-valuemax]="progreso().valoracionesNecesarias"
+    [attr.aria-label]="'Valoraciones hacia la siguiente aventura gratis'"
+  >
+    @for (rayita of rayitas(); track $index) {
+      <span
+        class="regalo__rayita"
+        [class.regalo__rayita--encendida]="rayita.encendida"
+        [class.regalo__rayita--destello]="rayita.destello"
+      ></span>
+    }
+  </div>
+
+  <p class="regalo__detalle">
+    @if (!progreso().ganadaAhora) {
+      {{ faltan() === 1 ? 'Te falta 1 valoración' : 'Te faltan ' + faltan() + ' valoraciones' }}
+    }
+    @if (progreso().aventurasGratis > 0) {
+      <span class="regalo__saldo">
+        ({{ progreso().aventurasGratis === 1 ? 'tienes 1 aventura gratis' : 'tienes ' + progreso().aventurasGratis + ' aventuras gratis' }})
+      </span>
+    }
+  </p>
+  <p class="regalo__nota">Cuenta igual media estrella que cinco: lo que queremos es tu opinión sincera.</p>
+</div>

@@ -10,8 +10,8 @@ export const ADMIN_ROUTES: Routes = [
       ),
   },
   {
-    path: 'roles',
-    loadComponent: () => import('./components/roles/roles.component').then((m) => m.RolesComponent),
+    path: 'usuarios',
+    loadComponent: () => import('./components/usuarios/usuarios.component').then((m) => m.UsuariosComponent),
   },
   {
     path: 'tipos-universo',
@@ -31,6 +31,7 @@ export const ADMIN_ROUTES: Routes = [
       import('./components/corregir-textos/corregir-textos.component').then((m) => m.CorregirTextosComponent),
   },
   { path: 'eliminar-aventuras', redirectTo: 'editar-aventuras', pathMatch: 'full' },
+  { path: 'roles', redirectTo: 'usuarios', pathMatch: 'full' },
   {
     path: 'precios',
     loadComponent: () => import('./components/precios/precios.component').then((m) => m.PreciosComponent),

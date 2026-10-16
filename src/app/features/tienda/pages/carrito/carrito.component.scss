@@ -143,6 +143,27 @@
   font-size: var(--text-sm);
 }
 
+.gratis {
+  font-weight: 600;
+  color: var(--color-success);
+
+  &__etiqueta {
+    display: inline-block;
+    margin-left: var(--space-1);
+    padding: 0 var(--space-2);
+    border-radius: var(--radius-md);
+    background: var(--color-surface-muted);
+    font-size: var(--text-xs);
+  }
+}
+
+.aviso-gratis {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-success);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+}
+
 .compra-ok {
   padding: var(--space-6) var(--space-4);
   border: 1px solid var(--color-success);

@@ -3,7 +3,11 @@
 @if (compraRealizada(); as compra) {
   <div class="compra-ok" role="status">
     <h2>¡Compra completada!</h2>
-    <p>Has pagado {{ compra.total | precio }}. Ya puedes jugar tus aventuras.</p>
+    @if (compra.total === 0) {
+      <p>No has pagado nada: te las has llevado con tus aventuras gratis. Ya puedes jugarlas.</p>
+    } @else {
+      <p>Has pagado {{ compra.total | precio }}. Ya puedes jugar tus aventuras.</p>
+    }
     <a class="btn--primary" routerLink="/">Ir a los universos</a>
   </div>
 } @else if (carritoService.cantidad() === 0) {
@@ -44,15 +48,22 @@
           <li class="lineas__item">
             <span>{{ linea.tituloAventura }}</span>
             <span class="lineas__importe">
-              <s>{{ linea.importe + linea.descuentoCampana | precio }}</s>
-              {{ linea.importe | precio }}
+              @if (linea.esGratuitaPorCredito) {
+                <s>{{ linea.precioBase - linea.descuento | precio }}</s>
+                <span class="gratis">{{ 0 | precio }} <span class="gratis__etiqueta">🎁 Gratis</span></span>
+              } @else {
+                <s>{{ linea.importe + linea.descuentoCampana | precio }}</s>
+                {{ linea.importe | precio }}
+              }
             </span>
           </li>
         }
       </ul>
-      <p class="grupo__subtotal">
-        Ahorras {{ grupo.totalSinDescuento - grupo.total | precio }} por comprar la campaña entera.
-      </p>
+      @if (grupo.ahorroCampana > 0) {
+        <p class="grupo__subtotal">
+          Ahorras {{ grupo.ahorroCampana | precio }} por comprar la campaña entera.
+        </p>
+      }
     </section>
   }
 
@@ -69,10 +80,15 @@
               <span class="lineas__campana">{{ linea.tituloCampana }}</span>
             </span>
             <span class="lineas__importe">
-              @if (linea.descuento > 0) {
-                <s>{{ linea.precioBase | precio }}</s>
+              @if (linea.esGratuitaPorCredito) {
+                <s>{{ linea.precioBase - linea.descuento | precio }}</s>
+                <span class="gratis">{{ 0 | precio }} <span class="gratis__etiqueta">🎁 Gratis</span></span>
+              } @else {
+                @if (linea.descuento > 0) {
+                  <s>{{ linea.precioBase | precio }}</s>
+                }
+                {{ linea.importe | precio }}
               }
-              {{ linea.importe | precio }}
             </span>
             <button
               type="button"
@@ -90,6 +106,22 @@
   }
 
   @if (p.lineas.length > 0) {
+    @if (p.aventurasGratisUsadas > 0) {
+      <p class="aviso-gratis">
+        🎁 Usas {{ p.aventurasGratisUsadas }} de tus {{ p.aventurasGratisDisponibles }}
+        {{ p.aventurasGratisDisponibles === 1 ? 'aventura gratis' : 'aventuras gratis' }}.
+        @if (p.aventurasGratisDisponibles > p.aventurasGratisUsadas) {
+          Te {{ p.aventurasGratisDisponibles - p.aventurasGratisUsadas === 1 ? 'quedará' : 'quedarán' }}
+          {{ p.aventurasGratisDisponibles - p.aventurasGratisUsadas }} para otra compra.
+        }
+      </p>
+    } @else if (p.aventurasGratisDisponibles > 0) {
+      <p class="aviso-gratis">
+        🎁 Tienes {{ p.aventurasGratisDisponibles }}
+        {{ p.aventurasGratisDisponibles === 1 ? 'aventura gratis' : 'aventuras gratis' }}, pero no sirven para libros.
+      </p>
+    }
+
     <p class="total">Total: <strong>{{ p.total | precio }}</strong> <span class="total__iva">(IVA incluido)</span></p>
 
     <div class="devoluciones">
@@ -119,7 +151,20 @@
       <p class="status status--error">{{ errorComprar() }}</p>
     }
 
-    @if (p.pagoSimulado) {
+    @if (p.total === 0) {
+      <!-- Todo sale gratis: no hay nada que cobrar, así que no hace falta pasarela. -->
+      <button
+        type="button"
+        class="btn--primary pagar"
+        [disabled]="!aceptaCondiciones() || comprando() || p.rechazados.length > 0"
+        (click)="comprar()"
+      >
+        {{ comprando() ? 'Confirmando…' : 'Conseguir gratis' }}
+      </button>
+      @if (p.rechazados.length > 0) {
+        <p class="status">Quita del carrito lo que no se puede comprar para continuar.</p>
+      }
+    } @else if (p.pagoSimulado) {
       <p class="aviso-simulado">
         <strong>Pago de prueba:</strong> todavía no hay pasarela de pago, así que no se cobra nada. La compra se registra
         como si hubieras pagado.

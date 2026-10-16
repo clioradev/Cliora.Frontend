@@ -1,0 +1,91 @@
+:host {
+  display: block;
+}
+
+.regalo {
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-accent);
+  border-radius: var(--radius-md);
+  background: var(--color-surface-muted);
+  text-align: center;
+
+  &--ganada {
+    border-color: var(--color-success);
+  }
+
+  &__titulo,
+  &__detalle {
+    margin: 0;
+  }
+
+  &__titulo {
+    font-weight: 600;
+  }
+
+  &__rayitas {
+    display: flex;
+    justify-content: center;
+    gap: var(--space-2);
+    margin: var(--space-3) 0 var(--space-2);
+  }
+
+  &__rayita {
+    width: 2.5rem;
+    height: 0.4rem;
+    border-radius: 999px;
+    background: var(--color-border);
+    transition:
+      background-color 0.4s ease,
+      box-shadow 0.4s ease;
+
+    &--encendida {
+      background: var(--color-accent);
+      box-shadow: 0 0 6px var(--color-accent);
+    }
+
+    &--destello {
+      animation: destello 1.2s ease-out;
+    }
+  }
+
+  &--ganada &__rayita--encendida {
+    background: var(--color-success);
+    box-shadow: 0 0 8px var(--color-success);
+  }
+
+  &__detalle {
+    font-size: var(--text-sm);
+  }
+
+  &__saldo {
+    color: var(--color-success);
+    font-weight: 600;
+  }
+
+  &__nota {
+    margin: var(--space-2) 0 0;
+    font-size: var(--text-xs);
+    color: var(--color-text-secondary);
+  }
+}
+
+@keyframes destello {
+  0% {
+    transform: scaleY(1);
+    filter: brightness(1);
+  }
+  30% {
+    transform: scaleY(2);
+    filter: brightness(1.8);
+  }
+  100% {
+    transform: scaleY(1);
+    filter: brightness(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .regalo__rayita--destello {
+    animation: none;
+  }
+}

@@ -4,13 +4,15 @@ import { FormsModule } from '@angular/forms';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { AreaTextoComponent } from '../../../../shared/components/area-texto/area-texto.component';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
+import { ProgresoAventuraGratisComponent } from '../../../../shared/components/progreso-aventura-gratis/progreso-aventura-gratis.component';
+import { ProgresoAventuraGratis } from '../../../../shared/components/progreso-aventura-gratis/progreso-aventura-gratis.model';
 import { StarRatingInputComponent } from '../../../../shared/components/star-rating-input/star-rating-input.component';
 import { ValoracionService } from '../../data-access/valoracion.service';
 import { GuardarValoracionRequest } from '../../models/valoracion.model';
 
 @Component({
   selector: 'app-valoracion-modal',
-  imports: [AreaTextoComponent, FormsModule, ModalComponent, StarRatingInputComponent],
+  imports: [AreaTextoComponent, FormsModule, ModalComponent, ProgresoAventuraGratisComponent, StarRatingInputComponent],
   templateUrl: './valoracion-modal.component.html',
   styleUrl: './valoracion-modal.component.scss',
 })
@@ -30,6 +32,11 @@ export class ValoracionModalComponent {
   protected readonly loading = this.miValoracionResource.isLoading;
   protected readonly error = computed(() => this.miValoracionResource.error() !== undefined);
   protected readonly puedeValorar = computed(() => this.miValoracionResource.value()?.puedeValorar ?? false);
+  // Si ya la había valorado, editarla no suma rayita.
+  protected readonly yaValorada = computed(() => this.miValoracionResource.value()?.puntuacion != null);
+
+  /** Las rayitas: primero las que trae Mia y, tras guardar, las que devuelve el servidor. */
+  protected readonly progreso = signal<ProgresoAventuraGratis | null>(null);
 
   constructor() {
     effect(() => {
@@ -37,6 +44,7 @@ export class ValoracionModalComponent {
       if (mia) {
         this.puntuacion.set(mia.puntuacion ?? 0);
         this.comentario.set(mia.comentario ?? '');
+        this.progreso.set(mia.progreso);
       }
     });
   }
@@ -44,6 +52,7 @@ export class ValoracionModalComponent {
   private readonly guardarAction = asyncAction(
     (dto: GuardarValoracionRequest) => this.valoracionService.guardarValoracion(dto),
     {
+      onSuccess: (valoracion) => this.progreso.set(valoracion.progreso),
       canRun: () => this.puntuacion() > 0,
       defaultErrorMessage: 'No se ha podido guardar la valoración.',
     },

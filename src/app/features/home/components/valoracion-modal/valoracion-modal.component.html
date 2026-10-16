@@ -5,10 +5,23 @@
     <p class="status status--error">No se ha podido comprobar tu valoración.</p>
   } @else if (guardadoOk()) {
     <p class="status">¡Gracias por tu valoración!</p>
+    @if (progreso(); as p) {
+      <app-progreso-aventura-gratis class="valoracion-modal__regalo" [progreso]="p" [animar]="!yaValorada()" />
+    }
+    <div class="valoracion-modal__acciones">
+      <button type="button" (click)="cerrado.emit()">Cerrar</button>
+    </div>
   } @else if (!puedeValorar()) {
     <p class="status">Todavía no puedes valorar esta aventura. Completa al menos 5 nodos para poder hacerlo.</p>
   } @else {
     <h3>Valora esta aventura</h3>
+
+    @if (progreso(); as p) {
+      <app-progreso-aventura-gratis class="valoracion-modal__regalo" [progreso]="p" />
+      @if (yaValorada()) {
+        <p class="valoracion-modal__aviso">Ya habías valorado esta aventura: cambiar tu valoración no suma otra rayita.</p>
+      }
+    }
 
     <app-star-rating-input [value]="puntuacion()" (valueChange)="puntuacion.set($event)" />
 

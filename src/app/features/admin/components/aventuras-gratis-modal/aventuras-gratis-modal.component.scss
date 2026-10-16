@@ -1,0 +1,81 @@
+:host {
+  display: block;
+}
+
+.status {
+  color: var(--color-text-secondary);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+.aventuras-gratis__ajuste {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+
+  input {
+    width: 5rem;
+    text-align: center;
+  }
+}
+
+.aventuras-gratis__previa {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+.aventuras-gratis__motivo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-3);
+}
+
+.aventuras-gratis__acciones {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.aventuras-gratis__historial {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  max-height: 14rem;
+  overflow-y: auto;
+  font-size: var(--text-sm);
+
+  li {
+    display: grid;
+    grid-template-columns: 2.5rem 1fr;
+    gap: 0 var(--space-2);
+  }
+
+  li > .aventuras-gratis__detalle:last-child {
+    grid-column: 2;
+  }
+}
+
+.aventuras-gratis__cantidad {
+  font-weight: 600;
+  color: var(--color-success);
+
+  &--resta {
+    color: var(--color-danger);
+  }
+}
+
+.aventuras-gratis__detalle {
+  display: block;
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}

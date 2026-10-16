@@ -14,6 +14,8 @@ export interface LineaPresupuesto {
   descuento: number;
   descuentoCampana: number;
   importe: number;
+  /** Sale a 0 € porque se paga con una de las aventuras gratis del usuario. */
+  esGratuitaPorCredito: boolean;
 }
 
 export interface ElementoRechazado {
@@ -26,6 +28,10 @@ export interface Presupuesto {
   lineas: LineaPresupuesto[];
   rechazados: ElementoRechazado[];
   total: number;
+  /** Aventuras gratis que tiene el usuario antes de comprar. */
+  aventurasGratisDisponibles: number;
+  /** Cuántas de ellas se gastan en este carrito. */
+  aventurasGratisUsadas: number;
   /** Progreso (%) a partir del cual una aventura deja de poder devolverse. */
   umbralDevolucion: number;
   /** El pago es ficticio (entorno de pruebas sin pasarela). */

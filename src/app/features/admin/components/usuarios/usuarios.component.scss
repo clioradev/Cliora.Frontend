@@ -2,7 +2,7 @@
   display: block;
 }
 
-.roles__buscador {
+.usuarios__buscador {
   display: flex;
   flex-direction: column;
   gap: var(--space-1);
@@ -44,4 +44,16 @@
 .usuario-list__roles {
   font-size: 0.85em;
   opacity: 0.7;
+}
+
+.usuario-list__gratis {
+  font-size: 0.85em;
+  color: var(--color-success);
+}
+
+.usuario-list__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
 }

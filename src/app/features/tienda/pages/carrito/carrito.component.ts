@@ -11,7 +11,8 @@ interface GrupoCampana {
   tituloCampana: string;
   lineas: LineaPresupuesto[];
   total: number;
-  totalSinDescuento: number;
+  /** Lo que se ahorra por el descuento de campaña (sin contar las que salen gratis). */
+  ahorroCampana: number;
 }
 
 @Component({
@@ -63,11 +64,13 @@ export class CarritoComponent {
         tituloCampana: linea.tituloCampana,
         lineas: [],
         total: 0,
-        totalSinDescuento: 0,
+        ahorroCampana: 0,
       };
       grupo.lineas.push(linea);
       grupo.total += linea.importe;
-      grupo.totalSinDescuento += linea.importe + linea.descuentoCampana;
+      if (!linea.esGratuitaPorCredito) {
+        grupo.ahorroCampana += linea.descuentoCampana;
+      }
       grupos.set(linea.idCampana, grupo);
     }
     return [...grupos.values()];

@@ -1,0 +1,78 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Aventuras gratis de {{ usuarioActual().email }}</h3>
+
+  <p class="aventuras-gratis__saldo">
+    Tiene <strong>{{ usuarioActual().aventurasGratis }}</strong>
+    {{ usuarioActual().aventurasGratis === 1 ? 'aventura gratis' : 'aventuras gratis' }} sin canjear.
+  </p>
+
+  <div class="aventuras-gratis__ajuste">
+    <button type="button" (click)="sumar(-1)" [disabled]="guardando()" aria-label="Una menos">−</button>
+    <input
+      type="number"
+      step="1"
+      min="-100"
+      max="100"
+      aria-label="Cantidad a sumar o restar"
+      [value]="cantidad()"
+      (input)="onCantidadInput($event)"
+    />
+    <button type="button" (click)="sumar(1)" [disabled]="guardando()" aria-label="Una más">+</button>
+  </div>
+
+  <p class="aventuras-gratis__previa" [class.aventuras-gratis__previa--error]="!cantidadValida()">
+    @if (saldoResultante() < 0) {
+      No tiene tantas para quitárselas.
+    } @else if (cantidad() === 0) {
+      Indica cuántas quieres regalar (o quitar, en negativo).
+    } @else {
+      {{ cantidad() > 0 ? 'Le regalas ' + cantidad() : 'Le quitas ' + -cantidad() }}: se quedará con {{ saldoResultante() }}.
+    }
+  </p>
+
+  <label class="aventuras-gratis__motivo">
+    Motivo (opcional)
+    <input type="text" maxlength="200" placeholder="Por ejemplo: por ayudar a probar la beta" [value]="motivo()" (input)="onMotivoInput($event)" />
+  </label>
+
+  @if (error()) {
+    <p class="status status--error">{{ error() }}</p>
+  }
+
+  <div class="aventuras-gratis__acciones">
+    <button type="button" (click)="cerrado.emit()">Cerrar</button>
+    <button type="button" class="btn--primary" (click)="guardar()" [disabled]="guardando() || !cantidadValida()">
+      {{ guardando() ? 'Guardando…' : 'Guardar' }}
+    </button>
+  </div>
+
+  <h4>Historial</h4>
+  @if (cargandoMovimientos()) {
+    <p class="status">Cargando…</p>
+  } @else if (movimientos().length === 0) {
+    <p class="status">Todavía no ha tenido aventuras gratis.</p>
+  } @else {
+    <ul class="aventuras-gratis__historial">
+      @for (movimiento of movimientos(); track $index) {
+        <li>
+          <span class="aventuras-gratis__cantidad" [class.aventuras-gratis__cantidad--resta]="movimiento.cantidad < 0">
+            {{ movimiento.cantidad > 0 ? '+' + movimiento.cantidad : movimiento.cantidad }}
+          </span>
+          <span>
+            {{ nombreTipo(movimiento) }}
+            @if (movimiento.tituloAventura) {
+              · {{ movimiento.tituloAventura }}
+            }
+            @if (movimiento.nombreAdministrador) {
+              · por {{ movimiento.nombreAdministrador }}
+            }
+            @if (movimiento.motivo) {
+              <span class="aventuras-gratis__detalle">«{{ movimiento.motivo }}»</span>
+            }
+          </span>
+          <span class="aventuras-gratis__detalle">{{ movimiento.fecha | date: 'dd/MM/yyyy HH:mm' }}</span>
+        </li>
+      }
+    </ul>
+  }
+</app-modal>

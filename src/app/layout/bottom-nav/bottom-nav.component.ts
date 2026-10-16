@@ -23,7 +23,7 @@ const OPCIONES_USUARIO: OpcionMas[] = [
 // Van bajo el título "Administración" del desplegable, por eso sin el prefijo "Admin:".
 const OPCIONES_ADMIN: OpcionMas[] = [
   { texto: 'Aventuras', ruta: '/admin/aventuras' },
-  { texto: 'Roles', ruta: '/admin/roles' },
+  { texto: 'Usuarios', ruta: '/admin/usuarios' },
   { texto: 'Tipos de universo', ruta: '/admin/tipos-universo' },
   { texto: 'Editar aventuras', ruta: '/admin/editar-aventuras' },
   { texto: 'Precios', ruta: '/admin/precios' },

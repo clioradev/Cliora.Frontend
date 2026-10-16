@@ -1,3 +1,5 @@
+import { Usuario } from '../../../core/auth/usuario.model';
+
 export interface Rol {
   idRol: number;
   nombre: string;
@@ -170,4 +172,34 @@ export interface TextosAventura {
   finales: FinalTextos[];
   caracteristicas: VariableTextos[];
   eventos: VariableTextos[];
+}
+
+/** Usuario tal como lo devuelve la búsqueda del panel de administración. */
+export interface UsuarioAdmin extends Usuario {
+  /** Aventuras gratis que le quedan por canjear. */
+  aventurasGratis: number;
+}
+
+export type TipoMovimientoAventuraGratis = 1 | 2 | 3 | 4;
+
+export const TIPOS_MOVIMIENTO_AVENTURA_GRATIS: Record<TipoMovimientoAventuraGratis, string> = {
+  1: 'Manual',
+  2: 'Valoraciones',
+  3: 'Canje',
+  4: 'Devolución',
+};
+
+export interface MovimientoAventuraGratis {
+  tipo: TipoMovimientoAventuraGratis;
+  cantidad: number;
+  fecha: string;
+  nombreAdministrador: string | null;
+  tituloAventura: string | null;
+  motivo: string | null;
+}
+
+export interface AjustarAventurasGratisRequest {
+  /** Positiva para regalar, negativa para quitar. */
+  cantidad: number;
+  motivo: string | null;
 }

@@ -11,9 +11,12 @@ import {
   GuardarPrecioRequest,
   ParametroAdmin,
   PrecioAventuraAdmin,
+  AjustarAventurasGratisRequest,
+  MovimientoAventuraGratis,
   Rol,
   SolicitudPublicacionAdmin,
   TextosAventura,
+  UsuarioAdmin,
 } from '../models/admin.model';
 
 @Injectable({ providedIn: 'root' })
@@ -21,8 +24,16 @@ export class AdminService {
   private readonly http = inject(HttpClient);
   private readonly baseUrl = inject(API_BASE_URL);
 
-  buscarUsuarios(email: string): Observable<Usuario[]> {
-    return this.http.get<Usuario[]>(`${this.baseUrl}/Admin/Usuario`, { params: { email } });
+  buscarUsuarios(email: string): Observable<UsuarioAdmin[]> {
+    return this.http.get<UsuarioAdmin[]>(`${this.baseUrl}/Admin/Usuario`, { params: { email } });
+  }
+
+  obtenerMovimientosAventurasGratis(idUsuario: number): Observable<MovimientoAventuraGratis[]> {
+    return this.http.get<MovimientoAventuraGratis[]>(`${this.baseUrl}/Admin/Usuario/${idUsuario}/AventurasGratis`);
+  }
+
+  ajustarAventurasGratis(idUsuario: number, dto: AjustarAventurasGratisRequest): Observable<UsuarioAdmin> {
+    return this.http.post<UsuarioAdmin>(`${this.baseUrl}/Admin/Usuario/${idUsuario}/AventurasGratis`, dto);
   }
 
   obtenerRoles(): Observable<Rol[]> {

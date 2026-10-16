@@ -8,6 +8,7 @@ import { escribirImporte, leerImporte } from '../../utils/importe';
 const NOMBRES: Record<string, string> = {
   DESCUENTO_CAMPANA: 'Descuento por comprar la campaña entera (%)',
   UMBRAL_DEVOLUCION: 'Progreso a partir del que no se puede devolver (%)',
+  VALORACIONES_POR_AVENTURA_GRATIS: 'Valoraciones para ganar una aventura gratis',
   [PARAMETRO_PRECIO_AVENTURA_INTERACTIVA]: 'Precio por defecto de una aventura interactiva (€)',
 };
 

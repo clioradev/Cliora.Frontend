@@ -1,6 +1,12 @@
 <nav class="bottom-nav">
   <div class="bottom-nav__inner">
-    <button type="button" class="bottom-nav__item" [disabled]="!continuarDestino()" (click)="onContinuar()">
+    <button
+      type="button"
+      class="bottom-nav__item"
+      data-tutorial="nav-continuar"
+      [disabled]="!continuarDestino()"
+      (click)="onContinuar()"
+    >
       <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 5v14l11-7z" fill="currentColor" /></svg>
       <span class="bottom-nav__label">Continuar</span>
     </button>
@@ -8,6 +14,7 @@
     <a
       class="bottom-nav__item"
       routerLink="/"
+      data-tutorial="nav-universos"
       routerLinkActive="bottom-nav__item--active"
       [routerLinkActiveOptions]="{ exact: true }"
     >
@@ -53,6 +60,7 @@
         type="button"
         class="bottom-nav__item"
         [class.bottom-nav__item--active]="masActivo() || menuAbierto()"
+        data-tutorial="nav-mas"
         aria-haspopup="menu"
         [attr.aria-expanded]="menuAbierto()"
         (click)="toggleMenu()"
@@ -66,7 +74,7 @@
       </button>
 
       @if (menuAbierto()) {
-        <div class="mas-menu" role="menu">
+        <div class="mas-menu" role="menu" data-tutorial="menu-mas">
           @for (opcion of opcionesUsuario; track opcion.ruta) {
             <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
               {{ opcion.texto }}

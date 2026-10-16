@@ -64,3 +64,29 @@
   font-size: var(--text-sm);
   font-style: italic;
 }
+
+// Bloques de la página (también los que resalta el tutorial).
+.grupo {
+  margin-bottom: var(--space-6);
+
+  &__titulo {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-md);
+  }
+}
+
+.repetir-tutorial {
+  margin-top: var(--space-8);
+
+  &__boton {
+    padding: 0;
+    border: none;
+    background: none;
+    color: var(--color-text-secondary);
+    text-decoration: underline;
+
+    &:hover {
+      color: var(--color-text);
+    }
+  }
+}

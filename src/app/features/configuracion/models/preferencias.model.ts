@@ -13,6 +13,8 @@ export interface Preferencias {
   manosLibres: boolean;
   /** Velocidad de la lectura en voz alta, en % de la normal del navegador. */
   velocidadLectura: number;
+  /** Solo llega del servidor (lectura): el tutorial de bienvenida ya se ha visto o saltado. */
+  tutorialVisto?: boolean;
 }
 
 export const VELOCIDAD_LECTURA_OPCIONES: OpcionEnum[] = [

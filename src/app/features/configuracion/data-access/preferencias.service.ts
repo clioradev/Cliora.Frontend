@@ -16,4 +16,8 @@ export class PreferenciasService {
   actualizarPreferencias(dto: Preferencias): Observable<Preferencias> {
     return this.http.put<Preferencias>(`${this.baseUrl}/Permiso/Preferencias`, dto);
   }
+
+  marcarTutorialVisto(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Permiso/Preferencias/TutorialVisto`, {});
+  }
 }

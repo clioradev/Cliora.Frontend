@@ -7,136 +7,148 @@
 } @else {
   <h1>Configuración</h1>
 
-  <div class="campo">
-    <label for="tema">Tema</label>
-    <select id="tema" (change)="onTemaChange($event)">
-      @for (opcion of temaOpciones; track opcion.valor) {
-        <option [value]="opcion.valor" [selected]="opcion.valor === tema()">{{ opcion.etiqueta }}</option>
-      }
-    </select>
-  </div>
+  <section class="grupo" data-tutorial="pref-apariencia">
+    <h2 class="grupo__titulo">Apariencia</h2>
 
-  <div class="campo">
-    <label for="tipografia">Tipografía</label>
-    <select id="tipografia" (change)="onTipografiaChange($event)">
-      @for (opcion of tipografiaOpciones; track opcion.valor) {
-        <option [value]="opcion.valor" [selected]="opcion.valor === tipografia()">{{ opcion.etiqueta }}</option>
-      }
-    </select>
-  </div>
-
-  <div class="campo">
-    <label for="tamanoFuente">Tamaño de letra</label>
-    <select id="tamanoFuente" (change)="onTamanoFuenteChange($event)">
-      @for (opcion of tamanoFuenteOpciones; track opcion.valor) {
-        <option [value]="opcion.valor" [selected]="opcion.valor === tamanoFuente()">{{ opcion.etiqueta }}</option>
-      }
-    </select>
-  </div>
-
-  <div class="campo">
-    <label for="espaciadoLineas">Espaciado entre líneas</label>
-    <select id="espaciadoLineas" (change)="onEspaciadoLineasChange($event)">
-      @for (opcion of espaciadoLineasOpciones; track opcion.valor) {
-        <option [value]="opcion.valor" [selected]="opcion.valor === espaciadoLineas()">{{ opcion.etiqueta }}</option>
-      }
-    </select>
-  </div>
-
-  <div class="campo">
-    <label for="anchoLectura">Ancho de lectura</label>
-    <select id="anchoLectura" (change)="onAnchoLecturaChange($event)">
-      @for (opcion of anchoLecturaOpciones; track opcion.valor) {
-        <option [value]="opcion.valor" [selected]="opcion.valor === anchoLectura()">{{ opcion.etiqueta }}</option>
-      }
-    </select>
-  </div>
-
-  <div class="campo">
-    <label for="intensidadFondo">Oscurecer fondo ({{ intensidadFondo() }}%)</label>
-    <input
-      id="intensidadFondo"
-      type="range"
-      min="0"
-      max="100"
-      [value]="intensidadFondo()"
-      (input)="onIntensidadFondoChange($event)"
-    />
-  </div>
-
-  <div class="campo campo--checkbox">
-    <label>
-      <input type="checkbox" [checked]="altoContraste()" (change)="onAltoContrasteChange($event)" />
-      Alto contraste
-    </label>
-  </div>
-
-  <div class="campo campo--checkbox">
-    <label>
-      <input type="checkbox" [checked]="reducirAnimaciones()" (change)="onReducirAnimacionesChange($event)" />
-      Reducir animaciones
-    </label>
-  </div>
-
-  @if (lecturaDisponible) {
     <div class="campo">
-      <label for="vozLectura">Voz de la lectura (en este dispositivo)</label>
-      <select id="vozLectura" (change)="onVozChange($event)">
-        <option value="" [selected]="!vozElegida()">Automática (recomendada)</option>
-        @for (voz of voces(); track voz.id) {
-          <option [value]="voz.id" [selected]="voz.id === vozElegida()">{{ voz.nombre }}</option>
+      <label for="tema">Tema</label>
+      <select id="tema" (change)="onTemaChange($event)">
+        @for (opcion of temaOpciones; track opcion.valor) {
+          <option [value]="opcion.valor" [selected]="opcion.valor === tema()">{{ opcion.etiqueta }}</option>
         }
       </select>
-      <p class="campo__ayuda">Cada dispositivo tiene sus voces: la elegida se guarda en este al momento, sin pulsar Guardar.</p>
     </div>
 
     <div class="campo">
-      <label for="velocidadLectura">Velocidad de la lectura en voz alta</label>
-      <div class="campo__fila">
-        <select id="velocidadLectura" (change)="onVelocidadLecturaChange($event)">
-          @for (opcion of velocidadLecturaOpciones; track opcion.valor) {
-            <option [value]="opcion.valor" [selected]="opcion.valor === velocidadLectura()">{{ opcion.etiqueta }}</option>
+      <label for="tipografia">Tipografía</label>
+      <select id="tipografia" (change)="onTipografiaChange($event)">
+        @for (opcion of tipografiaOpciones; track opcion.valor) {
+          <option [value]="opcion.valor" [selected]="opcion.valor === tipografia()">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="tamanoFuente">Tamaño de letra</label>
+      <select id="tamanoFuente" (change)="onTamanoFuenteChange($event)">
+        @for (opcion of tamanoFuenteOpciones; track opcion.valor) {
+          <option [value]="opcion.valor" [selected]="opcion.valor === tamanoFuente()">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="espaciadoLineas">Espaciado entre líneas</label>
+      <select id="espaciadoLineas" (change)="onEspaciadoLineasChange($event)">
+        @for (opcion of espaciadoLineasOpciones; track opcion.valor) {
+          <option [value]="opcion.valor" [selected]="opcion.valor === espaciadoLineas()">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="anchoLectura">Ancho de lectura</label>
+      <select id="anchoLectura" (change)="onAnchoLecturaChange($event)">
+        @for (opcion of anchoLecturaOpciones; track opcion.valor) {
+          <option [value]="opcion.valor" [selected]="opcion.valor === anchoLectura()">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+    </div>
+
+    <div class="campo">
+      <label for="intensidadFondo">Oscurecer fondo ({{ intensidadFondo() }}%)</label>
+      <input
+        id="intensidadFondo"
+        type="range"
+        min="0"
+        max="100"
+        [value]="intensidadFondo()"
+        (input)="onIntensidadFondoChange($event)"
+      />
+    </div>
+
+    <div class="campo campo--checkbox">
+      <label>
+        <input type="checkbox" [checked]="altoContraste()" (change)="onAltoContrasteChange($event)" />
+        Alto contraste
+      </label>
+    </div>
+
+    <div class="campo campo--checkbox">
+      <label>
+        <input type="checkbox" [checked]="reducirAnimaciones()" (change)="onReducirAnimacionesChange($event)" />
+        Reducir animaciones
+      </label>
+    </div>
+  </section>
+
+  @if (lecturaDisponible) {
+    <section class="grupo" data-tutorial="pref-voz">
+      <h2 class="grupo__titulo">Voz</h2>
+
+      <div class="campo">
+        <label for="vozLectura">Voz de la lectura (en este dispositivo)</label>
+        <select id="vozLectura" (change)="onVozChange($event)">
+          <option value="" [selected]="!vozElegida()">Automática (recomendada)</option>
+          @for (voz of voces(); track voz.id) {
+            <option [value]="voz.id" [selected]="voz.id === vozElegida()">{{ voz.nombre }}</option>
           }
         </select>
-        <button type="button" (click)="probarVoz()">Probar</button>
+        <p class="campo__ayuda">Cada dispositivo tiene sus voces: la elegida se guarda en este al momento, sin pulsar Guardar.</p>
       </div>
-    </div>
+
+      <div class="campo">
+        <label for="velocidadLectura">Velocidad de la lectura en voz alta</label>
+        <div class="campo__fila">
+          <select id="velocidadLectura" (change)="onVelocidadLecturaChange($event)">
+            @for (opcion of velocidadLecturaOpciones; track opcion.valor) {
+              <option [value]="opcion.valor" [selected]="opcion.valor === velocidadLectura()">{{ opcion.etiqueta }}</option>
+            }
+          </select>
+          <button type="button" (click)="probarVoz()">Probar</button>
+        </div>
+      </div>
+    </section>
   }
 
-  <div class="campo campo--checkbox">
-    <label>
-      <input type="checkbox" [checked]="lecturaAutomatica()" (change)="onLecturaAutomaticaChange($event)" />
-      Lectura automática: al entrar en un nodo, leerlo en voz alta
-    </label>
-    @if (!lecturaDisponible) {
-      <p class="campo__ayuda">Este navegador no puede leer en voz alta.</p>
-    }
-  </div>
+  <section class="grupo" data-tutorial="pref-lectura">
+    <h2 class="grupo__titulo">Escuchar las aventuras</h2>
 
-  <div class="campo campo--checkbox">
-    <label>
-      <input
-        type="checkbox"
-        [checked]="manosLibres()"
-        [disabled]="!lecturaDisponible || !reconocimientoDisponible"
-        (change)="onManosLibresChange($event)"
-      />
-      Manos libres: lee el nodo y sus opciones y elige por voz
-    </label>
-    @if (lecturaDisponible && reconocimientoDisponible) {
-      <p class="campo__ayuda">
-        Di «Elijo la primera», «Elijo la segunda»… También «Continuar» (tiradas y libros), «Repetir» y, al final,
-        «Finalizar». La pantalla tiene que estar encendida.
-      </p>
-      @if (errorMicrofono(); as error) {
-        <p class="mensaje mensaje--error">{{ error }}</p>
+    <div class="campo campo--checkbox">
+      <label>
+        <input type="checkbox" [checked]="lecturaAutomatica()" (change)="onLecturaAutomaticaChange($event)" />
+        Lectura automática: al entrar en un nodo, leerlo en voz alta
+      </label>
+      @if (!lecturaDisponible) {
+        <p class="campo__ayuda">Este navegador no puede leer en voz alta.</p>
       }
-    } @else {
-      <p class="campo__ayuda">Este navegador no puede reconocer la voz. Prueba con Chrome, Edge o Safari.</p>
-    }
-  </div>
+    </div>
 
-  <button type="button" class="btn--primary" [disabled]="guardando()" (click)="guardar()">
+    <div class="campo campo--checkbox">
+      <label>
+        <input
+          type="checkbox"
+          [checked]="manosLibres()"
+          [disabled]="!lecturaDisponible || !reconocimientoDisponible"
+          (change)="onManosLibresChange($event)"
+        />
+        Manos libres: lee el nodo y sus opciones y elige por voz
+      </label>
+      @if (lecturaDisponible && reconocimientoDisponible) {
+        <p class="campo__ayuda">
+          Di «Elijo la primera», «Elijo la segunda»… También «Continuar» (tiradas y libros), «Repetir» y, al final,
+          «Finalizar». La pantalla tiene que estar encendida.
+        </p>
+        @if (errorMicrofono(); as error) {
+          <p class="mensaje mensaje--error">{{ error }}</p>
+        }
+      } @else {
+        <p class="campo__ayuda">Este navegador no puede reconocer la voz. Prueba con Chrome, Edge o Safari.</p>
+      }
+    </div>
+  </section>
+
+  <button type="button" class="btn--primary" data-tutorial="pref-guardar" [disabled]="guardando()" (click)="guardar()">
     {{ guardando() ? 'Guardando...' : 'Guardar' }}
   </button>
 
@@ -147,4 +159,8 @@
   @if (guardarError()) {
     <p class="mensaje mensaje--error">{{ guardarError() }}</p>
   }
+
+  <p class="repetir-tutorial">
+    <button type="button" class="repetir-tutorial__boton" (click)="repetirTutorial()">Ver otra vez el tutorial</button>
+  </p>
 }

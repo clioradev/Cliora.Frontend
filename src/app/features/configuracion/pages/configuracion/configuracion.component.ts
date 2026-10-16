@@ -2,6 +2,7 @@ import { Component, computed, effect, inject, signal, untracked } from '@angular
 import { rxResource } from '@angular/core/rxjs-interop';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { LectorVozService, VELOCIDAD_LECTURA_POR_DEFECTO } from '../../../../core/voz/lector-voz.service';
+import { TutorialService } from '../../../../core/tutorial/tutorial.service';
 import { ReconocimientoVozService } from '../../../../core/voz/reconocimiento-voz.service';
 import { PreferenciasAplicadasService } from '../../data-access/preferencias-aplicadas.service';
 import { PreferenciasService } from '../../data-access/preferencias.service';
@@ -140,6 +141,12 @@ export class ConfiguracionComponent {
   protected onVozChange(event: Event): void {
     this.lector.cambiarVoz((event.target as HTMLSelectElement).value || null);
     this.probarVoz();
+  }
+
+  private readonly tutorial = inject(TutorialService);
+
+  protected repetirTutorial(): void {
+    this.tutorial.repetir();
   }
 
   protected probarVoz(): void {

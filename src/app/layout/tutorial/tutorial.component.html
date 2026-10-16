@@ -1,0 +1,49 @@
+@if (tutorial.paso(); as paso) {
+  <div class="tutorial">
+    <div class="tutorial__fondo" [class.tutorial__fondo--oscuro]="!hueco()" (click)="onClickFondo($event)"></div>
+
+    @if (hueco(); as h) {
+      <div
+        class="tutorial__foco"
+        [class.tutorial__foco--pulsable]="paso.pulsar"
+        [style.top.px]="h.top"
+        [style.left.px]="h.left"
+        [style.width.px]="h.width"
+        [style.height.px]="h.height"
+      ></div>
+    }
+
+    @if (!buscando()) {
+      @let pos = posicion();
+      <div
+        class="tutorial__burbuja"
+        [class.tutorial__burbuja--centrada]="pos.tipo === 'centrada'"
+        [style.width.px]="pos.ancho"
+        [style.top.px]="pos.tipo === 'debajo' ? pos.top : null"
+        [style.bottom.px]="pos.tipo === 'encima' ? pos.bottom : null"
+        [style.left.px]="pos.tipo === 'centrada' ? null : pos.left"
+        role="dialog"
+        aria-modal="true"
+        [attr.aria-labelledby]="paso.titulo ? 'tutorial-titulo' : 'tutorial-texto'"
+        (click)="$event.stopPropagation()"
+      >
+        @if (paso.titulo) {
+          <h3 id="tutorial-titulo" class="tutorial__titulo">{{ paso.titulo }}</h3>
+        }
+        <p id="tutorial-texto" class="tutorial__texto">{{ paso.texto }}</p>
+
+        <div class="tutorial__pie">
+          <span class="tutorial__progreso">{{ (tutorial.indice() ?? 0) + 1 }} / {{ tutorial.pasos.length }}</span>
+          @if (!tutorial.esUltimo()) {
+            <button type="button" class="tutorial__saltar" (click)="tutorial.terminar()">Saltar</button>
+          }
+          @if (!paso.pulsar || !hueco()) {
+            <button type="button" class="btn--primary" (click)="tutorial.siguiente()">
+              {{ tutorial.esUltimo() ? 'Terminar' : 'Siguiente' }}
+            </button>
+          }
+        </div>
+      </div>
+    }
+  </div>
+}

@@ -11,7 +11,7 @@
 }
 
 @if (!loading() && !error() && universos().length > 0) {
-  <div class="buscador">
+  <div class="buscador" data-tutorial="buscador">
     <div class="buscador__fila">
       <input
         type="search"
@@ -111,11 +111,12 @@
           <div class="universo-card__fondo" [style.background-image]="'url(' + universo.fondoUrl + ')'"></div>
         }
 
-        <header class="universo-card__header">
+        <header class="universo-card__header" data-tutorial="universo">
           <h2>{{ universo.titulo }}</h2>
           <button
             type="button"
             class="universo-card__favorito"
+            data-tutorial="favorito"
             [class.universo-card__favorito--activo]="esFavorito(universo)"
             (click)="alternarFavorito(universo)"
             [attr.aria-pressed]="esFavorito(universo)"
@@ -148,7 +149,7 @@
               <header class="campana-card__header">
                 <h3>{{ campana.titulo }}</h3>
                 @if (campana.bloqueada) {
-                  <span class="campana-card__candado" title="Campaña entera">
+                  <span class="campana-card__candado" title="Campaña entera" data-tutorial="campana-precio">
                     <img src="/media/tienda/candado.svg" alt="De pago" />
                     @if (carrito.contieneCampana(campana.idCampana)) {
                       <a class="campana-card__en-carrito" routerLink="/carrito">En el carrito</a>
@@ -189,7 +190,7 @@
               @if (campana.aventuras.length > 0) {
                 @let aventura = aventuraActual(campana);
 
-                <div class="estanteria" (appAnchoObservado)="onAnchoEstanteria(campana, $event)">
+                <div class="estanteria" data-tutorial="estanteria" (appAnchoObservado)="onAnchoEstanteria(campana, $event)">
                     @for (a of aventurasAnteriores(campana); track a.idAventura) {
                       <button
                         type="button"
@@ -216,6 +217,7 @@
 
                     <div
                       class="libro-abierto"
+                      data-tutorial="aventura"
                       [class.libro-abierto--libro]="aventura.esLibro"
                       [class.libro-abierto--jugable]="estadoAventura(aventura) === 'jugable'"
                       [class.libro-abierto--bloqueada]="estadoAventura(aventura) === 'bloqueada'"
@@ -300,7 +302,7 @@
                               </a>
                             </div>
                           } @else if (aventura.bloqueada) {
-                            <span class="libro-abierto__precio">
+                            <span class="libro-abierto__precio" data-tutorial="precio">
                               @if (aventura.precioSinDescuento !== null) {
                                 <s>{{ aventura.precioSinDescuento | precio }}</s>
                               }

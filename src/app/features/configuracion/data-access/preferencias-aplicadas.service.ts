@@ -39,6 +39,8 @@ export class PreferenciasAplicadasService {
   /** La lee la partida para empezar a leer cada nodo en voz alta. */
   readonly lecturaAutomatica = signal(false);
   readonly manosLibres = signal(false);
+  /** null mientras no se han cargado las preferencias (no se sabe si toca enseñar el tutorial). */
+  readonly tutorialVisto = signal<boolean | null>(null);
 
   private readonly lector = inject(LectorVozService);
 
@@ -46,6 +48,9 @@ export class PreferenciasAplicadasService {
     const raiz = document.documentElement;
     this.lecturaAutomatica.set(preferencias.lecturaAutomatica);
     this.manosLibres.set(preferencias.manosLibres);
+    if (preferencias.tutorialVisto !== undefined) {
+      this.tutorialVisto.set(preferencias.tutorialVisto);
+    }
     this.lector.velocidad.set(preferencias.velocidadLectura || VELOCIDAD_LECTURA_POR_DEFECTO);
 
     if (preferencias.tema === 1) {
@@ -80,6 +85,7 @@ export class PreferenciasAplicadasService {
     const raiz = document.documentElement;
     this.lecturaAutomatica.set(false);
     this.manosLibres.set(false);
+    this.tutorialVisto.set(null);
     this.lector.velocidad.set(VELOCIDAD_LECTURA_POR_DEFECTO);
 
     raiz.removeAttribute('data-theme');

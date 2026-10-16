@@ -3,10 +3,11 @@ import { RouterOutlet } from '@angular/router';
 import { AuthService } from '../../core/auth/auth.service';
 import { PreferenciasAplicadasService } from '../../features/configuracion/data-access/preferencias-aplicadas.service';
 import { BottomNavComponent } from '../bottom-nav/bottom-nav.component';
+import { TutorialComponent } from '../tutorial/tutorial.component';
 
 @Component({
   selector: 'app-shell',
-  imports: [RouterOutlet, BottomNavComponent],
+  imports: [RouterOutlet, BottomNavComponent, TutorialComponent],
   templateUrl: './shell.component.html',
   styleUrl: './shell.component.scss',
 })

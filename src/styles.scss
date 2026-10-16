@@ -240,3 +240,9 @@ input[type='range'] {
     display: block;
   }
 }
+
+// Elementos que resalta el tutorial: al desplazarse a ellos, que no queden bajo el menú inferior fijo.
+[data-tutorial] {
+  scroll-margin-top: var(--space-4);
+  scroll-margin-bottom: 5.5rem;
+}

@@ -1,6 +1,8 @@
 import { Component, computed, effect, inject, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { LectorVozService } from '../../../../core/voz/lector-voz.service';
+import { ReconocimientoVozService } from '../../../../core/voz/reconocimiento-voz.service';
 import { PreferenciasAplicadasService } from '../../data-access/preferencias-aplicadas.service';
 import { PreferenciasService } from '../../data-access/preferencias.service';
 import {
@@ -42,6 +44,10 @@ export class ConfiguracionComponent {
   protected readonly intensidadFondo = signal(100);
   protected readonly altoContraste = signal(false);
   protected readonly reducirAnimaciones = signal(false);
+  protected readonly lecturaAutomatica = signal(false);
+  protected readonly manosLibres = signal(false);
+  protected readonly lecturaDisponible = inject(LectorVozService).disponible;
+  protected readonly reconocimientoDisponible = inject(ReconocimientoVozService).disponible;
 
   constructor() {
     effect(() => {
@@ -95,6 +101,16 @@ export class ConfiguracionComponent {
     this.aplicarEnVivo();
   }
 
+  protected onLecturaAutomaticaChange(event: Event): void {
+    this.lecturaAutomatica.set((event.target as HTMLInputElement).checked);
+    this.aplicarEnVivo();
+  }
+
+  protected onManosLibresChange(event: Event): void {
+    this.manosLibres.set((event.target as HTMLInputElement).checked);
+    this.aplicarEnVivo();
+  }
+
   private readonly guardarAction = asyncAction(
     (dto: Preferencias) => this.preferenciasService.actualizarPreferencias(dto),
     {
@@ -119,6 +135,8 @@ export class ConfiguracionComponent {
       intensidadFondo: this.intensidadFondo(),
       altoContraste: this.altoContraste(),
       reducirAnimaciones: this.reducirAnimaciones(),
+      lecturaAutomatica: this.lecturaAutomatica(),
+      manosLibres: this.manosLibres(),
     });
   }
 
@@ -132,6 +150,8 @@ export class ConfiguracionComponent {
       intensidadFondo: this.intensidadFondo(),
       altoContraste: this.altoContraste(),
       reducirAnimaciones: this.reducirAnimaciones(),
+      lecturaAutomatica: this.lecturaAutomatica(),
+      manosLibres: this.manosLibres(),
     });
   }
 
@@ -144,5 +164,7 @@ export class ConfiguracionComponent {
     this.intensidadFondo.set(preferencias.intensidadFondo);
     this.altoContraste.set(preferencias.altoContraste);
     this.reducirAnimaciones.set(preferencias.reducirAnimaciones);
+    this.lecturaAutomatica.set(preferencias.lecturaAutomatica);
+    this.manosLibres.set(preferencias.manosLibres);
   }
 }

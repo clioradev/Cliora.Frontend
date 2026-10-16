@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { Injectable, signal } from '@angular/core';
 import { Preferencias } from '../models/preferencias.model';
 
 const TIPOGRAFIA_FUENTES: Record<number, string> = {
@@ -35,8 +35,14 @@ const FONDO_OSCURO: [string, string] = ['#4a453c', '#1c1a16'];
 
 @Injectable({ providedIn: 'root' })
 export class PreferenciasAplicadasService {
+  /** La lee la partida para empezar a leer cada nodo en voz alta. */
+  readonly lecturaAutomatica = signal(false);
+  readonly manosLibres = signal(false);
+
   aplicar(preferencias: Preferencias): void {
     const raiz = document.documentElement;
+    this.lecturaAutomatica.set(preferencias.lecturaAutomatica);
+    this.manosLibres.set(preferencias.manosLibres);
 
     if (preferencias.tema === 1) {
       raiz.setAttribute('data-theme', 'light');
@@ -68,6 +74,8 @@ export class PreferenciasAplicadasService {
   /** Vuelve a los valores por defecto (tema oscuro) al quedarse sin sesión. */
   restablecer(): void {
     const raiz = document.documentElement;
+    this.lecturaAutomatica.set(false);
+    this.manosLibres.set(false);
 
     raiz.removeAttribute('data-theme');
     for (const propiedad of [

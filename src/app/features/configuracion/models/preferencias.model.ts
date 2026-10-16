@@ -7,6 +7,10 @@ export interface Preferencias {
   intensidadFondo: number;
   altoContraste: boolean;
   reducirAnimaciones: boolean;
+  /** Al entrar en un nodo, empieza a leerlo en voz alta a los 2 segundos. */
+  lecturaAutomatica: boolean;
+  /** Lee el nodo y sus opciones y escucha la elección por voz («Elijo la primera»). */
+  manosLibres: boolean;
 }
 
 export interface OpcionEnum {

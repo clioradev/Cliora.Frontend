@@ -3,6 +3,14 @@
 } @else if (error()) {
   <p class="status status--error">No se ha podido cargar el final.</p>
 } @else if (final(); as f) {
+  @if (lector.bloqueado()) {
+    <button type="button" class="btn--primary final__desbloquear-voz" (click)="leerFinal()">🔊 Toca para escuchar</button>
+  }
+
+  @if (reconocimiento.error(); as errorMicro) {
+    <p class="status status--error">{{ errorMicro }}</p>
+  }
+
   <p class="final__texto">{{ f.texto }}</p>
 
   @if (!previsualizacionTerminada()) {

@@ -21,10 +21,61 @@
         <button type="button" class="nodo__boton-editor" (click)="volverAlEditor()">← Volver al editor</button>
       }
     </div>
-    @if (!n.esLibro && n.esRpg) {
-      <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
-    }
+    <div class="nodo__lector">
+      @if (lector.disponible) {
+        <button
+          type="button"
+          class="btn-icono"
+          [disabled]="lector.estado() === 'leyendo'"
+          (click)="reproducirLectura()"
+          [attr.aria-label]="lector.estado() === 'pausado' ? 'Seguir leyendo' : 'Leer en voz alta'"
+          [title]="lector.estado() === 'pausado' ? 'Seguir leyendo' : 'Leer en voz alta'"
+        >
+          <app-icono nombre="play" />
+        </button>
+        <button
+          type="button"
+          class="btn-icono"
+          [disabled]="lector.estado() !== 'leyendo'"
+          (click)="pausarLectura()"
+          aria-label="Pausar la lectura"
+          title="Pausar la lectura"
+        >
+          <app-icono nombre="pausa" />
+        </button>
+        <button
+          type="button"
+          class="btn-icono"
+          [disabled]="lector.estado() === 'parado' && !reconocimiento.escuchando()"
+          (click)="pararLectura()"
+          aria-label="Parar la lectura"
+          title="Parar la lectura"
+        >
+          <app-icono nombre="parar" />
+        </button>
+      }
+      @if (reconocimiento.escuchando()) {
+        <span class="nodo__microfono" role="status" title="Escuchando: di «Elijo la primera»…">
+          <app-icono nombre="microfono" />
+        </span>
+      }
+    </div>
+    <div class="nodo__cabecera-derecha">
+      @if (!n.esLibro && n.esRpg) {
+        <button type="button" class="nodo__boton-personaje" (click)="abrirPersonaje()">Personaje</button>
+      }
+    </div>
   </div>
+
+  @if (lector.bloqueado()) {
+    <button type="button" class="btn--primary nodo__desbloquear-voz" (click)="reproducirLectura()">
+      🔊 Toca para escuchar
+    </button>
+  }
+
+  @if (reconocimiento.error(); as errorMicro) {
+    <p class="status status--error">{{ errorMicro }}</p>
+  }
 
   @if (alertasEnNodo(); as total) {
     <p class="status">
@@ -89,8 +140,11 @@
     </div>
   } @else {
     <div class="nodo__opciones">
-      @for (opcion of n.opciones; track opcion.idOpcion) {
+      @for (opcion of n.opciones; track opcion.idOpcion; let i = $index) {
         <button type="button" (click)="elegir(opcion)" [disabled]="eligiendo()">
+          @if (manosLibres() && ordinales[i]) {
+            <span class="opcion__ordinal">{{ ordinales[i] }}</span>
+          }
           @if (opcion.nivelDificultad) {
             <span
               class="opcion__dificultad"

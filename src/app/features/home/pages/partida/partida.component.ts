@@ -1,8 +1,12 @@
-import { Component, computed, effect, inject, signal } from '@angular/core';
+import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { LectorVozService } from '../../../../core/voz/lector-voz.service';
+import { interpretarOrden, OrdenVoz, ORDINALES } from '../../../../core/voz/ordenes-voz';
+import { ReconocimientoVozService } from '../../../../core/voz/reconocimiento-voz.service';
+import { PreferenciasAplicadasService } from '../../../configuracion/data-access/preferencias-aplicadas.service';
 import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { AdminService } from '../../../admin/data-access/admin.service';
 import { AutorService } from '../../../autor/data-access/autor.service';
@@ -10,7 +14,13 @@ import { FichaPersonajeModalComponent } from '../../components/ficha-personaje-m
 import { InformarErrorModalComponent } from '../../components/informar-error-modal/informar-error-modal.component';
 import { ResultadoTiradaModalComponent } from '../../components/resultado-tirada-modal/resultado-tirada-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
-import { Opcion, TiradaResultado } from '../../models/partida.model';
+import { NivelDificultad, Opcion, TiradaResultado } from '../../models/partida.model';
+
+const DIFICULTAD_HABLADA: Record<NivelDificultad, string> = {
+  Facil: ', fácil',
+  Normal: ', normal',
+  Dificil: ', difícil',
+};
 
 @Component({
   selector: 'app-partida',
@@ -72,12 +82,136 @@ export class PartidaComponent {
   // fluya a su lado en vez de partir el nodo en bloques separados - ver onImagenCargada().
   protected readonly imagenesFlotantes = signal(new Set<number>());
 
+  // Lectura en voz alta. Con la lectura automática (o el modo manos libres) cada nodo empieza a
+  // leerse a los 2 s. En manos libres se leen también las opciones y después se escucha el micro.
+  protected readonly lector = inject(LectorVozService);
+  protected readonly reconocimiento = inject(ReconocimientoVozService);
+  private readonly preferenciasAplicadas = inject(PreferenciasAplicadasService);
+  private temporizadorLectura: ReturnType<typeof setTimeout> | undefined;
+
+  protected readonly manosLibres = computed(
+    () => this.preferenciasAplicadas.manosLibres() && this.lector.disponible && this.reconocimiento.disponible,
+  );
+  protected readonly ordinales = ORDINALES;
+
   constructor() {
     effect(() => {
       this.nodo();
       this.imagenesFlotantes.set(new Set());
       this.alertasEnNodo.set(null);
     });
+
+    effect(() => {
+      const nodo = this.nodo();
+      untracked(() => {
+        this.pararLectura();
+        if (nodo && (this.preferenciasAplicadas.lecturaAutomatica() || this.manosLibres())) {
+          this.temporizadorLectura = setTimeout(() => this.leerNodo(), 2000);
+        }
+      });
+    });
+
+    inject(DestroyRef).onDestroy(() => this.pararLectura());
+  }
+
+  protected reproducirLectura(): void {
+    if (this.lector.estado() === 'pausado') {
+      this.reconocimiento.detener();
+      this.lector.reanudar();
+    } else {
+      this.leerNodo();
+    }
+  }
+
+  protected pausarLectura(): void {
+    this.lector.pausar();
+  }
+
+  protected pararLectura(): void {
+    clearTimeout(this.temporizadorLectura);
+    this.lector.parar();
+    this.reconocimiento.detener();
+  }
+
+  private leerNodo(): void {
+    clearTimeout(this.temporizadorLectura);
+    this.reconocimiento.detener();
+    const nodo = this.nodo();
+    if (!nodo) {
+      return;
+    }
+
+    const parrafos = [nodo.escenaDescripcion, ...nodo.contenidos.map((c) => c.texto)].filter((t): t is string => !!t);
+    if (this.manosLibres() && !nodo.esLibro) {
+      parrafos.push('Opciones.', ...nodo.opciones.map((opcion, i) => this.textoOpcion(opcion, i)));
+    }
+    this.lector.leer(parrafos, () => this.escucharSiManosLibres());
+  }
+
+  private textoOpcion(opcion: Opcion, indice: number): string {
+    const ordinal = ORDINALES[indice] ?? `Opción ${indice + 1}`;
+    const dificultad = opcion.nivelDificultad ? DIFICULTAD_HABLADA[opcion.nivelDificultad] : '';
+    const texto = opcion.texto.trim();
+    return `${ordinal.charAt(0).toUpperCase()}${ordinal.slice(1)}${dificultad}: ${texto}${/[.!?…]$/.test(texto) ? '' : '.'}`;
+  }
+
+  /** Dice algo y vuelve a escuchar (respuestas del modo manos libres). */
+  private decirYEscuchar(texto: string): void {
+    this.reconocimiento.detener();
+    this.lector.leer([texto], () => this.escucharSiManosLibres());
+  }
+
+  private escucharSiManosLibres(): void {
+    if (this.manosLibres()) {
+      this.reconocimiento.escuchar((alternativas) => this.onOrdenVoz(interpretarOrden(alternativas)));
+    }
+  }
+
+  private onOrdenVoz(orden: OrdenVoz | null): void {
+    const nodo = this.nodo();
+    if (!orden || !nodo || this.eligiendo() || this.volviendoAtras()) {
+      return;
+    }
+
+    // Con el resultado de una tirada en pantalla solo vale seguir (o que lo repita).
+    const tirada = this.resultadoTirada();
+    if (tirada) {
+      if (orden.tipo === 'continuar') {
+        this.continuarTrasTirada();
+      } else if (orden.tipo === 'repetir') {
+        this.decirYEscuchar(this.textoTirada(tirada));
+      }
+      return;
+    }
+
+    switch (orden.tipo) {
+      case 'opcion': {
+        const opcion = nodo.esLibro ? undefined : nodo.opciones[orden.numero - 1];
+        if (opcion) {
+          this.elegir(opcion);
+        } else {
+          this.decirYEscuchar(nodo.esLibro ? 'Di continuar para pasar la página.' : 'No hay esa opción.');
+        }
+        break;
+      }
+      case 'continuar':
+        if (nodo.esLibro && nodo.opciones[0]) {
+          this.elegir(nodo.opciones[0]);
+        } else {
+          this.decirYEscuchar('Elige una opción. Por ejemplo: elijo la primera.');
+        }
+        break;
+      case 'repetir':
+        this.leerNodo();
+        break;
+      case 'no-entendida':
+        this.decirYEscuchar('No te he entendido. Di, por ejemplo: elijo la primera.');
+        break;
+    }
+  }
+
+  private textoTirada(tirada: TiradaResultado): string {
+    return `${tirada.exito ? '¡Éxito!' : '¡Fracaso!'} Di continuar para seguir.`;
   }
 
   protected onImagenCargada(event: Event, idContenidoNodo: number): void {
@@ -96,9 +230,17 @@ export class PartidaComponent {
         if (respuesta.tirada) {
           this.destinoPendiente = { idNodo: respuesta.idNodo, idFinal: respuesta.idFinal };
           this.resultadoTirada.set(respuesta.tirada);
+          if (this.manosLibres()) {
+            this.decirYEscuchar(this.textoTirada(respuesta.tirada));
+          }
           return;
         }
         this.navegarA(respuesta.idNodo, respuesta.idFinal);
+      },
+      onError: () => {
+        if (this.manosLibres()) {
+          this.decirYEscuchar('No se ha podido elegir. Inténtalo otra vez.');
+        }
       },
       defaultErrorMessage: 'No se ha podido procesar la elección.',
     },
@@ -107,6 +249,7 @@ export class PartidaComponent {
   protected readonly eligiendoError = this.elegirAction.error;
 
   protected elegir(opcion: Opcion): void {
+    this.pararLectura();
     this.elegirAction.run(opcion);
   }
 
@@ -131,6 +274,7 @@ export class PartidaComponent {
   }
 
   protected continuarTrasTirada(): void {
+    this.pararLectura();
     this.resultadoTirada.set(null);
 
     const destino = this.destinoPendiente;

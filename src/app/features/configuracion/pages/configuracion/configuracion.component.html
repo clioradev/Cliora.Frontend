@@ -78,6 +78,36 @@
     </label>
   </div>
 
+  <div class="campo campo--checkbox">
+    <label>
+      <input type="checkbox" [checked]="lecturaAutomatica()" (change)="onLecturaAutomaticaChange($event)" />
+      Lectura automática: al entrar en un nodo, leerlo en voz alta
+    </label>
+    @if (!lecturaDisponible) {
+      <p class="mensaje">Este navegador no puede leer en voz alta.</p>
+    }
+  </div>
+
+  <div class="campo campo--checkbox">
+    <label>
+      <input
+        type="checkbox"
+        [checked]="manosLibres()"
+        [disabled]="!lecturaDisponible || !reconocimientoDisponible"
+        (change)="onManosLibresChange($event)"
+      />
+      Manos libres: lee el nodo y sus opciones y elige por voz
+    </label>
+    @if (lecturaDisponible && reconocimientoDisponible) {
+      <p class="mensaje">
+        Di «Elijo la primera», «Elijo la segunda»… También «Continuar» (tiradas y libros), «Repetir» y, al final,
+        «Finalizar». La pantalla tiene que estar encendida y el navegador pedirá permiso para el micrófono.
+      </p>
+    } @else {
+      <p class="mensaje">Este navegador no puede reconocer la voz. Prueba con Chrome, Edge o Safari.</p>
+    }
+  </div>
+
   <button type="button" class="btn--primary" [disabled]="guardando()" (click)="guardar()">
     {{ guardando() ? 'Guardando...' : 'Guardar' }}
   </button>

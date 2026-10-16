@@ -66,6 +66,11 @@ export const routes: Routes = [
         children: [
           { path: '', redirectTo: 'preferencias', pathMatch: 'full' },
           {
+            path: 'cuenta',
+            loadComponent: () =>
+              import('./features/configuracion/pages/cuenta/cuenta.component').then((m) => m.CuentaComponent),
+          },
+          {
             path: 'preferencias',
             loadComponent: () =>
               import('./features/configuracion/pages/configuracion/configuracion.component').then(

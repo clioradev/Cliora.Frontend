@@ -12,4 +12,9 @@ export class UniversoService {
   getUniversos(): Observable<Universo[]> {
     return this.http.get<Universo[]>(`${this.baseUrl}/Universo`);
   }
+
+  marcarFavorito(idUniverso: number, esFavorito: boolean): Observable<void> {
+    const url = `${this.baseUrl}/Universo/${idUniverso}/Favorito`;
+    return esFavorito ? this.http.put<void>(url, {}) : this.http.delete<void>(url);
+  }
 }

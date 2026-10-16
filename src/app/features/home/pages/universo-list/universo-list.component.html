@@ -21,37 +21,78 @@
         (input)="onSearchInput($event)"
       />
 
-      <select
-        class="buscador__cantidad-decision"
-        [value]="selectedCantidadDecision() ?? ''"
-        (change)="onCantidadDecisionChange($event)"
-        aria-label="Filtrar por cantidad de decisiones"
+      <button
+        type="button"
+        class="buscador__filtros"
+        [class.buscador__filtros--activos]="filtrosActivos() > 0"
+        (click)="filtrosAbiertos.set(true)"
+        aria-label="Filtros y orden"
+        title="Filtros y orden"
       >
-        <option value="">Todas las cantidades</option>
-        @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
-          <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+        <app-icono nombre="filtros" />
+        @if (filtrosActivos() > 0) {
+          <span class="buscador__contador">{{ filtrosActivos() }}</span>
         }
-      </select>
-
-      @if (availableTags().length > 0) {
-        <app-multi-select
-          class="buscador__tipos"
-          [opciones]="availableTags()"
-          [seleccionadas]="selectedTags()"
-          placeholder="Todos los tipos"
-          ariaLabel="Filtrar por tipo de universo"
-          (alternado)="toggleTag($event)"
-          (limpiado)="clearTags()"
-        />
-      }
-
-      <select class="buscador__orden" [value]="orden()" (change)="onOrdenChange($event)" aria-label="Ordenar universos">
-        @for (opcion of ordenOpciones; track opcion.valor) {
-          <option [value]="opcion.valor">Ordenar: {{ opcion.etiqueta }}</option>
-        }
-      </select>
+      </button>
     </div>
   </div>
+}
+
+@if (filtrosAbiertos()) {
+  <app-modal (cerrar)="filtrosAbiertos.set(false)">
+    <h3>Filtros y orden</h3>
+
+    <div class="filtros">
+      <label class="filtros__campo">
+        Favoritos
+        <select [value]="filtroFavoritos()" (change)="onFiltroFavoritosChange($event)">
+          @for (opcion of filtroFavoritosOpciones; track opcion.valor) {
+            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+      </label>
+
+      <label class="filtros__campo">
+        Cantidad de decisiones
+        <select [value]="selectedCantidadDecision() ?? ''" (change)="onCantidadDecisionChange($event)">
+          <option value="">Todas las cantidades</option>
+          @for (opcion of cantidadDecisionOpciones; track opcion.valor) {
+            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+      </label>
+
+      @if (availableTags().length > 0) {
+        <div class="filtros__campo">
+          Tipo de universo
+          <app-multi-select
+            [opciones]="availableTags()"
+            [seleccionadas]="selectedTags()"
+            placeholder="Todos los tipos"
+            ariaLabel="Filtrar por tipo de universo"
+            (alternado)="toggleTag($event)"
+            (limpiado)="clearTags()"
+          />
+        </div>
+      }
+
+      <label class="filtros__campo">
+        Ordenar por
+        <select [value]="orden()" (change)="onOrdenChange($event)">
+          @for (opcion of ordenOpciones; track opcion.valor) {
+            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+      </label>
+    </div>
+
+    <div class="filtros__acciones">
+      <button type="button" (click)="limpiarFiltros()" [disabled]="filtrosActivos() === 0">Quitar filtros</button>
+      <button type="button" class="btn--primary" (click)="filtrosAbiertos.set(false)">
+        Ver {{ filteredUniversos().length }} {{ filteredUniversos().length === 1 ? 'universo' : 'universos' }}
+      </button>
+    </div>
+  </app-modal>
 }
 
 @if (loading()) {
@@ -72,6 +113,17 @@
 
         <header class="universo-card__header">
           <h2>{{ universo.titulo }}</h2>
+          <button
+            type="button"
+            class="universo-card__favorito"
+            [class.universo-card__favorito--activo]="esFavorito(universo)"
+            (click)="alternarFavorito(universo)"
+            [attr.aria-pressed]="esFavorito(universo)"
+            [attr.aria-label]="(esFavorito(universo) ? 'Quitar de favoritos ' : 'Añadir a favoritos ') + universo.titulo"
+            [title]="esFavorito(universo) ? 'Quitar de favoritos' : 'Añadir a favoritos'"
+          >
+            <app-icono [nombre]="esFavorito(universo) ? 'pulgar-relleno' : 'pulgar'" />
+          </button>
         </header>
 
         @if (universo.tipos.length > 0) {

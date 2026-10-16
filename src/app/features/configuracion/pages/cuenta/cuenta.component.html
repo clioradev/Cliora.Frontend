@@ -1,0 +1,140 @@
+<h1>Mi cuenta</h1>
+
+@if (cargando() && !perfil()) {
+  <p class="status">Cargando…</p>
+} @else if (errorCarga()) {
+  <p class="status status--error">No se ha podido cargar tu cuenta.</p>
+} @else if (perfil(); as p) {
+  <p class="miembro">Lector de Cliora desde el {{ p.fechaRegistro | date: 'dd/MM/yyyy' }}.</p>
+
+  <section class="seccion">
+    <h2>Tu biblioteca</h2>
+    <ul class="estadisticas">
+      <li class="estadisticas__item">
+        <span class="estadisticas__valor">{{ p.aventurasEmpezadas }}</span>
+        <span class="estadisticas__nombre">{{ p.aventurasEmpezadas === 1 ? 'aventura empezada' : 'aventuras empezadas' }}</span>
+      </li>
+      <li class="estadisticas__item">
+        <span class="estadisticas__valor">{{ p.aventurasTerminadas }}</span>
+        <span class="estadisticas__nombre">{{ p.aventurasTerminadas === 1 ? 'aventura terminada' : 'aventuras terminadas' }}</span>
+      </li>
+      <li class="estadisticas__item">
+        <span class="estadisticas__valor">{{ p.valoraciones }}</span>
+        <span class="estadisticas__nombre">{{ p.valoraciones === 1 ? 'valoración' : 'valoraciones' }}</span>
+      </li>
+      <li class="estadisticas__item">
+        <span class="estadisticas__valor">{{ p.aventurasCompradas }}</span>
+        <span class="estadisticas__nombre">{{ p.aventurasCompradas === 1 ? 'aventura comprada' : 'aventuras compradas' }}</span>
+      </li>
+    </ul>
+  </section>
+
+  @if (p.aventurasGratis; as gratis) {
+    <section class="seccion">
+      <h2>Aventuras gratis</h2>
+      <app-progreso-aventura-gratis [progreso]="gratis" />
+      @if (gratis.aventurasGratis > 0) {
+        <p class="status">Se descontarán solas en tu próxima compra (no sirven para libros).</p>
+      }
+    </section>
+  }
+
+  <section class="seccion">
+    <h2>Tus datos</h2>
+
+    <div class="campo">
+      <label for="nombre">Nombre</label>
+      <div class="campo__fila">
+        <input id="nombre" type="text" maxlength="100" autocomplete="name" [value]="nombre()" (input)="onNombreInput($event)" />
+        <button type="button" class="btn--primary" (click)="guardarNombre()" [disabled]="!nombreCambiado() || guardandoNombre()">
+          {{ guardandoNombre() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+      @if (errorNombre()) {
+        <p class="mensaje mensaje--error">{{ errorNombre() }}</p>
+      } @else if (nombreGuardado()) {
+        <p class="mensaje mensaje--ok">Nombre guardado.</p>
+      }
+    </div>
+
+    <div class="campo">
+      <span class="campo__etiqueta">Email</span>
+      <div class="campo__fila">
+        <span class="campo__valor">{{ p.email }}</span>
+        @if (!editandoEmail() && !emailPendiente()) {
+          <button type="button" (click)="empezarCambioEmail()">Cambiar email</button>
+        }
+      </div>
+      @if (emailCambiado()) {
+        <p class="mensaje mensaje--ok">Email cambiado. A partir de ahora entra con {{ p.email }}.</p>
+      }
+
+      @if (editandoEmail()) {
+        <div class="email-form">
+          <label>
+            Email nuevo
+            <input type="email" maxlength="200" autocomplete="email" [value]="emailNuevo()" (input)="onEmailNuevoInput($event)" />
+          </label>
+          <label>
+            Tu contraseña actual
+            <input type="password" autocomplete="current-password" [value]="password()" (input)="onPasswordInput($event)" />
+          </label>
+          <p class="status">Te enviaremos un código al email nuevo. El cambio no se aplica hasta que lo introduzcas.</p>
+          @if (errorSolicitar()) {
+            <p class="mensaje mensaje--error">{{ errorSolicitar() }}</p>
+          }
+          <div class="acciones">
+            <button type="button" (click)="cancelarEdicionEmail()" [disabled]="solicitando()">Cancelar</button>
+            <button
+              type="button"
+              class="btn--primary"
+              (click)="solicitarCambioEmail()"
+              [disabled]="solicitando() || !emailNuevo().trim() || !password()"
+            >
+              {{ solicitando() ? 'Enviando…' : 'Enviar código' }}
+            </button>
+          </div>
+        </div>
+      } @else if (emailPendiente(); as pendiente) {
+        <div class="email-form">
+          <p>Te hemos enviado un código de 6 cifras a <strong>{{ pendiente }}</strong>. Caduca en 15 minutos.</p>
+          <label>
+            Código
+            <input
+              type="text"
+              inputmode="numeric"
+              maxlength="6"
+              autocomplete="one-time-code"
+              [value]="codigo()"
+              (input)="onCodigoInput($event)"
+            />
+          </label>
+          @if (errorConfirmar()) {
+            <p class="mensaje mensaje--error">{{ errorConfirmar() }}</p>
+          }
+          @if (errorReenviar()) {
+            <p class="mensaje mensaje--error">{{ errorReenviar() }}</p>
+          } @else if (codigoReenviado()) {
+            <p class="mensaje mensaje--ok">Te hemos enviado un código nuevo.</p>
+          }
+          <div class="acciones">
+            <button type="button" (click)="cancelarCambioEmail()" [disabled]="cancelando() || confirmando()">
+              Cancelar cambio
+            </button>
+            <button type="button" (click)="reenviarCodigo()" [disabled]="reenviando() || confirmando()">
+              {{ reenviando() ? 'Reenviando…' : 'Reenviar código' }}
+            </button>
+            <button
+              type="button"
+              class="btn--primary"
+              (click)="confirmarCambioEmail()"
+              [disabled]="confirmando() || !codigo().trim()"
+            >
+              {{ confirmando() ? 'Confirmando…' : 'Confirmar' }}
+            </button>
+          </div>
+        </div>
+      }
+    </div>
+  </section>
+}

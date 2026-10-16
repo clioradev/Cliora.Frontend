@@ -1,0 +1,126 @@
+:host {
+  display: block;
+  max-width: var(--content-width-reading);
+}
+
+.status {
+  color: var(--color-text-secondary);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+.miembro {
+  margin-top: 0;
+  color: var(--color-text-secondary);
+}
+
+.seccion {
+  margin-bottom: var(--space-6);
+
+  h2 {
+    font-size: var(--text-md);
+    margin: 0 0 var(--space-3);
+  }
+}
+
+.estadisticas {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(8rem, 1fr));
+  gap: var(--space-3);
+
+  &__item {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    padding: var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+  }
+
+  &__valor {
+    font-size: var(--text-xl);
+    font-weight: 600;
+  }
+
+  &__nombre {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+}
+
+.campo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-bottom: var(--space-4);
+
+  label,
+  &__etiqueta {
+    font-weight: 600;
+  }
+
+  &__fila {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--space-2);
+
+    input {
+      flex: 1 1 14rem;
+      max-width: var(--content-width-sm);
+    }
+  }
+
+  &__valor {
+    flex: 1 1 auto;
+    overflow-wrap: anywhere;
+  }
+}
+
+.email-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-top: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-weight: normal;
+  }
+
+  p {
+    margin: 0;
+  }
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.mensaje {
+  margin: 0;
+  font-size: var(--text-sm);
+
+  &--ok {
+    color: var(--color-success);
+  }
+
+  &--error {
+    color: var(--color-danger);
+  }
+}

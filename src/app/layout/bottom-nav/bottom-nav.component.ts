@@ -16,6 +16,7 @@ interface OpcionMas {
 const OPCIONES_USUARIO: OpcionMas[] = [
   { texto: 'Cliora', ruta: '/cliora' },
   { texto: '¿Te gusta escribir?', ruta: '/escribir' },
+  { texto: 'Mi cuenta', ruta: '/configuracion/cuenta' },
   { texto: 'Preferencias', ruta: '/configuracion/preferencias' },
   { texto: 'Contraseña', ruta: '/configuracion/contrasena' },
 ];

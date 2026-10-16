@@ -1,6 +1,8 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, inject, linkedSignal, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { RouterLink } from '@angular/router';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { MultiSelectComponent } from '../../../../shared/components/multi-select/multi-select.component';
 import { TextoRecortadoComponent } from '../../../../shared/components/texto-recortado/texto-recortado.component';
 import { AnchoObservadoDirective } from '../../../../shared/directives/ancho-observado.directive';
@@ -16,6 +18,8 @@ import {
   Aventura,
   CANTIDAD_DECISION_OPCIONES,
   Campana,
+  FILTRO_FAVORITOS_OPCIONES,
+  FiltroFavoritos,
   ORDEN_UNIVERSOS_OPCIONES,
   OrdenUniversos,
   Universo,
@@ -44,6 +48,8 @@ interface ContextoAventura {
     AventuraDetalleComponent,
     ReiniciarAventuraModalComponent,
     ValoracionModalComponent,
+    IconoComponent,
+    ModalComponent,
     MultiSelectComponent,
     TextoRecortadoComponent,
     AnchoObservadoDirective,
@@ -97,6 +103,18 @@ export class UniversoListComponent {
   protected readonly cantidadDecisionOpciones = CANTIDAD_DECISION_OPCIONES;
   protected readonly orden = signal<OrdenUniversos>('reciente');
   protected readonly ordenOpciones = ORDEN_UNIVERSOS_OPCIONES;
+  protected readonly filtroFavoritos = signal<FiltroFavoritos>('todos');
+  protected readonly filtroFavoritosOpciones = FILTRO_FAVORITOS_OPCIONES;
+
+  // El texto queda siempre a la vista; el resto de filtros y el orden van en una modal.
+  protected readonly filtrosAbiertos = signal(false);
+  protected readonly filtrosActivos = computed(
+    () =>
+      Number(this.selectedCantidadDecision() !== null) +
+      Number(this.selectedTags().size > 0) +
+      Number(this.filtroFavoritos() !== 'todos') +
+      Number(this.orden() !== 'reciente'),
+  );
 
   private readonly indicesAventura = signal(new Map<number, number>());
   private readonly anchosEstanteria = signal(new Map<number, number>());
@@ -111,14 +129,39 @@ export class UniversoListComponent {
     return Array.from(tags).sort();
   });
 
+  /** Pulgares tocados en esta visita; mandan sobre lo que vino del servidor. */
+  private readonly favoritosPulsados = signal(new Map<number, boolean>());
+
+  // Los favoritos con los que se ordena y filtra: solo se recalculan al cambiar la búsqueda, un
+  // filtro, el orden o al recargar, para que el universo no salte de sitio nada más darle al pulgar.
+  private readonly favoritosParaOrden = linkedSignal({
+    source: () => ({
+      universos: this.universos(),
+      termino: this.searchTerm(),
+      tags: this.selectedTags(),
+      cantidadDecision: this.selectedCantidadDecision(),
+      orden: this.orden(),
+      filtro: this.filtroFavoritos(),
+    }),
+    computation: ({ universos }) =>
+      untracked(() => new Set(universos.filter((u) => this.esFavorito(u)).map((u) => u.idUniverso))),
+  });
+
+  protected esFavorito(universo: Universo): boolean {
+    return this.favoritosPulsados().get(universo.idUniverso) ?? universo.esFavorito;
+  }
+
   protected readonly filteredUniversos = computed(() => {
     const termino = this.searchTerm().trim().toLocaleLowerCase();
     const tags = this.selectedTags();
     const cantidadDecision = this.selectedCantidadDecision();
+    const filtro = this.filtroFavoritos();
+    const favoritos = this.favoritosParaOrden();
 
     // Se ordena antes de filtrar para que el orden dependa del universo completo y no de las
     // aventuras que deje ver el filtro.
-    return this.ordenarUniversos(this.universos(), this.orden())
+    return this.ordenarUniversos(this.universos(), this.orden(), favoritos)
+      .filter((universo) => filtro === 'todos' || favoritos.has(universo.idUniverso) === (filtro === 'favoritos'))
       .filter((universo) => tags.size === 0 || universo.tipos.some((tag) => tags.has(tag)))
       .map((universo) => this.filtrarUniverso(universo, termino, cantidadDecision))
       .filter((universo): universo is Universo => universo !== null);
@@ -241,6 +284,31 @@ export class UniversoListComponent {
     this.orden.set((event.target as HTMLSelectElement).value as OrdenUniversos);
   }
 
+  protected onFiltroFavoritosChange(event: Event): void {
+    this.filtroFavoritos.set((event.target as HTMLSelectElement).value as FiltroFavoritos);
+  }
+
+  protected limpiarFiltros(): void {
+    this.selectedCantidadDecision.set(null);
+    this.clearTags();
+    this.filtroFavoritos.set('todos');
+    this.orden.set('reciente');
+  }
+
+  // El pulgar cambia en pantalla al momento (y se deshace si el servidor falla), pero el universo
+  // no se mueve hasta el siguiente cambio de filtros o recarga: ver favoritosParaOrden.
+  protected alternarFavorito(universo: Universo): void {
+    const esFavorito = !this.esFavorito(universo);
+    this.establecerFavorito(universo.idUniverso, esFavorito);
+    this.universoService.marcarFavorito(universo.idUniverso, esFavorito).subscribe({
+      error: () => this.establecerFavorito(universo.idUniverso, !esFavorito),
+    });
+  }
+
+  private establecerFavorito(idUniverso: number, esFavorito: boolean): void {
+    this.favoritosPulsados.update((mapa) => new Map(mapa).set(idUniverso, esFavorito));
+  }
+
   protected verOpiniones(nivel: NivelValoracion, id: number, titulo: string): void {
     this.opinionesAbiertas.set({ nivel, id, titulo });
   }
@@ -309,10 +377,16 @@ export class UniversoListComponent {
     this.indicesAventura.set(mapa);
   }
 
-  // Primero los universos empezados que aún tienen aventuras por terminar; dentro de cada grupo,
-  // por el criterio elegido: más reciente (última aventura publicada) o mejor valoración media.
-  private ordenarUniversos(universos: Universo[], orden: OrdenUniversos): Universo[] {
+  // Tres bloques: favoritos, el resto y, al final, los que ya tienen todas las aventuras terminadas
+  // (aunque tengan pulgar). Dentro de cada bloque, primero los empezados con aventuras pendientes y
+  // luego por el criterio elegido: más reciente (última aventura publicada) o mejor valoración media.
+  private ordenarUniversos(universos: Universo[], orden: OrdenUniversos, favoritos: Set<number>): Universo[] {
     return [...universos].sort((a, b) => {
+      const bloque = this.bloqueOrden(a, favoritos) - this.bloqueOrden(b, favoritos);
+      if (bloque !== 0) {
+        return bloque;
+      }
+
       const prioridad = Number(this.estaEmpezadoConPendientes(b)) - Number(this.estaEmpezadoConPendientes(a));
       if (prioridad !== 0) {
         return prioridad;
@@ -324,6 +398,18 @@ export class UniversoListComponent {
           : this.marcaTiempo(b.fechaPublicacion) - this.marcaTiempo(a.fechaPublicacion);
       return criterio !== 0 ? criterio : b.idUniverso - a.idUniverso;
     });
+  }
+
+  private bloqueOrden(universo: Universo, favoritos: Set<number>): number {
+    if (this.estaTerminado(universo)) {
+      return 2;
+    }
+    return favoritos.has(universo.idUniverso) ? 0 : 1;
+  }
+
+  private estaTerminado(universo: Universo): boolean {
+    const aventuras = universo.campanas.flatMap((c) => c.aventuras);
+    return aventuras.length > 0 && aventuras.every((a) => a.estadoPartida === 'Finalizada');
   }
 
   private estaEmpezadoConPendientes(universo: Universo): boolean {

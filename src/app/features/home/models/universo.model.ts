@@ -85,7 +85,17 @@ export interface Universo {
   fechaPublicacion: string | null;
   puntuacionMedia: number | null;
   ultimaValoracion: UltimaValoracion | null;
+  /** El usuario le ha dado al pulgar. */
+  esFavorito: boolean;
 }
+
+export type FiltroFavoritos = 'todos' | 'favoritos' | 'no-favoritos';
+
+export const FILTRO_FAVORITOS_OPCIONES: { valor: FiltroFavoritos; etiqueta: string }[] = [
+  { valor: 'todos', etiqueta: 'Todos los universos' },
+  { valor: 'favoritos', etiqueta: 'Solo favoritos' },
+  { valor: 'no-favoritos', etiqueta: 'Sin favoritos' },
+];
 
 export type OrdenUniversos = 'reciente' | 'valoracion';
 

@@ -1,3 +1,4 @@
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router, RouterLink } from '@angular/router';
@@ -37,7 +38,7 @@ export class LoginComponent {
       ),
     {
       onSuccess: () => void this.router.navigate(['/']),
-      defaultErrorMessage: 'Credenciales incorrectas.',
+      resolveErrorMessage: mensajeErrorLogin,
     },
   );
   protected readonly submitting = this.loginAction.loading;
@@ -51,4 +52,21 @@ export class LoginComponent {
     const { email, password } = this.form.getRawValue();
     this.loginAction.run(email, password);
   }
+}
+
+// 429 con hora: el email está bloqueado por fallar varias veces seguidas. 429 sin hora: demasiadas
+// peticiones desde esta conexión.
+function mensajeErrorLogin(err: unknown): string {
+  if (err instanceof HttpErrorResponse && err.status === 429) {
+    const bloqueadoHasta: string | undefined = err.error?.bloqueadoHasta;
+    if (!bloqueadoHasta) {
+      return 'Demasiados intentos. Espera un minuto y vuelve a probar.';
+    }
+    const hasta = new Date(bloqueadoHasta);
+    const esHoy = hasta.toDateString() === new Date().toDateString();
+    const hora = hasta.toLocaleTimeString('es-ES', { hour: '2-digit', minute: '2-digit' });
+    const cuando = esHoy ? `a las ${hora}` : `mañana a las ${hora}`;
+    return `Has fallado demasiadas veces seguidas. Por seguridad, podrás volver a intentarlo ${cuando}.`;
+  }
+  return 'Credenciales incorrectas.';
 }

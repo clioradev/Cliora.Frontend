@@ -2,7 +2,8 @@ import { ProgresoAventuraGratis } from '../../../shared/components/progreso-aven
 
 export interface Perfil {
   nombre: string;
-  email: string;
+  /** Null en las cuentas de hijos. */
+  email: string | null;
   fechaRegistro: string;
   /** Email nuevo a la espera de confirmar con el código; null si no hay ninguno. */
   emailPendiente: string | null;

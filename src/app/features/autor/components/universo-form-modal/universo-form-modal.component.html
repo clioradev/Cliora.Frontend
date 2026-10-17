@@ -22,6 +22,16 @@
       <small class="universo-form-modal__ayuda">{{ ayudaTipoTirada() }}</small>
     </label>
 
+    <label>
+      Público
+      <select formControlName="idCatTipoUsuario">
+        @for (opcion of publicoOpciones; track opcion.valor) {
+          <option [ngValue]="opcion.valor">{{ opcion.etiqueta }}</option>
+        }
+      </select>
+      <small class="universo-form-modal__ayuda">Solo lo verán los lectores de ese tramo de edad.</small>
+    </label>
+
     <div>
       <label class="universo-form-modal__checkbox">
         <input type="checkbox" formControlName="esRpg" />

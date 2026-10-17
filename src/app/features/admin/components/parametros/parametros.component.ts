@@ -2,7 +2,7 @@ import { Component, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { AdminService } from '../../data-access/admin.service';
-import { PARAMETRO_PRECIO_AVENTURA_INTERACTIVA, ParametroAdmin } from '../../models/admin.model';
+import { PARAMETRO_PRECIO_AVENTURA_INTERACTIVA, PARAMETRO_PRECIO_LIBRO, ParametroAdmin } from '../../models/admin.model';
 import { escribirImporte, leerImporte } from '../../utils/importe';
 
 const NOMBRES: Record<string, string> = {
@@ -10,6 +10,7 @@ const NOMBRES: Record<string, string> = {
   UMBRAL_DEVOLUCION: 'Progreso a partir del que no se puede devolver (%)',
   VALORACIONES_POR_AVENTURA_GRATIS: 'Valoraciones para ganar una aventura gratis',
   [PARAMETRO_PRECIO_AVENTURA_INTERACTIVA]: 'Precio por defecto de una aventura interactiva (€)',
+  [PARAMETRO_PRECIO_LIBRO]: 'Precio por defecto de un libro (€)',
 };
 
 @Component({

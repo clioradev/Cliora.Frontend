@@ -7,6 +7,7 @@ import { AdminService } from '../../data-access/admin.service';
 import {
   GuardarPrecioRequest,
   PARAMETRO_PRECIO_AVENTURA_INTERACTIVA,
+  PARAMETRO_PRECIO_LIBRO,
   ParametroAdmin,
   SolicitudPublicacionAdmin,
 } from '../../models/admin.model';
@@ -54,23 +55,26 @@ export class SolicitudesPublicacionComponent {
     stream: () => this.adminService.obtenerParametros(),
     defaultValue: [] as ParametroAdmin[],
   });
-  private readonly precioPorDefecto = computed(
+  private readonly precioPorDefectoInteractiva = computed(
     () => this.parametrosResource.value().find((p) => p.codigo === PARAMETRO_PRECIO_AVENTURA_INTERACTIVA)?.valor ?? null,
+  );
+  private readonly precioPorDefectoLibro = computed(
+    () => this.parametrosResource.value().find((p) => p.codigo === PARAMETRO_PRECIO_LIBRO)?.valor ?? null,
   );
 
   protected readonly escribirImporte = escribirImporte;
   protected readonly errorPrecio = signal<{ idVersionAventura: number; mensaje: string } | null>(null);
 
-  // El precio que ya tenga la aventura; si no tiene, el precio por defecto para las interactivas que
-  // no son la primera de su campaña. Los libros y las primeras se proponen gratis.
+  // El precio que ya tenga la aventura; si no tiene, el precio por defecto de su tipo (interactiva o
+  // libro) salvo que sea la primera de su campaña, que se propone gratis.
   protected precioPropuesto(solicitud: SolicitudPublicacionAdmin): string {
     if (solicitud.precio !== null) {
       return escribirImporte(solicitud.precio);
     }
-    if (solicitud.esPrimera || solicitud.esLibro) {
+    if (solicitud.esPrimera) {
       return '';
     }
-    return escribirImporte(this.precioPorDefecto());
+    return escribirImporte(solicitud.esLibro ? this.precioPorDefectoLibro() : this.precioPorDefectoInteractiva());
   }
 
   private readonly publicarAction = asyncAction(

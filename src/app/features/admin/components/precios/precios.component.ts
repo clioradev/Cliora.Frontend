@@ -6,6 +6,7 @@ import { AdminService } from '../../data-access/admin.service';
 import {
   GuardarPrecioRequest,
   PARAMETRO_PRECIO_AVENTURA_INTERACTIVA,
+  PARAMETRO_PRECIO_LIBRO,
   ParametroAdmin,
   PrecioAventuraAdmin,
 } from '../../models/admin.model';
@@ -42,8 +43,11 @@ export class PreciosComponent {
     stream: () => this.adminService.obtenerParametros(),
     defaultValue: [] as ParametroAdmin[],
   });
-  protected readonly precioPorDefecto = computed(
+  private readonly precioPorDefectoInteractiva = computed(
     () => this.parametrosResource.value().find((p) => p.codigo === PARAMETRO_PRECIO_AVENTURA_INTERACTIVA)?.valor ?? null,
+  );
+  private readonly precioPorDefectoLibro = computed(
+    () => this.parametrosResource.value().find((p) => p.codigo === PARAMETRO_PRECIO_LIBRO)?.valor ?? null,
   );
 
   protected readonly universos = computed<GrupoUniverso[]>(() => {
@@ -94,8 +98,8 @@ export class PreciosComponent {
   }
 
   protected placeholderPrecio(aventura: PrecioAventuraAdmin): string {
-    const porDefecto = this.precioPorDefecto();
-    return !aventura.esLibro && porDefecto !== null ? `Gratis (por defecto ${escribirImporte(porDefecto)})` : 'Gratis';
+    const porDefecto = aventura.esLibro ? this.precioPorDefectoLibro() : this.precioPorDefectoInteractiva();
+    return porDefecto !== null ? `Gratis (por defecto ${escribirImporte(porDefecto)})` : 'Gratis';
   }
 
   protected guardar(aventura: PrecioAventuraAdmin, textoPrecio: string, textoDescuento: string): void {

@@ -89,6 +89,8 @@ export interface UniversoAutor {
   descripcion: string | null;
   tipoTirada: number;
   esRpg: boolean;
+  /** Público: 1 Infantil, 2 Juvenil, 3 Adulto. */
+  idCatTipoUsuario: number;
   campanas: CampanaAutor[];
   tipos: UniversoTipoAutor[];
 }
@@ -98,6 +100,8 @@ export interface GuardarUniversoRequest {
   descripcion: string | null;
   tipoTirada: number;
   esRpg: boolean;
+  /** Público: 1 Infantil, 2 Juvenil, 3 Adulto. */
+  idCatTipoUsuario: number;
 }
 
 export interface GuardarCampanaRequest {
@@ -370,3 +374,11 @@ export interface InformeImportacion {
   advertencias: ErrorImportacion[];
   conteo: ConteoImportacion;
 }
+
+/** Ids de CatTipoUsuario: el público al que va dirigido un universo. */
+export const PUBLICO_ADULTO = 3;
+export const PUBLICO_OPCIONES = [
+  { valor: 1, etiqueta: 'Infantil (menores de 8 años)' },
+  { valor: 2, etiqueta: 'Juvenil (de 8 a 17 años)' },
+  { valor: PUBLICO_ADULTO, etiqueta: 'Adulto (desde 18 años)' },
+];

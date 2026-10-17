@@ -12,7 +12,7 @@
   </label>
 
   @if (error()) {
-    <p class="login-form__error">Credenciales incorrectas.</p>
+    <p class="login-form__error">{{ error() }}</p>
   }
 
   <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">

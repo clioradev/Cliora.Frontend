@@ -89,6 +89,7 @@ export interface ParametroAdmin {
 }
 
 export const PARAMETRO_PRECIO_AVENTURA_INTERACTIVA = 'PRECIO_AVENTURA_INTERACTIVA';
+export const PARAMETRO_PRECIO_LIBRO = 'PRECIO_LIBRO';
 
 // --- Corrección de textos de la versión publicada ---
 

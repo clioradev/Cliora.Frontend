@@ -5,12 +5,13 @@ import { StarRatingDisplayComponent } from '../../../../shared/components/star-r
 import { PartidaService } from '../../data-access/partida.service';
 import { Aventura, Campana, Universo } from '../../models/universo.model';
 import { ReiniciarAventuraModalComponent } from '../reiniciar-aventura-modal/reiniciar-aventura-modal.component';
+import { DesbloquearModalComponent } from '../desbloquear-modal/desbloquear-modal.component';
 import { ResenasModalComponent } from '../resenas-modal/resenas-modal.component';
 import { ValoracionModalComponent } from '../valoracion-modal/valoracion-modal.component';
 
 @Component({
   selector: 'app-aventura-detalle',
-  imports: [RouterLink, StarRatingDisplayComponent, ResenasModalComponent, ValoracionModalComponent, ReiniciarAventuraModalComponent],
+  imports: [RouterLink, StarRatingDisplayComponent, ResenasModalComponent, ValoracionModalComponent, ReiniciarAventuraModalComponent, DesbloquearModalComponent],
   templateUrl: './aventura-detalle.component.html',
   styleUrl: './aventura-detalle.component.scss',
 })
@@ -29,6 +30,7 @@ export class AventuraDetalleComponent {
   protected readonly opinionesAbiertas = signal(false);
   protected readonly valorando = signal(false);
   protected readonly reiniciando = signal(false);
+  protected readonly desbloqueando = signal(false);
 
   protected hueCaratula(aventura: Aventura): number {
     return (aventura.idAventura * 47) % 360;

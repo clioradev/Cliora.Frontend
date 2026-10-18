@@ -25,7 +25,7 @@
       <span class="bottom-nav__label">Universos</span>
     </a>
 
-    @if (cantidadCarrito() > 0) {
+    @if (cantidadCarrito() > 0 && !esHijo()) {
       <a class="bottom-nav__item bottom-nav__item--carrito" routerLink="/carrito" routerLinkActive="bottom-nav__item--active">
         @if (burbujaCarrito(); as burbuja) {
           <span class="bottom-nav__burbuja" role="status">{{ burbuja.texto }}</span>
@@ -75,7 +75,7 @@
 
       @if (menuAbierto()) {
         <div class="mas-menu" role="menu" data-tutorial="menu-mas">
-          @for (opcion of opcionesUsuario; track opcion.ruta) {
+          @for (opcion of opcionesUsuario(); track opcion.ruta) {
             <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
               {{ opcion.texto }}
             </a>
@@ -91,10 +91,12 @@
             }
           }
 
-          <hr class="mas-menu__separador" />
-          <button type="button" class="mas-menu__item mas-menu__item--peligro" role="menuitem" (click)="cerrarSesion()">
-            Cerrar sesión
-          </button>
+          @if (puedeCerrarSesion()) {
+            <hr class="mas-menu__separador" />
+            <button type="button" class="mas-menu__item mas-menu__item--peligro" role="menuitem" (click)="cerrarSesion()">
+              Cerrar sesión
+            </button>
+          }
         </div>
       }
     </div>

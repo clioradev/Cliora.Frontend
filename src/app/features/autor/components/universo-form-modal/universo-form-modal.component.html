@@ -56,6 +56,8 @@
   </form>
 
   @if (universoActual(); as universo) {
+    <app-imagen-listado nivel="Universo" [id]="universo.idUniverso" [imagenUrl]="universo.imagenUrl" (cambiada)="universo.imagenUrl = $event" />
+
     <fieldset class="universo-form-modal__tipos">
       <legend>Tipos de universo</legend>
 

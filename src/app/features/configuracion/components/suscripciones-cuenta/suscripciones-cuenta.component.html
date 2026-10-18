@@ -1,0 +1,77 @@
+@if (tieneHijos() && estado(); as e) {
+  <section class="seccion">
+    <h2>Suscripciones</h2>
+    <p class="nota">
+      Tus hijos tienen gratis las dos primeras aventuras de cada campaña de su tramo. Con una suscripción pueden jugar todas.
+      De momento el pago es simulado: no se cobra nada.
+    </p>
+
+    @if (e.activas.length > 0) {
+      <ul class="activas">
+        @for (s of e.activas; track s.idSuscripcion) {
+          <li class="activas__item">
+            <div>
+              <strong>{{ s.esPrueba ? 'Prueba gratuita' : 'Suscripción' }} {{ nombrePlan[s.plan].toLowerCase() }}</strong>
+              <p class="activas__detalle">
+                @if (s.esPrueba) {
+                  Hasta el {{ ultimoDia(s) | date: 'dd/MM/yyyy' }}, incluido. No se renueva.
+                } @else if (s.renovacionAutomatica) {
+                  {{ s.importeMensual | precio }} al mes · se renueva el {{ s.fechaFin | date: 'dd/MM/yyyy' }}
+                } @else {
+                  Cancelada: activa hasta el {{ ultimoDia(s) | date: 'dd/MM/yyyy' }}
+                }
+              </p>
+            </div>
+            @if (!s.esPrueba && s.renovacionAutomatica) {
+              <button type="button" (click)="cancelarRenovacion(s)" [disabled]="ocupado()">Cancelar renovación</button>
+            }
+          </li>
+        }
+      </ul>
+    }
+
+    <ul class="planes">
+      @for (p of e.planes; track p.plan) {
+        <li class="planes__item">
+          <span class="planes__nombre">{{ nombrePlan[p.plan] }}</span>
+          <span class="planes__precio">{{ p.precioMensual | precio }} al mes</span>
+          @if (cubierto(p.plan)) {
+            <span class="planes__estado">Activa</span>
+          } @else {
+            <button type="button" class="btn--primary" (click)="elegir(p)" [disabled]="ocupado()">Suscribirme</button>
+          }
+        </li>
+      }
+    </ul>
+
+    @if (confirmando(); as c) {
+      <div class="confirmar">
+        <p>
+          ¿Suscribirte al plan {{ nombrePlan[c.plan].toLowerCase() }} por {{ c.precioMensual | precio }} al mes? Se renueva cada
+          mes y puedes cancelarlo cuando quieras.
+        </p>
+        <div class="acciones">
+          <button type="button" (click)="confirmando.set(null)" [disabled]="ocupado()">Cancelar</button>
+          <button type="button" class="btn--primary" (click)="confirmar()" [disabled]="ocupado()">
+            {{ ocupado() ? 'Pagando…' : 'Pagar (simulado)' }}
+          </button>
+        </div>
+      </div>
+    }
+
+    @if (error()) {
+      <p class="mensaje mensaje--error">{{ error() }}</p>
+    } @else if (mensaje()) {
+      <p class="mensaje mensaje--ok">{{ mensaje() }}</p>
+    }
+
+    <p class="nota">
+      Prueba gratuita de 9 días, una por tramo, sin tarjeta y sin renovación: se activa desde el perfil de tu hijo al tocar
+      una aventura con candado, escribiendo tu contraseña. Te avisaremos por correo antes de que acabe.
+      @if (pruebaUsada('Infantil') || pruebaUsada('Juvenil')) {
+        Ya has usado la de
+        {{ pruebaUsada('Infantil') && pruebaUsada('Juvenil') ? 'los dos tramos' : pruebaUsada('Infantil') ? 'infantil' : 'juvenil' }}.
+      }
+    </p>
+  </section>
+}

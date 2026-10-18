@@ -35,9 +35,10 @@ export class LoginComponent {
             catchError(() => of(null)),
           ),
         ),
+        switchMap(() => this.authService.destinoTrasEntrar()),
       ),
     {
-      onSuccess: () => void this.router.navigate(['/']),
+      onSuccess: (destino) => void this.router.navigateByUrl(destino),
       resolveErrorMessage: mensajeErrorLogin,
     },
   );

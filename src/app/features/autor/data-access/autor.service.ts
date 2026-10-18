@@ -102,6 +102,17 @@ export class AutorService {
     return this.http.post<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Imagen`, formData);
   }
 
+  /** Imagen del universo o de la campaña para el listado infantil. */
+  subirImagenListado(nivel: 'Universo' | 'Campana', id: number, archivo: File): Observable<{ imagenUrl: string | null }> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<{ imagenUrl: string | null }>(`${this.baseUrl}/Autor/${nivel}/${id}/Imagen`, formData);
+  }
+
+  eliminarImagenListado(nivel: 'Universo' | 'Campana', id: number): Observable<{ imagenUrl: string | null }> {
+    return this.http.delete<{ imagenUrl: string | null }>(`${this.baseUrl}/Autor/${nivel}/${id}/Imagen`);
+  }
+
   eliminarImagenAventura(idAventura: number): Observable<AventuraAutor> {
     return this.http.delete<AventuraAutor>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Imagen`);
   }

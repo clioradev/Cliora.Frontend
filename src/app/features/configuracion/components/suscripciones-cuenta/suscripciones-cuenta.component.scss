@@ -1,0 +1,86 @@
+.seccion {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+
+  h2 {
+    font-size: var(--text-md);
+    margin: 0;
+  }
+}
+
+.nota {
+  margin: 0;
+  color: var(--color-text-secondary);
+  font-style: italic;
+}
+
+.activas,
+.planes {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.activas__item,
+.planes__item {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--space-2);
+  padding: var(--space-3) var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.activas__detalle {
+  margin: var(--space-1) 0 0;
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.planes__nombre {
+  flex: 1 1 8rem;
+  font-weight: 600;
+}
+
+.planes__estado {
+  color: var(--color-success);
+  font-weight: 600;
+}
+
+.confirmar {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  p {
+    margin: 0;
+  }
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}
+
+.mensaje {
+  margin: 0;
+  font-size: var(--text-sm);
+
+  &--ok {
+    color: var(--color-success);
+  }
+
+  &--error {
+    color: var(--color-danger);
+  }
+}

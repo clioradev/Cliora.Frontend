@@ -23,4 +23,8 @@
       </button>
     </div>
   </form>
+
+  @if (campana(); as c) {
+    <app-imagen-listado nivel="Campana" [id]="c.idCampana" [imagenUrl]="c.imagenUrl" (cambiada)="c.imagenUrl = $event" />
+  }
 </app-modal>

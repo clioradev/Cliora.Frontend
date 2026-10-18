@@ -1,0 +1,20 @@
+<div class="imagen-listado">
+  <span class="imagen-listado__etiqueta">Imagen</span>
+  @if (url(); as u) {
+    <img class="imagen-listado__img" [src]="u" alt="" />
+  }
+  <input #archivo type="file" accept="image/*" hidden (change)="seleccionar($any($event.target).files); archivo.value = ''" />
+  <button type="button" (click)="archivo.click()" [disabled]="ocupado()">{{ url() ? 'Cambiar' : 'Subir' }}</button>
+  @if (url()) {
+    <button type="button" (click)="quitar()" [disabled]="ocupado()">Quitar</button>
+  }
+</div>
+<small class="imagen-listado__ayuda">
+  Se usa en el listado infantil, que se navega con imágenes.
+  @if (nivel() === 'Universo') {
+    Sin ella se muestra la carátula de su primera aventura.
+  }
+</small>
+@if (error()) {
+  <p class="status status--error">{{ error() }}</p>
+}

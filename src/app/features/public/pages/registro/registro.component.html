@@ -12,6 +12,18 @@
   </label>
 
   <label>
+    Fecha de nacimiento
+    <input type="date" formControlName="fechaNacimiento" autocomplete="bday" [max]="hoy" />
+  </label>
+  @if (form.controls.fechaNacimiento.errors?.['menorDeEdad'] && form.controls.fechaNacimiento.touched) {
+    <p class="registro-form__error">
+      Para crear una cuenta hay que ser mayor de edad. Si eres menor, pide a tu padre o a tu madre que te añada a su cuenta.
+    </p>
+  } @else if (form.controls.fechaNacimiento.errors?.['fechaNoValida'] && form.controls.fechaNacimiento.touched) {
+    <p class="registro-form__error">La fecha de nacimiento no es válida.</p>
+  }
+
+  <label>
     Contraseña
     <input type="password" formControlName="password" autocomplete="new-password" />
   </label>
@@ -29,11 +41,40 @@
     <p class="registro-form__error">Las contraseñas no coinciden.</p>
   }
 
+  @if (!mostrarHijos()) {
+    <button type="button" (click)="abrirHijos()">¿Tienes hijos?</button>
+  } @else {
+    <section class="hijos">
+      <h2>Tus hijos</h2>
+      <p class="registro-form__nota">
+        Cada hijo tendrá su propio perfil dentro de tu cuenta, con sus partidas. No pueden comprar ni verán publicidad, y
+        todos los correos te llegarán a ti. Puedes añadir hasta {{ maximoHijos }}, ahora o más adelante desde Mi cuenta.
+      </p>
+      <p class="registro-form__nota">
+        Las dos primeras aventuras de cada campaña infantil o juvenil son gratis. Para las demás hace falta una suscripción,
+        que puedes probar 9 días gratis, sin tarjeta y sin renovación automática; te avisaremos por correo antes de que
+        acabe la prueba.
+      </p>
+
+      @for (hijo of hijos.controls; track hijo; let i = $index) {
+        <fieldset class="hijos__hijo">
+          <legend>Hijo {{ i + 1 }}</legend>
+          <app-hijo-campos [grupo]="hijo" />
+          <button type="button" class="hijos__quitar" (click)="quitarHijo(i)">Quitar</button>
+        </fieldset>
+      }
+
+      @if (hijos.length < maximoHijos) {
+        <button type="button" (click)="anadirHijo()">Añadir otro hijo</button>
+      }
+    </section>
+  }
+
   @if (error()) {
     <p class="registro-form__error">{{ error() }}</p>
   }
 
-  <button type="submit" class="btn--primary" [disabled]="form.invalid || submitting()">
+  <button type="submit" class="btn--primary" [disabled]="submitting()">
     {{ submitting() ? 'Creando…' : 'Crear cuenta' }}
   </button>
 

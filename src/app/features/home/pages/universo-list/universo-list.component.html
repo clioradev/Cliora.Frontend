@@ -1,3 +1,14 @@
+@if (esInfantil()) {
+  @if (loading() && universos().length === 0) {
+    <p class="status">Cargando…</p>
+  } @else if (error()) {
+    <p class="status status--error">No se ha podido contactar con el servidor.</p>
+  } @else if (universos().length === 0) {
+    <p class="status">Todavía no hay aventuras para ti.</p>
+  } @else {
+    <app-listado-infantil [universos]="universos()" (cambiado)="recargarUniversos()" />
+  }
+} @else {
 @if (aventuraEnCurso(); as c) {
   <section class="aventura-en-curso">
     <h2 class="aventura-en-curso__titulo">Continúa tu aventura</h2>
@@ -148,7 +159,7 @@
             <article class="campana-card">
               <header class="campana-card__header">
                 <h3>{{ campana.titulo }}</h3>
-                @if (campana.bloqueada) {
+                @if (campana.bloqueada && !esHijo()) {
                   <span class="campana-card__candado" title="Campaña entera" data-tutorial="campana-precio">
                     <img src="/media/tienda/candado.svg" alt="De pago" />
                     @if (carrito.contieneCampana(campana.idCampana)) {
@@ -301,6 +312,11 @@
                                 </svg>
                               </a>
                             </div>
+                          } @else if (aventura.requiereSuscripcion) {
+                            <button type="button" class="libro-abierto__desbloquear" (click)="desbloqueando.set(true)">
+                              <img src="/media/tienda/candado-infantil.svg" alt="" />
+                              Desbloquear
+                            </button>
                           } @else if (aventura.bloqueada) {
                             <span class="libro-abierto__precio" data-tutorial="precio">
                               @if (aventura.precioSinDescuento !== null) {
@@ -458,4 +474,9 @@
 
 @if (idAventuraAValorar(); as id) {
   <app-valoracion-modal [idAventura]="id" (cerrado)="onValoracionCerrada()" />
+}
+
+@if (desbloqueando()) {
+  <app-desbloquear-modal (cerrado)="desbloqueando.set(false)" (desbloqueado)="recargarUniversos()" />
+}
 }

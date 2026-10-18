@@ -7,7 +7,10 @@ import { MultiSelectComponent } from '../../../../shared/components/multi-select
 import { TextoRecortadoComponent } from '../../../../shared/components/texto-recortado/texto-recortado.component';
 import { AnchoObservadoDirective } from '../../../../shared/directives/ancho-observado.directive';
 import { PrecioPipe } from '../../../../shared/pipes/precio.pipe';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { CarritoService } from '../../../tienda/data-access/carrito.service';
+import { DesbloquearModalComponent } from '../../components/desbloquear-modal/desbloquear-modal.component';
+import { ListadoInfantilComponent } from '../../components/listado-infantil/listado-infantil.component';
 import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
@@ -54,6 +57,8 @@ interface ContextoAventura {
     TextoRecortadoComponent,
     AnchoObservadoDirective,
     PrecioPipe,
+    ListadoInfantilComponent,
+    DesbloquearModalComponent,
   ],
   templateUrl: './universo-list.component.html',
   styleUrl: './universo-list.component.scss',
@@ -61,7 +66,13 @@ interface ContextoAventura {
 export class UniversoListComponent {
   private readonly universoService = inject(UniversoService);
   private readonly partidaService = inject(PartidaService);
+  private readonly authService = inject(AuthService);
   protected readonly carrito = inject(CarritoService);
+
+  // Los hijos no ven la tienda; el infantil tiene además su propio listado, solo con imágenes.
+  protected readonly esHijo = computed(() => this.authService.currentUser()?.esHijo ?? false);
+  protected readonly esInfantil = computed(() => this.esHijo() && this.authService.currentUser()?.tipoUsuario === 'Infantil');
+  protected readonly desbloqueando = signal(false);
 
   private readonly universosResource = rxResource({
     stream: () => this.universoService.getUniversos(),

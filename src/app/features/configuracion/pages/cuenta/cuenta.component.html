@@ -22,13 +22,25 @@
         <span class="estadisticas__valor">{{ p.valoraciones }}</span>
         <span class="estadisticas__nombre">{{ p.valoraciones === 1 ? 'valoración' : 'valoraciones' }}</span>
       </li>
-      <li class="estadisticas__item">
-        <span class="estadisticas__valor">{{ p.aventurasCompradas }}</span>
-        <span class="estadisticas__nombre">{{ p.aventurasCompradas === 1 ? 'aventura comprada' : 'aventuras compradas' }}</span>
-      </li>
+      @if (!p.esHijo) {
+        <li class="estadisticas__item">
+          <span class="estadisticas__valor">{{ p.aventurasCompradas }}</span>
+          <span class="estadisticas__nombre">{{ p.aventurasCompradas === 1 ? 'aventura comprada' : 'aventuras compradas' }}</span>
+        </li>
+      }
     </ul>
   </section>
 
+  @if (p.esHijo) {
+    <section class="seccion">
+      <h2>Tus datos</h2>
+      <div class="campo">
+        <span class="campo__etiqueta">Nombre</span>
+        <span class="campo__valor">{{ p.nombre }}</span>
+      </div>
+      <p class="status">Tu nombre y tu contraseña los cambia tu padre o tu madre desde su cuenta.</p>
+    </section>
+  } @else {
   @if (p.aventurasGratis; as gratis) {
     <section class="seccion">
       <h2>Aventuras gratis</h2>
@@ -54,6 +66,35 @@
         <p class="mensaje mensaje--error">{{ errorNombre() }}</p>
       } @else if (nombreGuardado()) {
         <p class="mensaje mensaje--ok">Nombre guardado.</p>
+      }
+    </div>
+
+    <div class="campo">
+      <label for="fecha-nacimiento">Fecha de nacimiento</label>
+      <div class="campo__fila">
+        <input
+          id="fecha-nacimiento"
+          type="date"
+          autocomplete="bday"
+          [max]="hoy"
+          [value]="fechaNacimiento()"
+          (input)="onFechaNacimientoInput($event)"
+        />
+        <button
+          type="button"
+          class="btn--primary"
+          (click)="guardarFechaNacimiento()"
+          [disabled]="!fechaCambiada() || guardandoFecha()"
+        >
+          {{ guardandoFecha() ? 'Guardando…' : 'Guardar' }}
+        </button>
+      </div>
+      @if (errorFecha()) {
+        <p class="mensaje mensaje--error">{{ errorFecha() }}</p>
+      } @else if (fechaGuardada()) {
+        <p class="mensaje mensaje--ok">Fecha de nacimiento guardada.</p>
+      } @else if (!p.fechaNacimiento) {
+        <p class="mensaje mensaje--error">Falta tu fecha de nacimiento: es obligatoria para usar Cliora.</p>
       }
     </div>
 
@@ -137,4 +178,12 @@
       }
     </div>
   </section>
+
+  <section class="seccion">
+    <h2>Tus hijos</h2>
+    <app-hijos-cuenta [puedeAnadir]="!!p.fechaNacimiento" (cambiado)="suscripciones.recargar()" />
+  </section>
+
+  <app-suscripciones-cuenta #suscripciones />
+  }
 }

@@ -24,6 +24,8 @@ export interface Aventura {
   /** De pago y sin comprar: se muestra con candado. */
   bloqueada: boolean;
   comprada: boolean;
+  /** Perfil de hijo: bloqueada hasta que el padre se suscriba o active la prueba. */
+  requiereSuscripcion: boolean;
 }
 
 export interface OpcionEnum {
@@ -64,6 +66,8 @@ export interface Campana {
   idCampana: number;
   titulo: string;
   descripcion: string | null;
+  /** Imagen para el listado infantil. */
+  imagenUrl: string | null;
   aventuras: Aventura[];
   puntuacionMedia: number | null;
   ultimaValoracion: UltimaValoracion | null;
@@ -82,6 +86,8 @@ export interface Universo {
   campanas: Campana[];
   tipos: string[];
   fondoUrl: string | null;
+  /** Carátula grande del listado infantil. */
+  imagenUrl: string | null;
   fechaPublicacion: string | null;
   puntuacionMedia: number | null;
   ultimaValoracion: UltimaValoracion | null;

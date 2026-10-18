@@ -1,0 +1,66 @@
+@if (universoAbierto(); as universo) {
+  <button type="button" class="volver" (click)="volver()" aria-label="Volver a todos los mundos">
+    <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M15.5 4 7.5 12l8 8" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" /></svg>
+  </button>
+
+  @for (campana of universo.campanas; track campana.idCampana) {
+    <section class="campana">
+      <header class="campana__cabecera">
+        @if (campana.imagenUrl) {
+          <img class="campana__imagen" [src]="campana.imagenUrl" alt="" />
+        }
+        <h2 class="campana__titulo">{{ campana.titulo }}</h2>
+      </header>
+
+      <ul class="aventuras">
+        @for (aventura of campana.aventuras; track aventura.idAventura) {
+          <li>
+            <button
+              type="button"
+              class="aventura"
+              [class]="'aventura--' + estado(aventura)"
+              (click)="tocar(aventura)"
+              [attr.aria-label]="aventura.titulo"
+            >
+              <span class="aventura__portada">
+                @if (aventura.caratulaUrl) {
+                  <img class="aventura__imagen" [src]="aventura.caratulaUrl" alt="" />
+                } @else {
+                  <img class="aventura__icono" src="/media/logos/Cliora-icono-reducido.png" alt="" />
+                }
+                @if (estado(aventura) === 'candado') {
+                  <img class="aventura__candado" src="/media/tienda/candado-infantil.svg" alt="" />
+                } @else if (estado(aventura) === 'terminada') {
+                  <span class="aventura__estrella" aria-hidden="true">★</span>
+                }
+              </span>
+              <span class="aventura__titulo">{{ aventura.titulo }}</span>
+            </button>
+            @if (avisoEspera() === aventura.idAventura) {
+              <p class="aventura__aviso">Primero termina la anterior.</p>
+            }
+          </li>
+        }
+      </ul>
+    </section>
+  }
+} @else {
+  <ul class="portadas">
+    @for (universo of universos(); track universo.idUniverso) {
+      <li>
+        <button type="button" class="portada" (click)="abrir(universo)" [attr.aria-label]="universo.titulo">
+          @if (portada(universo); as imagen) {
+            <img class="portada__imagen" [src]="imagen" alt="" />
+          } @else {
+            <span class="portada__sin-imagen">{{ universo.titulo }}</span>
+          }
+          <span class="portada__titulo">{{ universo.titulo }}</span>
+        </button>
+      </li>
+    }
+  </ul>
+}
+
+@if (desbloqueando()) {
+  <app-desbloquear-modal (cerrado)="desbloqueando.set(false)" (desbloqueado)="onDesbloqueado()" />
+}

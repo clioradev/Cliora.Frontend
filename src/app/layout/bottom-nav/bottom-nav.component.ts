@@ -21,6 +21,15 @@ const OPCIONES_USUARIO: OpcionMas[] = [
   { texto: 'Contraseña', ruta: '/configuracion/contrasena' },
 ];
 
+// Un hijo no escribe aventuras ni cambia su contraseña (lo hace el padre).
+const OPCIONES_HIJO: OpcionMas[] = [
+  { texto: 'Cliora', ruta: '/cliora' },
+  { texto: 'Mi cuenta', ruta: '/configuracion/cuenta' },
+  { texto: 'Preferencias', ruta: '/configuracion/preferencias' },
+];
+
+const OPCION_PERFILES: OpcionMas = { texto: 'Cambiar de perfil', ruta: '/perfiles' };
+
 // Van bajo el título "Administración" del desplegable, por eso sin el prefijo "Admin:".
 const OPCIONES_ADMIN: OpcionMas[] = [
   { texto: 'Aventuras', ruta: '/admin/aventuras' },
@@ -64,19 +73,42 @@ export class BottomNavComponent {
   protected readonly mostrarAutor = computed(() => this.authService.tieneRol('Autor'));
   private readonly carritoService = inject(CarritoService);
   protected readonly cantidadCarrito = this.carritoService.cantidad;
+  // Los hijos no compran: aunque quede algo en el carrito del padre, no lo ven.
+  protected readonly esHijo = computed(() => this.authService.currentUser()?.esHijo ?? false);
 
   // Burbuja "¡Aventura añadida!" sobre el carrito durante unos segundos tras añadir algo.
   protected readonly burbujaCarrito = signal<{ id: number; texto: string } | null>(null);
   private temporizadorBurbuja: ReturnType<typeof setTimeout> | undefined;
 
-  protected readonly opcionesUsuario = OPCIONES_USUARIO;
+  // Si el adulto tiene hijos, el menú ofrece volver al selector de perfiles.
+  private readonly perfilesResource = rxResource({
+    params: () => {
+      const usuario = this.authService.currentUser();
+      return usuario && !usuario.esHijo ? { id: usuario.idUsuario } : undefined;
+    },
+    stream: () => this.authService.perfiles(),
+  });
+
+  protected readonly opcionesUsuario = computed(() => {
+    const usuario = this.authService.currentUser();
+    if (usuario?.esHijo) {
+      return [...OPCIONES_HIJO, OPCION_PERFILES];
+    }
+    const tieneHijos = (this.perfilesResource.value()?.length ?? 0) > 1;
+    return tieneHijos ? [...OPCIONES_USUARIO, OPCION_PERFILES] : OPCIONES_USUARIO;
+  });
+  // Un perfil de hijo sin contraseña propia se queda fijo en el dispositivo: no puede cerrar sesión.
+  protected readonly puedeCerrarSesion = computed(() => {
+    const usuario = this.authService.currentUser();
+    return !usuario?.esHijo || usuario.accesoPropio;
+  });
   protected readonly opcionesAdmin = computed(() => (this.authService.tieneRol('Administrador') ? OPCIONES_ADMIN : []));
 
   protected readonly menuAbierto = signal(false);
   protected readonly masActivo = computed(() => {
     this.navegacion();
     const url = this.router.url;
-    return ['/cliora', '/escribir', '/configuracion', '/admin'].some((ruta) => url.startsWith(ruta));
+    return ['/cliora', '/escribir', '/configuracion', '/admin', '/perfiles'].some((ruta) => url.startsWith(ruta));
   });
 
   constructor() {

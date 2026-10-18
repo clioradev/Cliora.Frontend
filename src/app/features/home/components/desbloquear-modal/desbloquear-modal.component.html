@@ -1,0 +1,41 @@
+<app-modal (cerrar)="cerrar()" [cerrarAlPulsarFondo]="false">
+  <div class="desbloquear">
+    <img class="desbloquear__candado" src="/media/tienda/candado-infantil.svg" alt="" />
+
+    @if (activada()) {
+      <h2>¡Desbloqueado!</h2>
+      <p>Ya puedes jugar todas las aventuras durante {{ dias() }} días.</p>
+      <button type="button" class="btn--primary" (click)="cerrar()">Seguir</button>
+    } @else if (cargando()) {
+      <p class="desbloquear__texto">Cargando…</p>
+    } @else {
+      <h2>Esta aventura tiene candado</h2>
+      <p class="desbloquear__texto">Para abrirla hace falta tu padre o tu madre.</p>
+
+      @if (estado()?.pruebaDisponible) {
+        <form class="desbloquear__form" (submit)="$event.preventDefault(); activar()">
+          <p class="desbloquear__nota">
+            Si está contigo, puede escribir aquí su contraseña para probar gratis durante {{ dias() }} días todas las
+            aventuras con candado. No hace falta tarjeta y no se renueva sola.
+          </p>
+          <label>
+            Contraseña de tu padre o tu madre
+            <input type="password" autocomplete="off" [value]="password()" (input)="onPasswordInput($event)" />
+          </label>
+          @if (error()) {
+            <p class="desbloquear__error">{{ error() }}</p>
+          }
+          <div class="desbloquear__acciones">
+            <button type="button" (click)="cerrar()" [disabled]="activando()">Ahora no</button>
+            <button type="submit" class="btn--primary" [disabled]="activando() || !password()">
+              {{ activando() ? 'Desbloqueando…' : 'Probar gratis' }}
+            </button>
+          </div>
+        </form>
+      } @else {
+        <p class="desbloquear__nota">Puede abrirla desde su cuenta, en Mi cuenta.</p>
+        <button type="button" (click)="cerrar()">Vale</button>
+      }
+    }
+  </div>
+</app-modal>

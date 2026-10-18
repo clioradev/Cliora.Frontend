@@ -4,12 +4,15 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { switchMap } from 'rxjs';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { asyncAction } from '../../../../core/utils/async-action';
+import { hoyIso } from '../../../../core/utils/tramo-edad';
 import { ProgresoAventuraGratisComponent } from '../../../../shared/components/progreso-aventura-gratis/progreso-aventura-gratis.component';
+import { HijosCuentaComponent } from '../../components/hijos-cuenta/hijos-cuenta.component';
+import { SuscripcionesCuentaComponent } from '../../components/suscripciones-cuenta/suscripciones-cuenta.component';
 import { CuentaService } from '../../data-access/cuenta.service';
 
 @Component({
   selector: 'app-cuenta',
-  imports: [DatePipe, ProgresoAventuraGratisComponent],
+  imports: [DatePipe, ProgresoAventuraGratisComponent, HijosCuentaComponent, SuscripcionesCuentaComponent],
   templateUrl: './cuenta.component.html',
   styleUrl: './cuenta.component.scss',
 })
@@ -32,13 +35,44 @@ export class CuentaComponent {
   });
   protected readonly nombreGuardado = signal(false);
 
+  // --- Fecha de nacimiento ---
+  protected readonly hoy = hoyIso();
+  protected readonly fechaNacimiento = signal('');
+  protected readonly fechaCambiada = computed(() => {
+    const fecha = this.fechaNacimiento();
+    return fecha.length > 0 && fecha !== (this.perfil()?.fechaNacimiento ?? '');
+  });
+  protected readonly fechaGuardada = signal(false);
+
   constructor() {
     effect(() => {
       const perfil = this.perfil();
       if (perfil) {
         this.nombre.set(perfil.nombre);
+        this.fechaNacimiento.set(perfil.fechaNacimiento ?? '');
       }
     });
+  }
+
+  private readonly fechaAction = asyncAction(() => this.cuentaService.cambiarFechaNacimiento(this.fechaNacimiento()), {
+    canRun: () => this.fechaCambiada(),
+    onSuccess: () => {
+      this.fechaGuardada.set(true);
+      this.perfilResource.reload();
+    },
+    defaultErrorMessage: 'No se ha podido guardar la fecha de nacimiento.',
+  });
+  protected readonly guardandoFecha = this.fechaAction.loading;
+  protected readonly errorFecha = this.fechaAction.error;
+
+  protected onFechaNacimientoInput(evento: Event): void {
+    this.fechaNacimiento.set((evento.target as HTMLInputElement).value);
+    this.fechaGuardada.set(false);
+    this.fechaAction.reset();
+  }
+
+  protected guardarFechaNacimiento(): void {
+    this.fechaAction.run();
   }
 
   // Tras el cambio se renueva el token para que el menú y el resto de la app vean el dato nuevo.

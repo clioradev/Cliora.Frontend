@@ -68,6 +68,8 @@ export interface CampanaAutor {
   idCampana: number;
   titulo: string;
   descripcion: string | null;
+  /** Imagen para el listado infantil. */
+  imagenUrl: string | null;
   aventuras: AventuraAutor[];
 }
 
@@ -91,6 +93,8 @@ export interface UniversoAutor {
   esRpg: boolean;
   /** Público: 1 Infantil, 2 Juvenil, 3 Adulto. */
   idCatTipoUsuario: number;
+  /** Carátula grande del listado infantil. */
+  imagenUrl: string | null;
   campanas: CampanaAutor[];
   tipos: UniversoTipoAutor[];
 }

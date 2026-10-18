@@ -39,6 +39,8 @@ export class TutorialService {
     effect(() => {
       const toca =
         this.authService.isAuthenticated() &&
+        // Explica la tienda y el carrito, que los perfiles de hijos no tienen.
+        !this.authService.currentUser()?.esHijo &&
         this.preferenciasAplicadas.tutorialVisto() === false &&
         this.url().split('?')[0] === '/';
       if (toca && untracked(this.indice) === null) {

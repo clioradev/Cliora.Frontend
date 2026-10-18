@@ -4,13 +4,14 @@ import { rxResource } from '@angular/core/rxjs-interop';
 import { FormBuilder, ReactiveFormsModule, Validators } from '@angular/forms';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
+import { ImagenListadoComponent } from '../imagen-listado/imagen-listado.component';
 import { AutorService } from '../../data-access/autor.service';
 import { CatTipoUniversoAutor, PUBLICO_ADULTO, PUBLICO_OPCIONES, UniversoAutor } from '../../models/autor.model';
 import { TIPO_TIRADA_ACIERTOS_4D6, TIPO_TIRADA_OPCIONES } from '../../../home/models/universo.model';
 
 @Component({
   selector: 'app-universo-form-modal',
-  imports: [AreaTextoComponent, ModalComponent, ReactiveFormsModule],
+  imports: [AreaTextoComponent, ModalComponent, ReactiveFormsModule, ImagenListadoComponent],
   templateUrl: './universo-form-modal.component.html',
   styleUrl: './universo-form-modal.component.scss',
 })

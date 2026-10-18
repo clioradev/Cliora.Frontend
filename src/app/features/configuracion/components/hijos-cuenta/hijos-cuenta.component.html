@@ -1,0 +1,134 @@
+@if (cargando() && hijos().length === 0) {
+  <p class="status">Cargando…</p>
+} @else if (errorCarga()) {
+  <p class="status status--error">No se han podido cargar los perfiles de tus hijos.</p>
+} @else {
+  <p class="nota">
+    Cada hijo tiene su propio perfil, con sus partidas. No pueden comprar ni verán publicidad, y todos los correos te
+    llegan a ti. Las dos primeras aventuras de cada campaña infantil o juvenil son gratis; para las demás hace falta una
+    suscripción, que puedes probar 9 días gratis, sin tarjeta y sin renovación automática.
+  </p>
+
+  @if (hijos().length > 0) {
+    <ul class="hijos">
+      @for (hijo of hijos(); track hijo.idUsuario) {
+        <li class="hijos__item">
+          <div class="hijos__cabecera">
+            <span class="hijos__nombre">{{ hijo.nombre }}</span>
+            <span class="hijos__tramo">{{ nombreTramo[hijo.tipoUsuario] }}</span>
+          </div>
+          <p class="hijos__detalle">
+            {{ hijo.tieneAccesoPropio ? 'Con acceso propio' : 'Entra desde tu sesión' }} ·
+            {{ hijo.lecturaAutomatica ? 'Lectura en voz alta activada' : 'Sin lectura en voz alta' }}
+          </p>
+          @if (hijo.tipoPropuesto === 'Adulto') {
+            <p class="nota">Ya es mayor de edad: puede crearse su propia cuenta con su email.</p>
+          } @else if (hijo.tipoPropuesto && hijo.tipoPropuesto !== hijo.tipoUsuario) {
+            <p class="nota">Por su edad ya le corresponde el tramo juvenil. Cámbialo cuando creas que está preparado.</p>
+          }
+
+          @if (!edicion()) {
+            <div class="acciones">
+              <button type="button" (click)="editar(hijo)">Editar</button>
+              @if (hijo.tipoUsuario === 'Juvenil') {
+                <button type="button" (click)="acceso(hijo)">{{ hijo.tieneAccesoPropio ? 'Cambiar acceso' : 'Darle acceso propio' }}</button>
+              }
+              <button type="button" class="btn--peligro" (click)="baja(hijo)">Dar de baja</button>
+            </div>
+          }
+
+          @if (edicion(); as e) {
+            @if (e.tipo === 'editar' && e.hijo.idUsuario === hijo.idUsuario) {
+              <div class="formulario">
+                <app-hijo-campos [grupo]="e.form" [conPassword]="false" [tramoActual]="hijo.tipoUsuario" />
+                @if (error()) {
+                  <p class="mensaje mensaje--error">{{ error() }}</p>
+                }
+                <div class="acciones">
+                  <button type="button" (click)="cancelar()" [disabled]="ocupado()">Cancelar</button>
+                  <button type="button" class="btn--primary" (click)="guardar()" [disabled]="ocupado()">
+                    {{ ocupado() ? 'Guardando…' : 'Guardar' }}
+                  </button>
+                </div>
+              </div>
+            } @else if (e.tipo === 'acceso' && e.hijo.idUsuario === hijo.idUsuario) {
+              <div class="formulario">
+                <p class="nota">
+                  Con acceso propio, {{ hijo.nombre }} entra desde cualquier dispositivo con tu email y su contraseña. Al
+                  cambiarla, se cierran las sesiones que tenga abiertas.
+                </p>
+                <label>
+                  {{ hijo.tieneAccesoPropio ? 'Contraseña nueva' : 'Su contraseña' }}
+                  <input type="password" autocomplete="new-password" [value]="password()" (input)="onPasswordInput($event)" />
+                </label>
+                <p class="nota">Al menos {{ longitudMinima }} caracteres, distinta de la tuya y de la de sus hermanos.</p>
+                @if (error()) {
+                  <p class="mensaje mensaje--error">{{ error() }}</p>
+                }
+                <div class="acciones">
+                  <button type="button" (click)="cancelar()" [disabled]="ocupado()">Cancelar</button>
+                  @if (hijo.tieneAccesoPropio) {
+                    <button type="button" (click)="quitarAcceso(hijo)" [disabled]="ocupado()">Quitar acceso propio</button>
+                  }
+                  <button
+                    type="button"
+                    class="btn--primary"
+                    (click)="guardarAcceso(hijo)"
+                    [disabled]="ocupado() || password().length < longitudMinima"
+                  >
+                    Guardar
+                  </button>
+                </div>
+              </div>
+            } @else if (e.tipo === 'baja' && e.hijo.idUsuario === hijo.idUsuario) {
+              <div class="formulario">
+                <p class="nota">Se perderán sus partidas. Para confirmarlo, escribe tu contraseña.</p>
+                <label>
+                  Tu contraseña
+                  <input type="password" autocomplete="current-password" [value]="password()" (input)="onPasswordInput($event)" />
+                </label>
+                @if (error()) {
+                  <p class="mensaje mensaje--error">{{ error() }}</p>
+                }
+                <div class="acciones">
+                  <button type="button" (click)="cancelar()" [disabled]="ocupado()">Cancelar</button>
+                  <button type="button" class="btn--peligro" (click)="confirmarBaja(hijo)" [disabled]="ocupado() || !password()">
+                    Dar de baja
+                  </button>
+                </div>
+              </div>
+            }
+          }
+        </li>
+      }
+    </ul>
+  }
+
+  @if (mensaje()) {
+    <p class="mensaje mensaje--ok">{{ mensaje() }}</p>
+  }
+
+  @if (edicion(); as e) {
+    @if (e.tipo === 'nuevo') {
+      <div class="formulario">
+        <h3>Nuevo perfil</h3>
+        <app-hijo-campos [grupo]="e.form" />
+        @if (error()) {
+          <p class="mensaje mensaje--error">{{ error() }}</p>
+        }
+        <div class="acciones">
+          <button type="button" (click)="cancelar()" [disabled]="ocupado()">Cancelar</button>
+          <button type="button" class="btn--primary" (click)="guardar()" [disabled]="ocupado()">
+            {{ ocupado() ? 'Guardando…' : 'Añadir' }}
+          </button>
+        </div>
+      </div>
+    }
+  } @else if (!puedeAnadir()) {
+    <p class="nota">Para añadir hijos, indica antes tu fecha de nacimiento.</p>
+  } @else if (caben()) {
+    <button type="button" (click)="nuevo()">Añadir un hijo</button>
+  } @else {
+    <p class="nota">Ya tienes {{ maximoHijos }} perfiles de hijos, el máximo.</p>
+  }
+}

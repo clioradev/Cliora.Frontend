@@ -1,0 +1,69 @@
+<div class="hijo" [formGroup]="grupo()">
+  <label>
+    Nombre
+    <input type="text" formControlName="nombre" maxlength="100" autocomplete="off" />
+  </label>
+
+  <label>
+    Fecha de nacimiento
+    <input type="date" formControlName="fechaNacimiento" [max]="hoy" />
+  </label>
+
+  @if (grupo().errors?.['mayorDeEdad']) {
+    <p class="hijo__error">Es mayor de edad: tiene que crearse su propia cuenta con su email.</p>
+  } @else if (grupo().errors?.['fechaFutura']) {
+    <p class="hijo__error">La fecha no puede ser futura.</p>
+  } @else if (tramos().length > 0) {
+    <label>
+      Tramo
+      <select formControlName="tipoUsuario">
+        @for (tramo of tramos(); track tramo) {
+          <option [value]="tramo">{{ nombreTramo[tramo] }}</option>
+        }
+      </select>
+    </label>
+
+    @if (tramoActual() && propuesto() && propuesto() !== tramoActual()) {
+      <p class="hijo__nota">Por su edad ya le corresponde el tramo {{ propuesto() === 'Juvenil' ? 'juvenil' : 'infantil' }}. El cambio no es automático: decides tú cuándo hacerlo.</p>
+    } @else if (propuesto() === 'Infantil') {
+      <p class="hijo__nota">Por su edad le corresponde el tramo infantil, pero puedes pasarlo a juvenil si crees que está preparado.</p>
+    }
+
+    @if (tipo() === 'Infantil') {
+      <p class="hijo__nota">
+        Los perfiles infantiles no tienen contraseña: entrará desde tu sesión, eligiendo su perfil en el dispositivo, que se
+        quedará en su perfil. Para volver al tuyo se te pedirá tu contraseña.
+      </p>
+    } @else if (tipo() === 'Juvenil') {
+      <p class="hijo__nota">
+        Puede entrar desde tu sesión, eligiendo su perfil, o, si le das acceso propio, desde cualquier dispositivo con tu
+        email y su propia contraseña.
+      </p>
+      @if (conPassword()) {
+        <label class="hijo__check">
+          <input type="checkbox" formControlName="accesoPropio" />
+          Darle acceso propio con su contraseña
+        </label>
+        @if (grupo().controls.accesoPropio.value) {
+          <label>
+            Su contraseña
+            <input type="password" formControlName="password" autocomplete="new-password" />
+          </label>
+          <p class="hijo__nota">Al menos {{ longitudMinima }} caracteres, distinta de la tuya y de la de sus hermanos.</p>
+          @if (grupo().errors?.['passwordCorta'] && grupo().controls.password.touched) {
+            <p class="hijo__error">La contraseña es demasiado corta.</p>
+          }
+        }
+      }
+    }
+
+    <label class="hijo__check">
+      <input type="checkbox" formControlName="lecturaAutomatica" />
+      Leerle las aventuras en voz alta
+    </label>
+    <p class="hijo__nota">
+      La lectura en voz alta no se activa sola: hay familias que prefieren leer ellas. Puedes cambiarlo cuando quieras en
+      Mi cuenta.
+    </p>
+  }
+</div>

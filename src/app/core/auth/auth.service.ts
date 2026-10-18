@@ -3,7 +3,7 @@ import { computed, inject, Injectable, signal } from '@angular/core';
 import { catchError, finalize, map, Observable, of, shareReplay, tap } from 'rxjs';
 import { API_BASE_URL } from '../api/api-base-url.token';
 import { LoginResponse } from './login-response.model';
-import { Usuario } from './usuario.model';
+import { DatosRegistro, PerfilFamilia, Usuario } from './usuario.model';
 
 @Injectable({ providedIn: 'root' })
 export class AuthService {
@@ -29,8 +29,37 @@ export class AuthService {
       .pipe(tap((response) => this.setSession(response)));
   }
 
-  register(nombre: string, email: string, password: string): Observable<Usuario> {
-    return this.http.post<Usuario>(`${this.baseUrl}/Permiso/Registrar`, { nombre, email, password });
+  register(datos: DatosRegistro): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Permiso/Registrar`, datos);
+  }
+
+  perfiles(): Observable<PerfilFamilia[]> {
+    return this.http.get<PerfilFamilia[]>(`${this.baseUrl}/Permiso/Perfiles`);
+  }
+
+  /** Deja el dispositivo en el perfil de un hijo (sesión larga). */
+  entrarEnPerfil(idHijo: number): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${this.baseUrl}/Permiso/Perfil/${idHijo}`, null, { withCredentials: true })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  /** Desde el perfil de un hijo, vuelve al del padre con su contraseña. */
+  volverAlPadre(password: string): Observable<LoginResponse> {
+    return this.http
+      .post<LoginResponse>(`${this.baseUrl}/Permiso/VolverAlPadre`, { password }, { withCredentials: true })
+      .pipe(tap((response) => this.setSession(response)));
+  }
+
+  /** Tras entrar: el selector de perfiles si el adulto tiene hijos; si no, el listado. */
+  destinoTrasEntrar(): Observable<string> {
+    if (this._currentUser()?.esHijo) {
+      return of('/');
+    }
+    return this.perfiles().pipe(
+      map((perfiles) => (perfiles.length > 1 ? '/perfiles' : '/')),
+      catchError(() => of('/')),
+    );
   }
 
   confirmarRegistro(email: string, codigo: string): Observable<LoginResponse> {

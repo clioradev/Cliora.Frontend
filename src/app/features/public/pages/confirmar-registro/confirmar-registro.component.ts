@@ -38,9 +38,10 @@ export class ConfirmarRegistroComponent {
             catchError(() => of(null)),
           ),
         ),
+        switchMap(() => this.authService.destinoTrasEntrar()),
       ),
     {
-      onSuccess: () => void this.router.navigate(['/']),
+      onSuccess: (destino) => void this.router.navigateByUrl(destino),
       defaultErrorMessage: 'El código no es válido o ha caducado.',
     },
   );

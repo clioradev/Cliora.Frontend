@@ -73,6 +73,8 @@
           <button type="button" class="btn--primary" (click)="empezarPartida()" [disabled]="starting() || !a.idVersionAventura">
             {{ starting() ? 'Empezando…' : 'Empezar partida' }}
           </button>
+        } @else if (a.requiereSuscripcion) {
+          <button type="button" class="btn--primary" (click)="desbloqueando.set(true)">Desbloquear</button>
         } @else if (!a.estadoPartida) {
           <span class="detalle__bloqueada">Completa la aventura anterior para desbloquearla</span>
         }
@@ -88,6 +90,10 @@
       }
     </section>
   </div>
+
+  @if (desbloqueando()) {
+    <app-desbloquear-modal (cerrado)="desbloqueando.set(false)" (desbloqueado)="cambiado.emit()" />
+  }
 </div>
 
 @if (opinionesAbiertas()) {

@@ -1,0 +1,33 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  margin-top: var(--space-4);
+}
+
+.imagen-listado {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+
+  &__etiqueta {
+    font-weight: 600;
+  }
+
+  &__img {
+    width: 4rem;
+    height: 4rem;
+    border-radius: var(--radius-md);
+    object-fit: cover;
+  }
+
+  &__ayuda {
+    color: var(--color-text-secondary);
+  }
+}
+
+.status--error {
+  margin: 0;
+  color: var(--color-danger);
+}

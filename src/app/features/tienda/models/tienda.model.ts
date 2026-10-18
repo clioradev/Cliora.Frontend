@@ -42,3 +42,29 @@ export interface CompraRealizada {
   idCompra: number;
   total: number;
 }
+
+/** Una aventura comprada en «Mis compras». */
+export interface CompraUsuario {
+  idCompraAventura: number;
+  idCompra: number;
+  fechaCompra: string;
+  idAventura: number;
+  tituloAventura: string;
+  tituloCampana: string;
+  tituloUniverso: string;
+  esLibro: boolean;
+  /** Comprada con la campaña entera: se devuelve con el resto del pack. */
+  idCampanaPack: number | null;
+  importe: number;
+  esGratuitaPorCredito: boolean;
+  estado: 'Activa' | 'Devuelta';
+  fechaDevolucion: string | null;
+  puedeDevolverse: boolean;
+  /** Por qué no se puede devolver, si está activa y no se puede. */
+  motivoNoDevolvible: string | null;
+}
+
+export interface DevolucionRealizada {
+  importeDevuelto: number;
+  aventurasGratisDevueltas: number;
+}

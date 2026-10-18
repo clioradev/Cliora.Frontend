@@ -7,6 +7,7 @@ import {
   AventuraAdmin,
   CambioTexto,
   CatTipoUniversoAdmin,
+  EstadisticasAdmin,
   GuardarCatTipoUniversoRequest,
   GuardarPrecioRequest,
   ParametroAdmin,
@@ -84,6 +85,10 @@ export class AdminService {
 
   guardarPrecio(idAventura: number, precio: GuardarPrecioRequest): Observable<void> {
     return this.http.put<void>(`${this.baseUrl}/Admin/Aventura/${idAventura}/Precio`, precio);
+  }
+
+  obtenerEstadisticas(): Observable<EstadisticasAdmin> {
+    return this.http.get<EstadisticasAdmin>(`${this.baseUrl}/Admin/Estadisticas`);
   }
 
   obtenerParametros(): Observable<ParametroAdmin[]> {

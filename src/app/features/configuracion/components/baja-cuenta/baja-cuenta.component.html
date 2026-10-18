@@ -1,0 +1,94 @@
+@switch (paso()) {
+  @case ('codigo') {
+    <div class="baja-form">
+      <p>
+        Te hemos enviado un código de 6 cifras a <strong>{{ email() }}</strong>, con todo lo que supone darse de baja.
+        Caduca en 15 minutos.
+      </p>
+      <label>
+        Código
+        <input
+          type="text"
+          inputmode="numeric"
+          maxlength="6"
+          autocomplete="one-time-code"
+          [value]="codigo()"
+          (input)="onCodigoInput($event)"
+        />
+      </label>
+      @if (errorComprobar()) {
+        <p class="mensaje mensaje--error">{{ errorComprobar() }}</p>
+      }
+      @if (errorReenviar()) {
+        <p class="mensaje mensaje--error">{{ errorReenviar() }}</p>
+      } @else if (codigoReenviado()) {
+        <p class="mensaje mensaje--ok">Te hemos enviado un código nuevo.</p>
+      }
+      <div class="acciones">
+        <button type="button" (click)="cancelar()" [disabled]="cancelando() || comprobando()">No darme de baja</button>
+        <button type="button" (click)="reenviar()" [disabled]="reenviando() || comprobando()">
+          {{ reenviando() ? 'Reenviando…' : 'Reenviar código' }}
+        </button>
+        <button type="button" class="btn--primary" (click)="comprobar()" [disabled]="comprobando() || !codigo().trim()">
+          {{ comprobando() ? 'Comprobando…' : 'Continuar' }}
+        </button>
+      </div>
+    </div>
+  }
+  @case ('motivo') {
+    <div class="baja-form">
+      <p>
+        Último paso. Antes de irte, ¿nos cuentas por qué? Es opcional, pero nos ayuda mucho a mejorar.
+      </p>
+      <label>
+        Por qué te vas (opcional)
+        <textarea
+          rows="4"
+          [attr.maxlength]="longitudMaximaMotivo"
+          [value]="motivo()"
+          (input)="onMotivoInput($event)"
+        ></textarea>
+      </label>
+      <p class="aviso">
+        Al pulsar «Dar de baja mi cuenta» perderás tus compras, tu progreso y los perfiles de tus hijos.
+        <strong>No hay vuelta atrás.</strong>
+      </p>
+      @if (errorConfirmar()) {
+        <p class="mensaje mensaje--error">{{ errorConfirmar() }}</p>
+      }
+      <div class="acciones">
+        <button type="button" (click)="cancelar()" [disabled]="cancelando() || confirmando()">No darme de baja</button>
+        <button type="button" class="btn--danger" (click)="confirmar()" [disabled]="confirmando()">
+          {{ confirmando() ? 'Dando de baja…' : 'Dar de baja mi cuenta' }}
+        </button>
+      </div>
+    </div>
+  }
+  @default {
+    <p class="status">
+      Si te das de baja se borrará tu cuenta, con tus compras, tu progreso y los perfiles de tus hijos.
+    </p>
+    <button type="button" class="btn--danger" (click)="abrirAviso()">Darme de baja</button>
+  }
+}
+
+@if (paso() === 'aviso') {
+  <app-modal (cerrar)="cerrarAviso()">
+    <h3>¿Seguro que quieres darte de baja?</h3>
+    <p>
+      Perderás todas las aventuras y libros que hayas comprado, todo tu progreso y, si los tienes, los perfiles de tus
+      hijos. No se devuelve el dinero de las compras ni de las suscripciones.
+    </p>
+    <p><strong>Una vez hecha, la baja no tiene vuelta atrás.</strong></p>
+    <p>Para confirmarlo te enviaremos un código a {{ email() }}.</p>
+    @if (errorSolicitar()) {
+      <p class="mensaje mensaje--error">{{ errorSolicitar() }}</p>
+    }
+    <div class="acciones">
+      <button type="button" (click)="cerrarAviso()" [disabled]="solicitando()">Cancelar</button>
+      <button type="button" class="btn--danger" (click)="solicitar()" [disabled]="solicitando()">
+        {{ solicitando() ? 'Enviando…' : 'Sí, enviarme el código' }}
+      </button>
+    </div>
+  </app-modal>
+}

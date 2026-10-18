@@ -124,3 +124,14 @@
     color: var(--color-danger);
   }
 }
+
+.casilla {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-2);
+  cursor: pointer;
+
+  input {
+    margin-top: 0.2rem;
+  }
+}

@@ -1,0 +1,110 @@
+<h1>Mis compras</h1>
+
+<p class="ayuda">
+  Puedes devolver una aventura o un libro mientras no hayas pasado del progreso que te indicamos al comprar ni lo hayas
+  terminado; si ya no se puede, te decimos por qué. Una campaña comprada entera se devuelve entera. Al devolverla
+  dejarás de poder jugarla y se borrará su progreso.
+</p>
+
+@if (devuelto(); as d) {
+  <p class="mensaje mensaje--ok">
+    Has devuelto {{ d.titulo }}.
+    @if (d.resultado.importeDevuelto > 0) {
+      Te devolvemos {{ d.resultado.importeDevuelto | precio }}.
+    }
+    @if (d.resultado.aventurasGratisDevueltas > 0) {
+      Recuperas {{ textoAventurasGratis(d.resultado.aventurasGratisDevueltas) }}.
+    }
+  </p>
+}
+
+@if (cargando() && elementos().length === 0) {
+  <p class="status">Cargando…</p>
+} @else if (errorCarga()) {
+  <p class="status status--error">No se han podido cargar tus compras.</p>
+} @else if (elementos().length === 0) {
+  <p class="status">Todavía no has comprado nada.</p>
+} @else {
+  <ul class="compras">
+    @for (elemento of elementos(); track elemento.clave) {
+      <li class="compra" [class.compra--devuelta]="elemento.devuelta">
+        <div class="compra__cabecera">
+          <div>
+            <h2 class="compra__titulo">
+              @if (elemento.esPack) {
+                Campaña «{{ elemento.lineas[0].tituloCampana }}»
+              } @else {
+                {{ elemento.lineas[0].tituloAventura }}
+                @if (elemento.lineas[0].esLibro) {
+                  <span class="etiqueta">Libro</span>
+                }
+              }
+            </h2>
+            <p class="compra__subtitulo">{{ elemento.subtitulo }}</p>
+          </div>
+          <div class="compra__importe">
+            @if (elemento.importe > 0 || elemento.aventurasGratis === 0) {
+              <span>{{ elemento.importe | precio }}</span>
+            }
+            @if (elemento.aventurasGratis > 0) {
+              <span class="compra__gratis">{{ textoAventurasGratis(elemento.aventurasGratis) }}</span>
+            }
+          </div>
+        </div>
+
+        @if (elemento.esPack) {
+          <ul class="compra__aventuras">
+            @for (linea of elemento.lineas; track linea.idCompraAventura) {
+              <li>
+                {{ linea.tituloAventura }}
+                @if (linea.esLibro) {
+                  <span class="etiqueta">Libro</span>
+                }
+              </li>
+            }
+          </ul>
+        }
+
+        <div class="compra__pie">
+          <span class="compra__fecha">Comprada el {{ elemento.fechaCompra | date: 'dd/MM/yyyy' }}</span>
+          @if (elemento.devuelta) {
+            <span class="compra__estado">Devuelta el {{ elemento.fechaDevolucion | date: 'dd/MM/yyyy' }}</span>
+          } @else if (elemento.puedeDevolverse) {
+            <button type="button" (click)="pedirDevolucion(elemento)">
+              {{ elemento.esPack ? 'Devolver campaña' : 'Devolver' }}
+            </button>
+          } @else if (elemento.motivoNoDevolvible) {
+            <span class="compra__motivo">{{ elemento.motivoNoDevolvible }}</span>
+          }
+        </div>
+      </li>
+    }
+  </ul>
+}
+
+@if (aDevolver(); as elemento) {
+  <app-modal (cerrar)="cerrarModal()">
+    <h3>¿Devolver {{ elemento.titulo }}?</h3>
+    @if (elemento.esPack) {
+      <p>Se devuelven a la vez todas las aventuras que compraste con la campaña.</p>
+    }
+    <p>
+      @if (elemento.importe > 0) {
+        Te devolveremos {{ elemento.importe | precio }}.
+      }
+      @if (elemento.aventurasGratis > 0) {
+        Recuperarás {{ textoAventurasGratis(elemento.aventurasGratis) }}.
+      }
+      Dejarás de poder jugar y se borrará el progreso. Podrás volver a comprar cuando quieras.
+    </p>
+    @if (errorDevolver()) {
+      <p class="mensaje mensaje--error">{{ errorDevolver() }}</p>
+    }
+    <div class="acciones">
+      <button type="button" (click)="cerrarModal()" [disabled]="devolviendo()">Cancelar</button>
+      <button type="button" class="btn--primary" (click)="confirmarDevolucion()" [disabled]="devolviendo()">
+        {{ devolviendo() ? 'Devolviendo…' : 'Sí, devolver' }}
+      </button>
+    </div>
+  </app-modal>
+}

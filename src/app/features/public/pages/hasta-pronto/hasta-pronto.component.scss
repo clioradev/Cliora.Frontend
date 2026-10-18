@@ -1,0 +1,10 @@
+.hasta-pronto {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+
+  h1,
+  p {
+    margin: 0;
+  }
+}

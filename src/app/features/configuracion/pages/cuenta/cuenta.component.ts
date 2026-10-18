@@ -6,13 +6,20 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { hoyIso } from '../../../../core/utils/tramo-edad';
 import { ProgresoAventuraGratisComponent } from '../../../../shared/components/progreso-aventura-gratis/progreso-aventura-gratis.component';
+import { BajaCuentaComponent } from '../../components/baja-cuenta/baja-cuenta.component';
 import { HijosCuentaComponent } from '../../components/hijos-cuenta/hijos-cuenta.component';
 import { SuscripcionesCuentaComponent } from '../../components/suscripciones-cuenta/suscripciones-cuenta.component';
 import { CuentaService } from '../../data-access/cuenta.service';
 
 @Component({
   selector: 'app-cuenta',
-  imports: [DatePipe, ProgresoAventuraGratisComponent, HijosCuentaComponent, SuscripcionesCuentaComponent],
+  imports: [
+    BajaCuentaComponent,
+    DatePipe,
+    ProgresoAventuraGratisComponent,
+    HijosCuentaComponent,
+    SuscripcionesCuentaComponent,
+  ],
   templateUrl: './cuenta.component.html',
   styleUrl: './cuenta.component.scss',
 })
@@ -44,14 +51,38 @@ export class CuentaComponent {
   });
   protected readonly fechaGuardada = signal(false);
 
+  // --- Comunicaciones ---
+  protected readonly sinComunicaciones = signal(false);
+  protected readonly comunicacionesGuardadas = signal(false);
+
   constructor() {
     effect(() => {
       const perfil = this.perfil();
       if (perfil) {
         this.nombre.set(perfil.nombre);
         this.fechaNacimiento.set(perfil.fechaNacimiento ?? '');
+        this.sinComunicaciones.set(perfil.sinComunicaciones);
       }
     });
+  }
+
+  private readonly comunicacionesAction = asyncAction(
+    (sinComunicaciones: boolean) => this.cuentaService.cambiarComunicaciones(sinComunicaciones),
+    {
+      onSuccess: () => this.comunicacionesGuardadas.set(true),
+      // Si no se ha guardado, la casilla vuelve a como estaba.
+      onError: (_, sinComunicaciones) => this.sinComunicaciones.set(!sinComunicaciones),
+      defaultErrorMessage: 'No se ha podido guardar.',
+    },
+  );
+  protected readonly guardandoComunicaciones = this.comunicacionesAction.loading;
+  protected readonly errorComunicaciones = this.comunicacionesAction.error;
+
+  protected onComunicacionesChange(evento: Event): void {
+    const sinComunicaciones = (evento.target as HTMLInputElement).checked;
+    this.sinComunicaciones.set(sinComunicaciones);
+    this.comunicacionesGuardadas.set(false);
+    this.comunicacionesAction.run(sinComunicaciones);
   }
 
   private readonly fechaAction = asyncAction(() => this.cuentaService.cambiarFechaNacimiento(this.fechaNacimiento()), {

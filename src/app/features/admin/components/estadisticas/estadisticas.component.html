@@ -1,0 +1,156 @@
+<h1>Admin: Estadísticas</h1>
+
+@if (error()) {
+  <p class="status status--error">No se han podido cargar las estadísticas.</p>
+} @else if (cargando() && !estadisticas()) {
+  <p>Cargando…</p>
+} @else if (estadisticas(); as e) {
+  <div class="bloques">
+    <section class="bloque">
+      <h2>Usuarios</h2>
+      <dl class="datos">
+        <div><dt>Adultos</dt><dd>{{ e.usuariosAdultos }}</dd></div>
+        <div><dt>Juveniles</dt><dd>{{ e.usuariosJuveniles }}</dd></div>
+        <div><dt>Infantiles</dt><dd>{{ e.usuariosInfantiles }}</dd></div>
+        <div><dt>Familias (adultos con hijos)</dt><dd>{{ e.familias }}</dd></div>
+        <div><dt>Adultos nuevos (30 días)</dt><dd>{{ e.adultosNuevos30Dias }}</dd></div>
+        <div><dt>Han entrado (30 días)</dt><dd>{{ e.usuariosActivos30Dias }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="bloque">
+      <h2>Suscripciones</h2>
+      <dl class="datos">
+        <div><dt>Infantiles de pago</dt><dd>{{ e.suscripcionesInfantiles }}</dd></div>
+        <div><dt>Juveniles de pago</dt><dd>{{ e.suscripcionesJuveniles }}</dd></div>
+        <div><dt>Pruebas infantiles en curso</dt><dd>{{ e.pruebasInfantiles }}</dd></div>
+        <div><dt>Pruebas juveniles en curso</dt><dd>{{ e.pruebasJuveniles }}</dd></div>
+        <div><dt>Ingreso mensual</dt><dd>{{ euros(e.ingresoMensualSuscripciones) }}</dd></div>
+        <div>
+          <dt>Pruebas que acabaron en pago</dt>
+          <dd>{{ e.pruebasConvertidas }} de {{ e.pruebasTerminadas }} ({{ porcentajeTexto(porcentajeConversion()) }})</dd>
+        </div>
+      </dl>
+      <p class="nota">Las de «ambas» cuentan en los dos tramos.</p>
+    </section>
+
+    <section class="bloque">
+      <h2>Compras</h2>
+      <dl class="datos">
+        <div><dt>Aventuras interactivas</dt><dd>{{ e.aventurasInteractivasCompradas }}</dd></div>
+        <div><dt>Libros</dt><dd>{{ e.librosComprados }}</dd></div>
+        <div><dt>Ingresos</dt><dd>{{ euros(e.ingresosCompras) }}</dd></div>
+        <div><dt>Canjeadas con aventuras gratis</dt><dd>{{ e.canjeadasConAventuraGratis }}</dd></div>
+        <div><dt>Devoluciones</dt><dd>{{ e.devoluciones }}</dd></div>
+      </dl>
+    </section>
+
+    <section class="bloque">
+      <h2>Partidas y valoraciones</h2>
+      <dl class="datos">
+        <div><dt>Partidas empezadas</dt><dd>{{ e.partidasEmpezadas }}</dd></div>
+        <div><dt>En curso</dt><dd>{{ e.partidasEnCurso }}</dd></div>
+        <div><dt>Aventuras completadas</dt><dd>{{ e.aventurasCompletadas }}</dd></div>
+        <div><dt>Finalización</dt><dd>{{ porcentajeTexto(porcentajeFinalizacion()) }}</dd></div>
+        <div><dt>Valoraciones</dt><dd>{{ e.valoraciones }}</dd></div>
+        <div><dt>Media de valoración</dt><dd>{{ media(e.mediaValoraciones) }}</dd></div>
+      </dl>
+    </section>
+  </div>
+
+  <section class="detalle">
+    <div class="detalle__cabecera">
+      <h2>Por universo, campaña y aventura</h2>
+      <label class="detalle__agrupar">
+        Agrupar por
+        <select [value]="agrupacion()" (change)="onAgrupacionChange($event)">
+          @for (opcion of agrupaciones; track opcion.valor) {
+            <option [value]="opcion.valor">{{ opcion.etiqueta }}</option>
+          }
+        </select>
+      </label>
+    </div>
+    <p class="nota">
+      Pulsa una columna para ordenar por ella. Compras sin las regaladas al poner precio a una aventura ya empezada.
+    </p>
+
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col" class="texto" [attr.aria-sort]="ordenAria('nombre')">
+              <button type="button" (click)="ordenarPor('nombre')">Universo{{ indicador('nombre') }}</button>
+            </th>
+            @if (agrupacion() !== 'universo') {
+              <th scope="col" class="texto">Campaña</th>
+            }
+            @if (agrupacion() === 'aventura') {
+              <th scope="col" class="texto">Aventura</th>
+            }
+            <th scope="col" [attr.aria-sort]="ordenAria('partidasEmpezadas')">
+              <button type="button" (click)="ordenarPor('partidasEmpezadas')">Partidas{{ indicador('partidasEmpezadas') }}</button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('completadas')">
+              <button type="button" (click)="ordenarPor('completadas')">Completadas{{ indicador('completadas') }}</button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('porcentajeFinalizacion')">
+              <button type="button" (click)="ordenarPor('porcentajeFinalizacion')">
+                Finalización{{ indicador('porcentajeFinalizacion') }}
+              </button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('duracionMediaMinutos')">
+              <button type="button" (click)="ordenarPor('duracionMediaMinutos')">
+                Duración media{{ indicador('duracionMediaMinutos') }}
+              </button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('compras')">
+              <button type="button" (click)="ordenarPor('compras')">Compras{{ indicador('compras') }}</button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('ingresos')">
+              <button type="button" (click)="ordenarPor('ingresos')">Ingresos{{ indicador('ingresos') }}</button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('valoraciones')">
+              <button type="button" (click)="ordenarPor('valoraciones')">Valoraciones{{ indicador('valoraciones') }}</button>
+            </th>
+            <th scope="col" [attr.aria-sort]="ordenAria('mediaValoraciones')">
+              <button type="button" (click)="ordenarPor('mediaValoraciones')">Media{{ indicador('mediaValoraciones') }}</button>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (fila of filas(); track fila.clave) {
+            <tr [class.no-visible]="!fila.visible">
+              <td class="texto">{{ fila.universo }}</td>
+              @if (fila.campana !== null) {
+                <td class="texto">{{ fila.campana }}</td>
+              }
+              @if (fila.aventura !== null) {
+                <td class="texto">
+                  {{ fila.aventura }}
+                  @if (fila.esLibro) {
+                    <span class="etiqueta etiqueta--libro">Libro</span>
+                  }
+                  @if (!fila.visible) {
+                    <span class="etiqueta">No publicada</span>
+                  }
+                </td>
+              }
+              <td>{{ fila.partidasEmpezadas }}</td>
+              <td>{{ fila.completadas }}</td>
+              <td>{{ porcentajeTexto(fila.porcentajeFinalizacion) }}</td>
+              <td>{{ duracion(fila.duracionMediaMinutos) }}</td>
+              <td>{{ fila.compras }}</td>
+              <td>{{ euros(fila.ingresos) }}</td>
+              <td>{{ fila.valoraciones }}</td>
+              <td>{{ media(fila.mediaValoraciones) }}</td>
+            </tr>
+          } @empty {
+            <tr>
+              <td class="texto" colspan="11">Todavía no hay aventuras.</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+}

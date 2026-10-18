@@ -17,6 +17,7 @@ const OPCIONES_USUARIO: OpcionMas[] = [
   { texto: 'Cliora', ruta: '/cliora' },
   { texto: '¿Te gusta escribir?', ruta: '/escribir' },
   { texto: 'Mi cuenta', ruta: '/configuracion/cuenta' },
+  { texto: 'Mis compras', ruta: '/compras' },
   { texto: 'Preferencias', ruta: '/configuracion/preferencias' },
   { texto: 'Contraseña', ruta: '/configuracion/contrasena' },
 ];
@@ -38,6 +39,7 @@ const OPCIONES_ADMIN: OpcionMas[] = [
   { texto: 'Editar aventuras', ruta: '/admin/editar-aventuras' },
   { texto: 'Precios', ruta: '/admin/precios' },
   { texto: 'Parámetros', ruta: '/admin/parametros' },
+  { texto: 'Estadísticas', ruta: '/admin/estadisticas' },
 ];
 
 @Component({

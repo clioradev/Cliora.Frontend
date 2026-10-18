@@ -6,7 +6,13 @@ import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ImagenListadoComponent } from '../imagen-listado/imagen-listado.component';
 import { AutorService } from '../../data-access/autor.service';
-import { CatTipoUniversoAutor, PUBLICO_ADULTO, PUBLICO_OPCIONES, UniversoAutor } from '../../models/autor.model';
+import {
+  CatTipoUniversoAutor,
+  CatUniversoEdad,
+  EDAD_UNIVERSO_ADULTOS,
+  etiquetaEdadUniverso,
+  UniversoAutor,
+} from '../../models/autor.model';
 import { TIPO_TIRADA_ACIERTOS_4D6, TIPO_TIRADA_OPCIONES } from '../../../home/models/universo.model';
 
 @Component({
@@ -31,11 +37,11 @@ export class UniversoFormModalComponent {
     descripcion: [''],
     tipoTirada: [TIPO_TIRADA_ACIERTOS_4D6],
     esRpg: [true],
-    idCatTipoUsuario: [PUBLICO_ADULTO],
+    idCatUniversoEdad: [EDAD_UNIVERSO_ADULTOS],
   });
 
   protected readonly tipoTiradaOpciones = TIPO_TIRADA_OPCIONES;
-  protected readonly publicoOpciones = PUBLICO_OPCIONES;
+  protected readonly etiquetaEdad = etiquetaEdadUniverso;
   private readonly tipoTiradaElegido = signal(TIPO_TIRADA_ACIERTOS_4D6);
   protected readonly ayudaTipoTirada = computed(
     () => TIPO_TIRADA_OPCIONES.find((o) => o.valor === this.tipoTiradaElegido())?.ayuda ?? '',
@@ -50,6 +56,12 @@ export class UniversoFormModalComponent {
   });
   protected readonly tiposCatalogo = this.tiposCatalogoResource.value;
 
+  private readonly edadesCatalogoResource = rxResource({
+    stream: () => this.autorService.getCatalogoEdadesUniverso(),
+    defaultValue: [] as CatUniversoEdad[],
+  });
+  protected readonly edadesCatalogo = this.edadesCatalogoResource.value;
+
   constructor() {
     this.form.controls.tipoTirada.valueChanges.subscribe((valor) => this.tipoTiradaElegido.set(Number(valor)));
 
@@ -62,7 +74,7 @@ export class UniversoFormModalComponent {
           descripcion: universo.descripcion ?? '',
           tipoTirada: universo.tipoTirada ?? TIPO_TIRADA_ACIERTOS_4D6,
           esRpg: universo.esRpg ?? true,
-          idCatTipoUsuario: universo.idCatTipoUsuario ?? PUBLICO_ADULTO,
+          idCatUniversoEdad: universo.idCatUniversoEdad ?? EDAD_UNIVERSO_ADULTOS,
         });
       }
     });
@@ -96,11 +108,11 @@ export class UniversoFormModalComponent {
   }
 
   private readonly guardarAction = asyncAction(
-    (titulo: string, descripcion: string | null, tipoTirada: number, esRpg: boolean, idCatTipoUsuario: number) => {
+    (titulo: string, descripcion: string | null, tipoTirada: number, esRpg: boolean, idCatUniversoEdad: number) => {
       const actual = this.universo();
       return actual
-        ? this.autorService.actualizarUniverso(actual.idUniverso, { titulo, descripcion, tipoTirada, esRpg, idCatTipoUsuario })
-        : this.autorService.crearUniverso({ titulo, descripcion, tipoTirada, esRpg, idCatTipoUsuario });
+        ? this.autorService.actualizarUniverso(actual.idUniverso, { titulo, descripcion, tipoTirada, esRpg, idCatUniversoEdad })
+        : this.autorService.crearUniverso({ titulo, descripcion, tipoTirada, esRpg, idCatUniversoEdad });
     },
     {
       onSuccess: (universo) => this.guardado.emit(universo),
@@ -115,7 +127,7 @@ export class UniversoFormModalComponent {
       return;
     }
 
-    const { titulo, descripcion, tipoTirada, esRpg, idCatTipoUsuario } = this.form.getRawValue();
-    this.guardarAction.run(titulo, descripcion.trim() || null, Number(tipoTirada), esRpg, Number(idCatTipoUsuario));
+    const { titulo, descripcion, tipoTirada, esRpg, idCatUniversoEdad } = this.form.getRawValue();
+    this.guardarAction.run(titulo, descripcion.trim() || null, Number(tipoTirada), esRpg, Number(idCatUniversoEdad));
   }
 }

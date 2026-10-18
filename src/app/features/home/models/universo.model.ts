@@ -93,6 +93,8 @@ export interface Universo {
   ultimaValoracion: UltimaValoracion | null;
   /** El usuario le ha dado al pulgar. */
   esFavorito: boolean;
+  /** Hijos: 0 los de su edad, luego los de edades inferiores y después los de superiores. Adultos: 0. */
+  ordenEdad: number;
 }
 
 export type FiltroFavoritos = 'todos' | 'favoritos' | 'no-favoritos';

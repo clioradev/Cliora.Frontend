@@ -185,5 +185,32 @@
   </section>
 
   <app-suscripciones-cuenta #suscripciones />
+
+  <section class="seccion">
+    <h2>Comunicaciones</h2>
+    <label class="casilla">
+      <input
+        type="checkbox"
+        [checked]="sinComunicaciones()"
+        [disabled]="guardandoComunicaciones()"
+        (change)="onComunicacionesChange($event)"
+      />
+      No quiero recibir comunicaciones de Cliora (novedades, ofertas, felicitaciones…)
+    </label>
+    <p class="status">
+      Seguirás recibiendo los correos de tu propia cuenta: códigos de verificación, cambios de email y avisos de tus
+      suscripciones.
+    </p>
+    @if (errorComunicaciones()) {
+      <p class="mensaje mensaje--error">{{ errorComunicaciones() }}</p>
+    } @else if (comunicacionesGuardadas()) {
+      <p class="mensaje mensaje--ok">Guardado.</p>
+    }
+  </section>
+
+  <section class="seccion">
+    <h2>Darse de baja</h2>
+    <app-baja-cuenta [email]="p.email ?? ''" [bajaPendiente]="p.bajaPendiente" />
+  </section>
   }
 }

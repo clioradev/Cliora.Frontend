@@ -10,6 +10,7 @@ import {
   CaracteristicaAutor,
   CatTipoCaracteristicaAutor,
   CatTipoUniversoAutor,
+  CatUniversoEdad,
   ContenidoNodoAutor,
   CrearNodoDestinoRequest,
   CrearNodoRequest,
@@ -139,6 +140,10 @@ export class AutorService {
 
   getCatalogoTiposUniverso(): Observable<CatTipoUniversoAutor[]> {
     return this.http.get<CatTipoUniversoAutor[]>(`${this.baseUrl}/Autor/CatTipoUniverso`);
+  }
+
+  getCatalogoEdadesUniverso(): Observable<CatUniversoEdad[]> {
+    return this.http.get<CatUniversoEdad[]>(`${this.baseUrl}/Autor/CatUniversoEdad`);
   }
 
   anadirTipoUniverso(idUniverso: number, idCatTipoUniverso: number): Observable<UniversoAutor> {

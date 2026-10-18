@@ -12,6 +12,10 @@ export interface Perfil {
   esHijo: boolean;
   /** Email nuevo a la espera de confirmar con el código; null si no hay ninguno. */
   emailPendiente: string | null;
+  /** Ha pedido no recibir comunicaciones (novedades, ofertas…). */
+  sinComunicaciones: boolean;
+  /** Ya se le ha enviado el código de baja y sigue vigente. */
+  bajaPendiente: boolean;
   aventurasEmpezadas: number;
   aventurasTerminadas: number;
   valoraciones: number;

@@ -46,6 +46,11 @@ export const routes: Routes = [
                 (m) => m.RestablecerContrasenaComponent,
               ),
           },
+          {
+            path: 'hasta-pronto',
+            loadComponent: () =>
+              import('./features/public/pages/hasta-pronto/hasta-pronto.component').then((m) => m.HastaProntoComponent),
+          },
         ],
       },
       {
@@ -97,6 +102,12 @@ export const routes: Routes = [
         canActivate: [authGuard],
         loadComponent: () =>
           import('./features/tienda/pages/carrito/carrito.component').then((m) => m.CarritoComponent),
+      },
+      {
+        path: 'compras',
+        canActivate: [authGuard],
+        loadComponent: () =>
+          import('./features/tienda/pages/mis-compras/mis-compras.component').then((m) => m.MisComprasComponent),
       },
       {
         path: 'autor',

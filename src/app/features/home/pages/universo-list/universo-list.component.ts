@@ -389,13 +389,20 @@ export class UniversoListComponent {
   }
 
   // Tres bloques: favoritos, el resto y, al final, los que ya tienen todas las aventuras terminadas
-  // (aunque tengan pulgar). Dentro de cada bloque, primero los empezados con aventuras pendientes y
-  // luego por el criterio elegido: más reciente (última aventura publicada) o mejor valoración media.
+  // (aunque tengan pulgar). Dentro de cada bloque, a un hijo le salen primero los de su edad, luego
+  // los de edades inferiores y después los de superiores; después, los empezados con aventuras
+  // pendientes y por último el criterio elegido: más reciente (última aventura publicada) o mejor
+  // valoración media.
   private ordenarUniversos(universos: Universo[], orden: OrdenUniversos, favoritos: Set<number>): Universo[] {
     return [...universos].sort((a, b) => {
       const bloque = this.bloqueOrden(a, favoritos) - this.bloqueOrden(b, favoritos);
       if (bloque !== 0) {
         return bloque;
+      }
+
+      const edad = a.ordenEdad - b.ordenEdad;
+      if (edad !== 0) {
+        return edad;
       }
 
       const prioridad = Number(this.estaEmpezadoConPendientes(b)) - Number(this.estaEmpezadoConPendientes(a));

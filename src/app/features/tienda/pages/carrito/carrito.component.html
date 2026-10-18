@@ -127,14 +127,14 @@
     <div class="devoluciones">
       <h2>Devoluciones</h2>
       <p>
-        Puedes devolver cada aventura y recuperar lo que pagaste por ella mientras no hayas jugado más del
-        {{ p.umbralDevolucion }}&nbsp;% de la aventura. En cuanto lo superes deja de poder devolverse, aunque luego la
-        reinicies.
+        Puedes devolver cada aventura desde «Mis compras» y recuperar lo que pagaste por ella mientras no hayas jugado
+        más del {{ p.umbralDevolucion }}&nbsp;% ni la hayas terminado. En cuanto pase eso deja de poder devolverse,
+        aunque luego la reinicies.
       </p>
       @if (campanas().length > 0) {
         <p>
           Una campaña comprada entera se devuelve entera, y solo mientras no hayas superado el
-          {{ p.umbralDevolucion }}&nbsp;% de ninguna de sus aventuras.
+          {{ p.umbralDevolucion }}&nbsp;% ni terminado ninguna de sus aventuras.
         </p>
       }
     </div>
@@ -143,7 +143,7 @@
       <input type="checkbox" [checked]="aceptaCondiciones()" (change)="onAceptaCondiciones($event)" />
       <span>
         Quiero empezar a jugar en cuanto pague y entiendo que podré devolver cada aventura mientras no haya superado el
-        {{ p.umbralDevolucion }}&nbsp;% de ella.
+        {{ p.umbralDevolucion }}&nbsp;% de ella ni la haya terminado.
       </span>
     </label>
 

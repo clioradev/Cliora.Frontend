@@ -85,14 +85,21 @@ export interface CatTipoUniversoAutor {
   fondoUrl: string | null;
 }
 
+/** Edades a las que puede ir dirigido un universo. Ningún rango cruza los tramos de lector. */
+export interface CatUniversoEdad {
+  idCatUniversoEdad: number;
+  edadMinima: number;
+  edadMaxima: number;
+}
+
 export interface UniversoAutor {
   idUniverso: number;
   titulo: string;
   descripcion: string | null;
   tipoTirada: number;
   esRpg: boolean;
-  /** Público: 1 Infantil, 2 Juvenil, 3 Adulto. */
-  idCatTipoUsuario: number;
+  /** Edades a las que va dirigido (CatUniversoEdad). */
+  idCatUniversoEdad: number;
   /** Carátula grande del listado infantil. */
   imagenUrl: string | null;
   campanas: CampanaAutor[];
@@ -104,8 +111,8 @@ export interface GuardarUniversoRequest {
   descripcion: string | null;
   tipoTirada: number;
   esRpg: boolean;
-  /** Público: 1 Infantil, 2 Juvenil, 3 Adulto. */
-  idCatTipoUsuario: number;
+  /** Edades a las que va dirigido (CatUniversoEdad). */
+  idCatUniversoEdad: number;
 }
 
 export interface GuardarCampanaRequest {
@@ -379,10 +386,12 @@ export interface InformeImportacion {
   conteo: ConteoImportacion;
 }
 
-/** Ids de CatTipoUsuario: el público al que va dirigido un universo. */
-export const PUBLICO_ADULTO = 3;
-export const PUBLICO_OPCIONES = [
-  { valor: 1, etiqueta: 'Infantil (menores de 8 años)' },
-  { valor: 2, etiqueta: 'Juvenil (de 8 a 17 años)' },
-  { valor: PUBLICO_ADULTO, etiqueta: 'Adulto (desde 18 años)' },
-];
+/** Id de CatUniversoEdad 18-200: el de los universos adultos y el que se pone por defecto. */
+export const EDAD_UNIVERSO_ADULTOS = 6;
+
+/** «De 8 a 11 años (juvenil)», «Desde 18 años (adulto)»: el tramo sale de la edad máxima. */
+export function etiquetaEdadUniverso(edad: CatUniversoEdad): string {
+  const tramo = edad.edadMaxima < 8 ? 'infantil' : edad.edadMaxima < 18 ? 'juvenil' : 'adulto';
+  const rango = edad.edadMaxima >= 200 ? `Desde ${edad.edadMinima} años` : `De ${edad.edadMinima} a ${edad.edadMaxima} años`;
+  return `${rango} (${tramo})`;
+}

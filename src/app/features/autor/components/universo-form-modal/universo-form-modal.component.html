@@ -23,13 +23,15 @@
     </label>
 
     <label>
-      Público
-      <select formControlName="idCatTipoUsuario">
-        @for (opcion of publicoOpciones; track opcion.valor) {
-          <option [ngValue]="opcion.valor">{{ opcion.etiqueta }}</option>
+      Edad
+      <select formControlName="idCatUniversoEdad">
+        @for (edad of edadesCatalogo(); track edad.idCatUniversoEdad) {
+          <option [ngValue]="edad.idCatUniversoEdad">{{ etiquetaEdad(edad) }}</option>
         }
       </select>
-      <small class="universo-form-modal__ayuda">Solo lo verán los lectores de ese tramo de edad.</small>
+      <small class="universo-form-modal__ayuda">
+        Solo lo verán los lectores de ese tramo, y a los de esa edad les saldrá primero.
+      </small>
     </label>
 
     <div>

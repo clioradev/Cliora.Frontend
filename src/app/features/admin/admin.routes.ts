@@ -37,6 +37,11 @@ export const ADMIN_ROUTES: Routes = [
     loadComponent: () => import('./components/precios/precios.component').then((m) => m.PreciosComponent),
   },
   {
+    path: 'estadisticas',
+    loadComponent: () =>
+      import('./components/estadisticas/estadisticas.component').then((m) => m.EstadisticasComponent),
+  },
+  {
     path: 'parametros',
     loadComponent: () => import('./components/parametros/parametros.component').then((m) => m.ParametrosComponent),
   },

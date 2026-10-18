@@ -204,3 +204,53 @@ export interface AjustarAventurasGratisRequest {
   cantidad: number;
   motivo: string | null;
 }
+
+export interface EstadisticaAventuraAdmin {
+  idUniverso: number;
+  tituloUniverso: string;
+  idCampana: number;
+  tituloCampana: string;
+  idAventura: number;
+  tituloAventura: string;
+  orden: number;
+  visible: boolean;
+  esLibro: boolean;
+  partidasEmpezadas: number;
+  completadas: number;
+  /** Minutos de media entre empezar y terminar, de las partidas completadas. */
+  duracionMediaMinutos: number | null;
+  compras: number;
+  ingresos: number;
+  valoraciones: number;
+  mediaValoraciones: number | null;
+}
+
+export interface EstadisticasAdmin {
+  usuariosAdultos: number;
+  usuariosJuveniles: number;
+  usuariosInfantiles: number;
+  /** Adultos con al menos un hijo activo. */
+  familias: number;
+  adultosNuevos30Dias: number;
+  usuariosActivos30Dias: number;
+  /** Vigentes de pago; una «Ambas» cuenta en los dos tramos. */
+  suscripcionesInfantiles: number;
+  suscripcionesJuveniles: number;
+  pruebasInfantiles: number;
+  pruebasJuveniles: number;
+  ingresoMensualSuscripciones: number;
+  pruebasTerminadas: number;
+  /** Pruebas terminadas tras las que el padre se suscribió de pago. */
+  pruebasConvertidas: number;
+  aventurasInteractivasCompradas: number;
+  librosComprados: number;
+  ingresosCompras: number;
+  canjeadasConAventuraGratis: number;
+  devoluciones: number;
+  partidasEmpezadas: number;
+  partidasEnCurso: number;
+  aventurasCompletadas: number;
+  valoraciones: number;
+  mediaValoraciones: number | null;
+  aventuras: EstadisticaAventuraAdmin[];
+}

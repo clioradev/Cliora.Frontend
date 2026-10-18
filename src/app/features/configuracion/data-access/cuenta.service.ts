@@ -58,4 +58,25 @@ export class CuentaService {
   cancelarCambioEmail(): Observable<void> {
     return this.http.delete<void>(`${this.baseUrl}/Cuenta/CambioEmail`);
   }
+
+  cambiarComunicaciones(sinComunicaciones: boolean): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/Cuenta/Comunicaciones`, { sinComunicaciones });
+  }
+
+  /** Envía (o reenvía) el código de baja al email de la cuenta. */
+  solicitarBaja(): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Cuenta/Baja`, {});
+  }
+
+  comprobarCodigoBaja(codigo: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Cuenta/Baja/Comprobar`, { codigo });
+  }
+
+  confirmarBaja(codigo: string, motivo: string | null): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Cuenta/Baja/Confirmar`, { codigo, motivo });
+  }
+
+  cancelarBaja(): Observable<void> {
+    return this.http.delete<void>(`${this.baseUrl}/Cuenta/Baja`);
+  }
 }

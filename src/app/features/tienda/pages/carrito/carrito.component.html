@@ -142,8 +142,9 @@
     <label class="condiciones">
       <input type="checkbox" [checked]="aceptaCondiciones()" (change)="onAceptaCondiciones($event)" />
       <span>
-        Quiero empezar a jugar en cuanto pague y entiendo que podré devolver cada aventura mientras no haya superado el
-        {{ p.umbralDevolucion }}&nbsp;% de ella ni la haya terminado.
+        Quiero empezar a jugar en cuanto pague, así que renuncio al derecho de desistimiento de 14 días, y entiendo que
+        podré devolver cada aventura mientras no haya superado el {{ p.umbralDevolucion }}&nbsp;% de ella ni la haya
+        terminado (<a href="/legal/condiciones" target="_blank" rel="noopener">condiciones</a>).
       </span>
     </label>
 

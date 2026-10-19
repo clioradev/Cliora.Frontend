@@ -20,6 +20,7 @@ const OPCIONES_USUARIO: OpcionMas[] = [
   { texto: 'Mis compras', ruta: '/compras' },
   { texto: 'Preferencias', ruta: '/configuracion/preferencias' },
   { texto: 'Contraseña', ruta: '/configuracion/contrasena' },
+  { texto: 'Aviso legal', ruta: '/legal' },
 ];
 
 // Un hijo no escribe aventuras ni cambia su contraseña (lo hace el padre).
@@ -27,6 +28,7 @@ const OPCIONES_HIJO: OpcionMas[] = [
   { texto: 'Cliora', ruta: '/cliora' },
   { texto: 'Mi cuenta', ruta: '/configuracion/cuenta' },
   { texto: 'Preferencias', ruta: '/configuracion/preferencias' },
+  { texto: 'Aviso legal', ruta: '/legal' },
 ];
 
 const OPCION_PERFILES: OpcionMas = { texto: 'Cambiar de perfil', ruta: '/perfiles' };
@@ -110,7 +112,7 @@ export class BottomNavComponent {
   protected readonly masActivo = computed(() => {
     this.navegacion();
     const url = this.router.url;
-    return ['/cliora', '/escribir', '/configuracion', '/admin', '/perfiles'].some((ruta) => url.startsWith(ruta));
+    return ['/cliora', '/escribir', '/configuracion', '/admin', '/perfiles', '/legal'].some((ruta) => url.startsWith(ruta));
   });
 
   constructor() {

@@ -45,6 +45,7 @@ export class RegistroComponent {
       password: ['', [Validators.required, passwordComplejidadValidator]],
       confirmarPassword: ['', [Validators.required]],
       hijos: new FormArray<HijoForm>([]),
+      aceptaCondiciones: [false, [Validators.requiredTrue]],
     },
     { validators: passwordsIgualesValidator },
   );
@@ -89,7 +90,14 @@ export class RegistroComponent {
       return;
     }
 
-    const { nombre, email, password, fechaNacimiento } = this.form.getRawValue();
-    this.registroAction.run({ nombre, email, password, fechaNacimiento, hijos: this.hijos.controls.map(datosDeHijoForm) });
+    const { nombre, email, password, fechaNacimiento, aceptaCondiciones } = this.form.getRawValue();
+    this.registroAction.run({
+      nombre,
+      email,
+      password,
+      fechaNacimiento,
+      hijos: this.hijos.controls.map(datosDeHijoForm),
+      aceptaCondiciones,
+    });
   }
 }

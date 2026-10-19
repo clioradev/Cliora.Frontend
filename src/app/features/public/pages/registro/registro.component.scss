@@ -16,6 +16,17 @@
     color: var(--color-text-secondary);
   }
 
+  // La casilla va en línea con su texto, no encima como los demás campos.
+  label.registro-form__acepto {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: var(--space-2);
+
+    input {
+      margin-top: 0.3em;
+    }
+  }
+
   label {
     display: flex;
     flex-direction: column;

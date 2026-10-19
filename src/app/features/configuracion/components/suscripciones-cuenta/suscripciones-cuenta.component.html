@@ -54,7 +54,8 @@
       <div class="confirmar">
         <p>
           ¿Suscribirte al plan {{ nombrePlan[c.plan].toLowerCase() }} por {{ c.precioMensual | precio }} al mes? Se renueva cada
-          mes y puedes cancelarlo cuando quieras.
+          mes y puedes cancelarlo cuando quieras. Como tus hijos podrán jugar enseguida, renuncias al derecho de
+          desistimiento de 14 días (<a href="/legal/condiciones" target="_blank" rel="noopener">condiciones</a>).
         </p>
         <div class="acciones">
           <button type="button" (click)="confirmando.set(null)" [disabled]="ocupado()">Cancelar</button>

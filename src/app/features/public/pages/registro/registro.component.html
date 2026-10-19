@@ -71,6 +71,18 @@
     </section>
   }
 
+  <!-- Los enlaces abren otra pestaña para no perder lo que ya se ha rellenado. -->
+  <label class="registro-form__acepto">
+    <input type="checkbox" formControlName="aceptaCondiciones" />
+    <span>
+      He leído y acepto las <a href="/legal/condiciones" target="_blank" rel="noopener">condiciones de uso</a> y la
+      <a href="/legal/privacidad" target="_blank" rel="noopener">política de privacidad</a>.
+    </span>
+  </label>
+  @if (form.controls.aceptaCondiciones.invalid && form.controls.aceptaCondiciones.touched) {
+    <p class="registro-form__error">Para crear la cuenta tienes que aceptarlas.</p>
+  }
+
   @if (error()) {
     <p class="registro-form__error">{{ error() }}</p>
   }

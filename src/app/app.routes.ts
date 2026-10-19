@@ -9,6 +9,12 @@ export const routes: Routes = [
     path: '',
     component: ShellComponent,
     children: [
+      // Textos legales: abiertos a todos, con o sin sesión.
+      { path: 'legal', redirectTo: 'legal/aviso', pathMatch: 'full' },
+      {
+        path: 'legal/:seccion',
+        loadComponent: () => import('./features/legal/pages/legal/legal.component').then((m) => m.LegalComponent),
+      },
       // El registro ha crecido demasiado para la modal del portal: va en su propia página, con la
       // misma URL. Tiene que ir antes de 'bienvenida' para que no la capture esa ruta.
       {

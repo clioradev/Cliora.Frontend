@@ -1,0 +1,301 @@
+<h1>Información legal</h1>
+
+<nav class="pestanas" aria-label="Apartados">
+  @for (s of secciones; track s.valor) {
+    <a class="pestanas__item" [class.pestanas__item--activa]="seccion() === s.valor" [routerLink]="['/legal', s.valor]">
+      {{ s.etiqueta }}
+    </a>
+  }
+</nav>
+
+@switch (seccion()) {
+  @case ('aviso') {
+    <section class="texto">
+      <h2>Aviso legal</h2>
+      <p>
+        En cumplimiento de la Ley 34/2002, de servicios de la sociedad de la información y de comercio electrónico
+        (LSSI), estos son los datos del responsable de {{ datos.web }}:
+      </p>
+      <ul>
+        <li><strong>Titular:</strong> {{ datos.titular }}</li>
+        <li><strong>NIF:</strong> {{ datos.nif }}</li>
+        <li><strong>Domicilio:</strong> {{ datos.domicilio }}</li>
+        <li>
+          <strong>Correo electrónico:</strong> <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>
+        </li>
+        @if (datos.registroMercantil) {
+          <li><strong>Registro Mercantil:</strong> {{ datos.registroMercantil }}</li>
+        }
+      </ul>
+
+      <h3>Propiedad intelectual</h3>
+      <p>
+        © {{ datos.titular }}. El nombre y el logotipo de Cliora, el diseño de la web y de la aplicación y su
+        programación pertenecen a su titular. Las historias, textos, ilustraciones y audios de cada universo pertenecen a
+        sus autores, que autorizan a Cliora a publicarlos. Todos los derechos reservados: no se pueden copiar,
+        distribuir, transformar ni comunicar públicamente, en todo o en parte, sin permiso expreso, salvo lo que permitan
+        las condiciones de uso para el disfrute personal.
+      </p>
+
+      <h3>Responsabilidad</h3>
+      <p>
+        Cliora procura que el servicio funcione sin interrupciones y sin errores, pero no puede garantizarlo en todo
+        momento. Las aventuras son obras de ficción: los personajes, lugares y hechos que aparecen en ellas son
+        inventados o se usan de forma ficticia.
+      </p>
+    </section>
+  }
+
+  @case ('privacidad') {
+    <section class="texto">
+      <h2>Política de privacidad</h2>
+      <p>
+        Aquí te contamos qué datos personales tratamos, para qué y qué derechos tienes, según el Reglamento General de
+        Protección de Datos (RGPD) y la Ley Orgánica 3/2018 (LOPDGDD).
+      </p>
+
+      <h3>Responsable</h3>
+      <p>
+        {{ datos.titular }} (NIF {{ datos.nif }}), {{ datos.domicilio }}. Puedes escribirnos para cualquier asunto de
+        privacidad a <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>.
+      </p>
+
+      <h3>Qué datos tratamos</h3>
+      <ul>
+        <li>
+          <strong>Tu cuenta:</strong> nombre, email, fecha de nacimiento y contraseña (guardada cifrada, nunca la vemos),
+          tus preferencias y la fecha en que aceptaste estas condiciones.
+        </li>
+        <li>
+          <strong>Los perfiles de tus hijos</strong>, si los añades: nombre, fecha de nacimiento, tramo de lectura y, si
+          se lo das, su contraseña de acceso. No tienen email: todas las comunicaciones te llegan a ti.
+        </li>
+        <li>
+          <strong>Tu actividad de lectura:</strong> partidas, decisiones, personajes, favoritos y valoraciones.
+        </li>
+        <li>
+          <strong>Compras y suscripciones:</strong> qué has comprado, cuándo, por cuánto y si lo has devuelto. Los datos de
+          tu tarjeta los trata la plataforma de pago, no Cliora.
+        </li>
+        <li>
+          <strong>Datos técnicos de la sesión:</strong> la dirección IP desde la que entras, para mantener la sesión
+          abierta de forma segura y frenar los intentos de acceso abusivos.
+        </li>
+        <li>
+          <strong>Lo que nos escribes</strong>, por ejemplo al pedir información para ser autor o al darte de baja.
+        </li>
+      </ul>
+
+      <h3>Para qué y con qué base legal</h3>
+      <ul>
+        <li>
+          <strong>Darte el servicio</strong>: tu cuenta, tus partidas, tus compras y suscripciones, las devoluciones y los
+          avisos necesarios (códigos, cambios en tu cuenta, fin de una prueba). Base: el contrato que aceptas al
+          registrarte.
+        </li>
+        <li>
+          <strong>Cumplir obligaciones legales</strong>, como las fiscales y contables de las compras. Base: obligación
+          legal.
+        </li>
+        <li>
+          <strong>Mantener Cliora segura</strong> y evitar abusos (bloqueos por intentos fallidos, límites de
+          peticiones). Base: interés legítimo.
+        </li>
+        <li>
+          <strong>Mandarte novedades de Cliora</strong> o algún detalle, como un obsequio por tu cumpleaños. Base: interés
+          legítimo, al ser ya usuario; puedes desactivarlo cuando quieras en Mi cuenta.
+        </li>
+        <li>
+          <strong>Estadísticas internas</strong> de uso (qué aventuras se juegan y se terminan) para mejorar el catálogo.
+          Se hacen sin publicar datos de nadie. Base: interés legítimo.
+        </li>
+      </ul>
+
+      <h3>Menores</h3>
+      <p>
+        Para tener cuenta propia hay que ser mayor de {{ datos.edadMinima }} años. Los menores usan Cliora desde un
+        perfil que crea y controla su padre, madre o tutor dentro de su cuenta, que es quien da los datos y consiente
+        su tratamiento. Los perfiles de menores no compran, no ven publicidad ni reciben correos, y solo valoran con
+        estrellas, sin texto.
+      </p>
+
+      <h3>Qué ven otros usuarios</h3>
+      <p>
+        Si valoras una aventura con un comentario, los demás lectores ven tu nombre, tu nota y tu comentario. Nada más
+        de tu cuenta es público.
+      </p>
+
+      <h3>Con quién compartimos datos</h3>
+      <p>No vendemos tus datos. Solo los tratan, por cuenta de Cliora y con contrato, los proveedores imprescindibles:</p>
+      <ul>
+        <li><strong>Alojamiento, base de datos, archivos y envío de correos:</strong> {{ datos.alojamiento }}.</li>
+        <li>
+          <strong>Pagos:</strong> la plataforma de pago con la que compres (en la web) o la tienda de aplicaciones de tu
+          móvil (App Store o Google Play), cuando estén disponibles.
+        </li>
+      </ul>
+      <p>
+        <strong>Lectura y órdenes por voz:</strong> si usas la lectura en voz alta o das órdenes de voz, lo hace tu
+        navegador o tu móvil con sus propias voces y su propio reconocimiento. Cliora no recibe ni guarda tu voz, pero
+        algunos navegadores (por ejemplo Chrome) envían el audio a su fabricante para reconocerlo, según su propia
+        política de privacidad.
+      </p>
+
+      <h3>Cuánto tiempo los guardamos</h3>
+      <p>
+        Mientras tengas la cuenta. Si te das de baja, borramos tus datos personales y tu progreso; solo conservamos,
+        anonimizado, lo que la ley obliga a guardar de las compras (los plazos fiscales y mercantiles, normalmente entre
+        4 y 6 años) y las valoraciones, sin tu nombre ni tu comentario. Un registro que no se confirma con el código se
+        borra al caducar.
+      </p>
+
+      <h3>Tus derechos</h3>
+      <p>
+        Puedes pedir acceder a tus datos, rectificarlos, suprimirlos, oponerte o limitar su tratamiento y llevártelos
+        (portabilidad), escribiendo a <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>. Muchos los puedes
+        ejercer tú mismo desde Mi cuenta (cambiar tus datos, no recibir comunicaciones o darte de baja). Si crees que no
+        hemos atendido bien tu petición, puedes reclamar ante la Agencia Española de Protección de Datos
+        (<a href="https://www.aepd.es" target="_blank" rel="noopener">aepd.es</a>).
+      </p>
+    </section>
+  }
+
+  @case ('cookies') {
+    <section class="texto">
+      <h2>Política de cookies</h2>
+      <p>
+        Cliora <strong>no usa cookies de publicidad ni de analítica</strong>, ni propias ni de terceros. Por eso no te
+        mostramos ningún banner para aceptarlas.
+      </p>
+      <p>Solo guardamos en tu navegador lo imprescindible para que la aplicación funcione:</p>
+      <ul>
+        <li>
+          <strong>Una cookie de sesión segura</strong> que te mantiene identificado sin pedirte la contraseña cada vez.
+          No se puede leer desde la página y caduca sola.
+        </li>
+        <li>
+          <strong>Almacenamiento local del navegador</strong> para el contenido del carrito, la voz elegida para la
+          lectura en voz alta y, si escribes aventuras, qué partes del editor tenías abiertas.
+        </li>
+      </ul>
+      <p>
+        Son técnicas y necesarias, así que la ley no exige pedirte permiso. Puedes borrarlas desde la configuración de tu
+        navegador, pero tendrás que volver a entrar y perderás el carrito. Si algún día usamos otro tipo de cookies, te
+        pediremos permiso antes.
+      </p>
+    </section>
+  }
+
+  @case ('condiciones') {
+    <section class="texto">
+      <h2>Condiciones de uso y de contratación</h2>
+      <p>
+        Estas condiciones regulan el uso de Cliora y las compras y suscripciones que hagas en ella. Al crear tu cuenta las
+        aceptas.
+      </p>
+
+      <h3>La cuenta</h3>
+      <ul>
+        <li>
+          Para tener cuenta hay que ser mayor de {{ datos.edadMinima }} años. Puedes añadir perfiles para tus hijos,
+          de los que eres responsable.
+        </li>
+        <li>
+          Tu cuenta es personal: no compartas tu contraseña. Si crees que alguien ha entrado en ella, escríbenos a
+          <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>.
+        </li>
+        <li>
+          Puedes darte de baja cuando quieras desde Mi cuenta. La baja borra tus compras y tu progreso y no tiene vuelta
+          atrás.
+        </li>
+      </ul>
+
+      <h3>Uso de las historias</h3>
+      <p>
+        Lo que compras es una licencia personal e intransferible para leer y jugar las aventuras en Cliora, para tu uso
+        privado y el de tu familia. No puedes copiarlas, publicarlas, venderlas, extraer su contenido de forma automática
+        ni usarlo para entrenar sistemas de inteligencia artificial. El PDF que te enviamos al terminar tu primera
+        campaña es para tu uso personal.
+      </p>
+
+      <h3>Valoraciones</h3>
+      <p>
+        Tus valoraciones deben referirse a la aventura y respetar a los demás: no se permiten insultos, contenido
+        ofensivo, publicidad ni datos personales de terceros. Podemos retirar las que no lo cumplan.
+      </p>
+
+      <h3>Compras</h3>
+      <ul>
+        <li>
+          Los precios incluyen el IVA y se muestran antes de pagar. La primera aventura de cada campaña es gratis y
+          algunas otras también lo son.
+        </li>
+        <li>
+          Cada aventura necesita haber terminado la anterior de su campaña; los libros se compran y se leen por separado.
+          Puedes comprar la campaña entera de una vez con descuento.
+        </li>
+        <li>
+          Las aventuras gratis que consigas (por ejemplo, valorando aventuras) se canjean en el carrito y no tienen valor
+          en dinero. Las condiciones de estas promociones pueden cambiar.
+        </li>
+      </ul>
+
+      <h3>Derecho de desistimiento y devoluciones</h3>
+      <p>
+        La ley da 14 días para desistir de una compra a distancia. En el contenido digital ese derecho se pierde cuando,
+        con tu consentimiento expreso, empiezas a disfrutarlo antes de que acaben esos 14 días. Por eso, al pagar te
+        pedimos que confirmes que quieres empezar a jugar enseguida y que sabes que pierdes ese derecho.
+      </p>
+      <p>
+        A cambio, Cliora te deja <strong>devolver cada aventura o libro</strong> mientras no hayas superado el
+        {{ datos.umbralDevolucion }}&nbsp;% de él ni lo hayas terminado, sin plazo, desde Mis compras:
+      </p>
+      <ul>
+        <li>Te devolvemos lo que pagaste por el mismo medio de pago, o la aventura gratis si la canjeaste.</li>
+        <li>Al devolverla dejas de poder jugarla y se borra su progreso.</li>
+        <li>
+          Una campaña comprada de una vez se devuelve entera, y solo mientras ninguna de sus aventuras haya pasado del
+          {{ datos.umbralDevolucion }}&nbsp;% ni esté terminada.
+        </li>
+        <li>No se puede devolver una aventura si tienes comprada aparte la siguiente de su campaña.</li>
+        <li>Las suscripciones no se devuelven; se cancelan (ver abajo).</li>
+      </ul>
+
+      <h3>Suscripciones para los perfiles de tus hijos</h3>
+      <ul>
+        <li>
+          Dan acceso a todas las aventuras de su tramo (infantil, juvenil o ambos) mientras estén activas. Se pagan por
+          meses y se renuevan solas hasta que las canceles.
+        </li>
+        <li>
+          Puedes cancelar la renovación cuando quieras desde Mi cuenta: la suscripción sigue activa hasta el final del
+          mes pagado y no se te vuelve a cobrar.
+        </li>
+        <li>
+          Hay una prueba gratuita de {{ datos.diasPrueba }} días por tramo y por cuenta, sin tarjeta y sin renovación: al
+          acabar, si no te suscribes, no se cobra nada. Te avisamos por correo antes de que termine.
+        </li>
+        <li>
+          Al suscribirte empiezan a jugar enseguida, así que, como en las compras, renuncias al derecho de desistimiento
+          de 14 días.
+        </li>
+      </ul>
+
+      <h3>Cambios en el servicio y en estas condiciones</h3>
+      <p>
+        Cliora puede añadir, cambiar o retirar contenido y funciones. Si retiramos una aventura o un libro que compraste,
+        te devolvemos lo que pagaste por él (o la aventura gratis, si la canjeaste), sea cual sea tu avance. Si cambiamos
+        estas condiciones de forma importante, te avisaremos antes; los cambios no afectan a las compras ya hechas.
+      </p>
+
+      <h3>Ley aplicable</h3>
+      <p>
+        Estas condiciones se rigen por la ley española. Si eres consumidor, puedes acudir a los juzgados de tu domicilio.
+        Antes de eso, escríbenos a <a [href]="'mailto:' + datos.email">{{ datos.email }}</a>: casi todo se arregla
+        hablando.
+      </p>
+    </section>
+  }
+}
+
+<p class="actualizacion">Última actualización: {{ datos.fechaActualizacion }}.</p>

@@ -41,4 +41,6 @@ export interface DatosRegistro {
   password: string;
   fechaNacimiento: string;
   hijos: DatosHijo[];
+  /** Casilla de las condiciones de uso y la política de privacidad: el servidor la exige. */
+  aceptaCondiciones: boolean;
 }

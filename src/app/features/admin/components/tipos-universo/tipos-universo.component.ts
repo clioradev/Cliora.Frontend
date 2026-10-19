@@ -83,8 +83,7 @@ export class TiposUniversoComponent {
     const uso =
       tipo.numeroUniversos === 0
         ? 'Ningún universo lo usa.'
-        : `Lo usa${tipo.numeroUniversos === 1 ? ' 1 universo' : `n ${tipo.numeroUniversos} universos`}, que lo perderán; ` +
-          'si era su tipo principal, pasará a principal otro de sus tipos (y con él, la imagen de fondo).';
+        : `Lo usa${tipo.numeroUniversos === 1 ? ' 1 universo' : `n ${tipo.numeroUniversos} universos`}, que lo perderán.`;
     this.eliminarModal.set({
       titulo: `Eliminar tipo de universo "${tipo.nombre}"`,
       mensaje: `¿Seguro que quieres eliminar el tipo "${tipo.nombre}"? ${uso}`,
@@ -96,33 +95,5 @@ export class TiposUniversoComponent {
     this.eliminarModal.set(null);
     this.cancelarEdicion();
     this.tiposResource.reload();
-  }
-
-  protected readonly filaEnCurso = signal<number | null>(null);
-
-  private readonly subirImagenAction = asyncAction(
-    (tipo: CatTipoUniversoAdmin, archivo: File) => this.adminService.subirImagenTipoUniverso(tipo.id, archivo),
-    {
-      onSuccess: () => {
-        this.filaEnCurso.set(null);
-        this.tiposResource.reload();
-      },
-      onError: () => this.filaEnCurso.set(null),
-      defaultErrorMessage: 'No se ha podido subir la imagen.',
-    },
-  );
-  protected readonly subiendoImagen = this.subirImagenAction.loading;
-  protected readonly errorImagen = this.subirImagenAction.error;
-
-  protected seleccionarImagen(tipo: CatTipoUniversoAdmin, files: FileList | null): void {
-    const archivo = files?.[0];
-    if (archivo) {
-      this.filaEnCurso.set(tipo.id);
-      this.subirImagenAction.run(tipo, archivo);
-    }
-  }
-
-  protected filaEnCursoDe(tipo: CatTipoUniversoAdmin): boolean {
-    return this.filaEnCurso() === tipo.id && this.subiendoImagen();
   }
 }

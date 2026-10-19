@@ -118,8 +118,8 @@
   <div class="universos">
     @for (universo of filteredUniversos(); track universo.idUniverso) {
       <section class="universo-card">
-        @if (universo.fondoUrl) {
-          <div class="universo-card__fondo" [style.background-image]="'url(' + universo.fondoUrl + ')'"></div>
+        @if (universo.imagenUrl) {
+          <div class="universo-card__fondo" [style.background-image]="'url(' + universo.imagenUrl + ')'"></div>
         }
 
         <header class="universo-card__header" data-tutorial="universo">

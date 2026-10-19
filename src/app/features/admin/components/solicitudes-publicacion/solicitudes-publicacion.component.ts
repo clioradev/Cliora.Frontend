@@ -93,6 +93,14 @@ export class SolicitudesPublicacionComponent {
   protected readonly errorPublicar = this.publicarAction.error;
 
   protected publicar(solicitud: SolicitudPublicacionAdmin, textoPrecio: string, textoDescuento: string): void {
+    // Infantil y juvenil no se venden: se guardan a 0 € (el back lo fuerza igualmente).
+    if (solicitud.esParaHijos) {
+      this.errorPrecio.set(null);
+      this.filaEnCurso.set(solicitud.idVersionAventura);
+      this.publicarAction.run(solicitud, { precio: 0, descuento: 0 });
+      return;
+    }
+
     const precio = leerImporte(textoPrecio);
     const descuento = leerImporte(textoDescuento);
     if (precio === undefined || descuento === undefined) {

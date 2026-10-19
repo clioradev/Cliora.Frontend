@@ -61,6 +61,26 @@
   </ul>
 }
 
+@if (errorEmpezar() && !volverALeer()) {
+  <p class="status status--error">{{ errorEmpezar() }}</p>
+}
+
+@if (volverALeer(); as volver) {
+  <app-modal (cerrar)="volverALeer.set(null)">
+    <p class="volver-a-leer__pregunta">¿Quieres volver a leerla?</p>
+    @if (volver.pierdePosteriores) {
+      <p class="volver-a-leer__aviso">Se borrará lo leído en las aventuras que van detrás.</p>
+    }
+    @if (errorEmpezar()) {
+      <p class="status status--error">{{ errorEmpezar() }}</p>
+    }
+    <div class="volver-a-leer__acciones">
+      <button type="button" (click)="volverALeer.set(null)">No</button>
+      <button type="button" class="btn--primary" [disabled]="empezando()" (click)="confirmarVolverALeer()">Sí</button>
+    </div>
+  </app-modal>
+}
+
 @if (desbloqueando()) {
   <app-desbloquear-modal (cerrado)="desbloqueando.set(false)" (desbloqueado)="onDesbloqueado()" />
 }

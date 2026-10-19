@@ -85,8 +85,7 @@ export interface Universo {
   descripcion: string | null;
   campanas: Campana[];
   tipos: string[];
-  fondoUrl: string | null;
-  /** Carátula grande del listado infantil. */
+  /** Imagen del universo: fondo de su tarjeta y carátula grande del listado infantil. */
   imagenUrl: string | null;
   fechaPublicacion: string | null;
   puntuacionMedia: number | null;

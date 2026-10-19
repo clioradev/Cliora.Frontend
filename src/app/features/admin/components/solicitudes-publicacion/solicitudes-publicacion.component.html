@@ -47,7 +47,13 @@
         </div>
 
         <div class="solicitud-list__precio">
-          <label>
+          @if (solicitud.esParaHijos) {
+            <span class="solicitud-list__acceso">
+              {{ solicitud.gratisSinSuscripcion ? 'Gratis' : 'Con suscripción' }}
+            </span>
+          }
+          <!-- Ocultos y no quitados: el botón Publicar lee sus valores por referencia. -->
+          <label [hidden]="solicitud.esParaHijos">
             <span>Precio (€)</span>
             <input
               #precio
@@ -57,7 +63,7 @@
               [placeholder]="solicitud.esPrimera ? 'Primera: gratis' : 'Gratis'"
             />
           </label>
-          <label>
+          <label [hidden]="solicitud.esParaHijos">
             <span>Descuento (€)</span>
             <input
               #descuento
@@ -67,7 +73,7 @@
               placeholder="0"
             />
           </label>
-          @if (solicitud.esPrimera) {
+          @if (solicitud.esPrimera && !solicitud.esParaHijos) {
             <span class="solicitud-list__nota">Es la primera de su campaña: será gratis aunque tenga precio.</span>
           }
           @if (errorPrecio()?.idVersionAventura === solicitud.idVersionAventura) {

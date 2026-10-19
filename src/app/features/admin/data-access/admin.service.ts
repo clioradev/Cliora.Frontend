@@ -65,12 +65,6 @@ export class AdminService {
     return this.http.delete<void>(`${this.baseUrl}/Admin/CatTipoUniverso/${id}`);
   }
 
-  subirImagenTipoUniverso(id: number, archivo: File): Observable<CatTipoUniversoAdmin> {
-    const formData = new FormData();
-    formData.append('archivo', archivo);
-    return this.http.post<CatTipoUniversoAdmin>(`${this.baseUrl}/Admin/CatTipoUniverso/${id}/Imagen`, formData);
-  }
-
   obtenerSolicitudesPublicacion(): Observable<SolicitudPublicacionAdmin[]> {
     return this.http.get<SolicitudPublicacionAdmin[]>(`${this.baseUrl}/Admin/SolicitudPublicacion`);
   }

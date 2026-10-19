@@ -71,9 +71,18 @@
     gap: var(--space-1);
   }
 
+  label[hidden] {
+    display: none;
+  }
+
   input {
     width: 7rem;
   }
+}
+
+.solicitud-list__acceso {
+  width: 7rem;
+  font-weight: 600;
 }
 
 .solicitud-list__nota {

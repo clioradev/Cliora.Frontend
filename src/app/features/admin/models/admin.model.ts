@@ -10,7 +10,6 @@ export interface CatTipoUniversoAdmin {
   id: number;
   nombre: string;
   descripcion: string | null;
-  fondoUrl: string | null;
   /** Cuántos universos tienen este tipo (se avisa antes de borrarlo). */
   numeroUniversos: number;
 }
@@ -54,6 +53,10 @@ export interface SolicitudPublicacionAdmin {
   esPrimera: boolean;
   precio: number | null;
   descuento: number;
+  /** Universo infantil o juvenil: no se vende, se publica a 0 € y el acceso lo da la suscripción. */
+  esParaHijos: boolean;
+  /** Infantil o juvenil: es de las que el hijo juega sin suscripción (2 primeras en infantil, 1 en juvenil). */
+  gratisSinSuscripcion: boolean;
 }
 
 // --- Tienda ---

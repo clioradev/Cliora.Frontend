@@ -1,8 +1,8 @@
 @let a = aventura();
 
 <div class="detalle">
-  @if (universo().fondoUrl) {
-    <div class="detalle__fondo" [style.background-image]="'url(' + universo().fondoUrl + ')'"></div>
+  @if (universo().imagenUrl) {
+    <div class="detalle__fondo" [style.background-image]="'url(' + universo().imagenUrl + ')'"></div>
   }
 
   <section class="detalle__caratula">

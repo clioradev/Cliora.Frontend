@@ -28,22 +28,6 @@
   padding: var(--space-2) var(--space-3);
 }
 
-.tipo-universo-list__imagen {
-  width: 56px;
-  height: 56px;
-  object-fit: cover;
-  border-radius: var(--radius-md, 8px);
-  flex-shrink: 0;
-}
-
-.tipo-universo-list__imagen--vacia {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  opacity: 0.6;
-  background: color-mix(in srgb, currentColor 8%, transparent);
-}
-
 .tipo-universo-list__nombre {
   flex: 1;
   font-weight: 600;

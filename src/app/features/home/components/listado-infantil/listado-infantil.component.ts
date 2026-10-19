@@ -1,7 +1,18 @@
 import { Component, computed, inject, input, output, signal } from '@angular/core';
 import { Router } from '@angular/router';
+import { concatMap } from 'rxjs';
+import { asyncAction } from '../../../../core/utils/async-action';
+import { ModalComponent } from '../../../../shared/components/modal/modal.component';
+import { PartidaService } from '../../data-access/partida.service';
 import { Aventura, Universo } from '../../models/universo.model';
 import { DesbloquearModalComponent } from '../desbloquear-modal/desbloquear-modal.component';
+
+/** Aventura terminada que se quiere volver a leer. */
+interface VolverALeer {
+  aventura: Aventura;
+  /** Hay aventuras posteriores de la campaña con avance, que el reinicio borra. */
+  pierdePosteriores: boolean;
+}
 
 type EstadoInfantil = 'jugable' | 'terminada' | 'candado' | 'espera';
 
@@ -12,12 +23,13 @@ type EstadoInfantil = 'jugable' | 'terminada' | 'candado' | 'espera';
  */
 @Component({
   selector: 'app-listado-infantil',
-  imports: [DesbloquearModalComponent],
+  imports: [DesbloquearModalComponent, ModalComponent],
   templateUrl: './listado-infantil.component.html',
   styleUrl: './listado-infantil.component.scss',
 })
 export class ListadoInfantilComponent {
   private readonly router = inject(Router);
+  private readonly partidaService = inject(PartidaService);
 
   readonly universos = input.required<Universo[]>();
   /** Se ha desbloqueado algo: hay que recargar el listado. */
@@ -56,6 +68,8 @@ export class ListadoInfantilComponent {
     return aventura.estadoPartida !== null || aventura.puedeEmpezarPartida ? 'jugable' : 'espera';
   }
 
+  // Sin pasar por la portada: la que está a medias sigue donde se quedó y la nueva empieza ya. La
+  // terminada (o abandonada) pregunta antes, porque volver a leerla borra su partida.
   protected tocar(aventura: Aventura): void {
     switch (this.estado(aventura)) {
       case 'candado':
@@ -65,8 +79,51 @@ export class ListadoInfantilComponent {
         this.avisoEspera.set(aventura.idAventura);
         break;
       default:
-        void this.router.navigate(['/aventura', aventura.idAventura, 'portada']);
+        if (aventura.estadoPartida === 'En curso' && aventura.idNodoActual) {
+          this.irAPartida(aventura.idNodoActual, aventura);
+        } else if (aventura.estadoPartida !== null) {
+          this.volverALeer.set({ aventura, pierdePosteriores: this.tienePosterioresConAvance(aventura) });
+        } else if (aventura.idVersionAventura) {
+          this.empezarAction.run(aventura, false);
+        }
     }
+  }
+
+  protected readonly volverALeer = signal<VolverALeer | null>(null);
+
+  private readonly empezarAction = asyncAction(
+    (aventura: Aventura, reiniciar: boolean) => {
+      const empezar = this.partidaService.empezar(aventura.idVersionAventura!);
+      return reiniciar
+        ? this.partidaService.reiniciarAventura(aventura.idAventura).pipe(concatMap(() => empezar))
+        : empezar;
+    },
+    {
+      onSuccess: (respuesta, aventura) => {
+        this.volverALeer.set(null);
+        this.irAPartida(respuesta.idNodoActual, aventura);
+      },
+      defaultErrorMessage: 'No se ha podido abrir la aventura.',
+    },
+  );
+  protected readonly empezando = this.empezarAction.loading;
+  protected readonly errorEmpezar = this.empezarAction.error;
+
+  protected confirmarVolverALeer(): void {
+    const volver = this.volverALeer();
+    if (volver?.aventura.idVersionAventura) {
+      this.empezarAction.run(volver.aventura, true);
+    }
+  }
+
+  private irAPartida(idNodo: number, aventura: Aventura): void {
+    void this.router.navigate(['/partida', idNodo], { queryParams: { idAventura: aventura.idAventura } });
+  }
+
+  private tienePosterioresConAvance(aventura: Aventura): boolean {
+    const campana = this.universoAbierto()?.campanas.find((c) => c.aventuras.includes(aventura));
+    const posteriores = campana?.aventuras.slice(campana.aventuras.indexOf(aventura) + 1) ?? [];
+    return posteriores.some((a) => a.estadoPartida !== null);
   }
 
   protected onDesbloqueado(): void {

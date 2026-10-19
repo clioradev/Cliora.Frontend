@@ -76,13 +76,11 @@ export interface CampanaAutor {
 export interface UniversoTipoAutor {
   idCatTipoUniverso: number;
   nombre: string;
-  esPrincipal: boolean;
 }
 
 export interface CatTipoUniversoAutor {
   id: number;
   nombre: string;
-  fondoUrl: string | null;
 }
 
 /** Edades a las que puede ir dirigido un universo. Ningún rango cruza los tramos de lector. */

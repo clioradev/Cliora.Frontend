@@ -3,7 +3,7 @@ import { LectorVozService, VELOCIDAD_LECTURA_POR_DEFECTO } from '../../../core/v
 import { Preferencias } from '../models/preferencias.model';
 
 const TIPOGRAFIA_FUENTES: Record<number, string> = {
-  1: "'Literata', Georgia, 'Times New Roman', serif",
+  1: "'Literata Variable', 'Literata', Georgia, 'Times New Roman', serif",
   2: "Georgia, 'Times New Roman', Times, serif",
   3: "Consolas, 'Courier New', monospace",
   4: "'Orbitron', 'Segoe UI', sans-serif",

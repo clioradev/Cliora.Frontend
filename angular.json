@@ -33,7 +33,15 @@
                 "input": "public"
               }
             ],
-            "styles": ["src/styles.scss"]
+            "styles": [
+              "@fontsource-variable/literata/opsz.css",
+              "@fontsource/orbitron/400.css",
+              "@fontsource/orbitron/600.css",
+              "@fontsource/orbitron/700.css",
+              "@fontsource/medievalsharp/400.css",
+              "@fontsource/special-elite/400.css",
+              "src/styles.scss"
+            ]
           },
           "configurations": {
             "production": {

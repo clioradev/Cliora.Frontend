@@ -1,6 +1,6 @@
 import { Component, inject, signal } from '@angular/core';
 import { AbstractControl, FormArray, FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from '@angular/forms';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { AuthService } from '../../../../core/auth/auth.service';
 import { DatosRegistro } from '../../../../core/auth/usuario.model';
 import { passwordComplejidadValidator } from '../../../../core/validators/password-complejidad.validator';
@@ -33,7 +33,6 @@ export class RegistroComponent {
   private readonly fb = inject(FormBuilder);
   private readonly authService = inject(AuthService);
   private readonly router = inject(Router);
-  private readonly route = inject(ActivatedRoute);
 
   protected readonly hoy = hoyIso();
   protected readonly maximoHijos = MAXIMO_HIJOS;
@@ -54,7 +53,7 @@ export class RegistroComponent {
 
   private readonly registroAction = asyncAction((datos: DatosRegistro) => this.authService.register(datos), {
     onSuccess: (_resultado, datos) =>
-      void this.router.navigate(['../confirmar-registro'], { relativeTo: this.route, queryParams: { email: datos.email } }),
+      void this.router.navigate(['/bienvenida/confirmar-registro'], { queryParams: { email: datos.email } }),
     defaultErrorMessage: 'No se ha podido completar el registro.',
   });
   protected readonly submitting = this.registroAction.loading;

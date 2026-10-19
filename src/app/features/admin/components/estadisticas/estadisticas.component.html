@@ -153,4 +153,59 @@
       </table>
     </div>
   </section>
+
+  <section class="colaboradores">
+    <h2>Colaboradores</h2>
+    <p class="nota">
+      Tienen todo desbloqueado, también sus hijos (cada uno en su tramo), y cuentan en las estadísticas como cualquier
+      usuario. El rol se da desde Usuarios. Al quitarlo conservan sus partidas y pueden continuarlas, pero no empezar las
+      que no hayan comprado.
+    </p>
+
+    @if (quitarAction.error()) {
+      <p class="status status--error">{{ quitarAction.error() }}</p>
+    }
+
+    <ul class="colaboradores__lista">
+      @for (c of e.colaboradores; track c.idUsuario) {
+        <li class="colaborador">
+          <div class="colaborador__cabecera">
+            <div>
+              <strong>{{ c.nombre }}</strong>
+              <span class="colaborador__dato">{{ c.email }}</span>
+              <span class="colaborador__dato">
+                Último acceso: {{ c.fechaUltimoAcceso ? (c.fechaUltimoAcceso | date: 'dd/MM/yyyy') : 'nunca' }}
+                @if (c.hijos > 0) {
+                  · {{ c.hijos }} {{ c.hijos === 1 ? 'hijo' : 'hijos' }}
+                }
+              </span>
+            </div>
+            @if (quitando() === c.idUsuario) {
+              <div class="colaborador__acciones">
+                <span>¿Quitarle el rol?</span>
+                <button type="button" (click)="quitando.set(null)" [disabled]="quitarAction.loading()">No</button>
+                <button type="button" class="btn--danger" (click)="quitarAction.run(c)" [disabled]="quitarAction.loading()">
+                  Sí, quitar
+                </button>
+              </div>
+            } @else {
+              <button type="button" (click)="quitando.set(c.idUsuario)" [disabled]="e.idRolColaborador === null">
+                Quitar rol
+              </button>
+            }
+          </div>
+          <p class="colaborador__jugadas">
+            <span class="colaborador__etiqueta">Completadas ({{ c.aventurasCompletadas.length }}):</span>
+            {{ c.aventurasCompletadas.length > 0 ? c.aventurasCompletadas.join(' · ') : '—' }}
+          </p>
+          <p class="colaborador__jugadas">
+            <span class="colaborador__etiqueta">En curso ({{ c.aventurasEnCurso.length }}):</span>
+            {{ c.aventurasEnCurso.length > 0 ? c.aventurasEnCurso.join(' · ') : '—' }}
+          </p>
+        </li>
+      } @empty {
+        <li class="nota">Todavía no hay colaboradores.</li>
+      }
+    </ul>
+  </section>
 }

@@ -9,6 +9,14 @@ export const routes: Routes = [
     path: '',
     component: ShellComponent,
     children: [
+      // El registro ha crecido demasiado para la modal del portal: va en su propia página, con la
+      // misma URL. Tiene que ir antes de 'bienvenida' para que no la capture esa ruta.
+      {
+        path: 'bienvenida/registro',
+        canActivate: [guestGuard],
+        loadComponent: () =>
+          import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
+      },
       {
         path: 'bienvenida',
         canActivate: [guestGuard],
@@ -19,11 +27,6 @@ export const routes: Routes = [
             path: 'login',
             loadComponent: () =>
               import('./features/public/pages/login/login.component').then((m) => m.LoginComponent),
-          },
-          {
-            path: 'registro',
-            loadComponent: () =>
-              import('./features/public/pages/registro/registro.component').then((m) => m.RegistroComponent),
           },
           {
             path: 'confirmar-registro',

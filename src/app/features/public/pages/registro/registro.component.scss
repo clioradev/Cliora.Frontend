@@ -1,7 +1,20 @@
+// Página propia (antes iba en la modal del portal): mismo ancho que Mi cuenta, centrada; en móvil,
+// todo el ancho.
+:host {
+  display: block;
+  max-width: var(--content-width-reading);
+  margin: 0 auto;
+}
+
 .registro-form {
   display: flex;
   flex-direction: column;
   gap: var(--space-4);
+
+  &__pie {
+    margin: 0;
+    color: var(--color-text-secondary);
+  }
 
   label {
     display: flex;

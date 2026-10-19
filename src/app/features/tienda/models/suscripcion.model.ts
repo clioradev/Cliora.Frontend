@@ -26,6 +26,8 @@ export interface EstadoSuscripciones {
   /** Tramos cuya prueba gratuita ya se ha usado. */
   pruebasUsadas: PlanSuscripcion[];
   tramosHijos: TipoUsuario[];
+  /** Padre colaborador: sus hijos lo tienen todo abierto y no se le ofrecen planes. */
+  esColaborador: boolean;
 }
 
 export interface EstadoPruebaHijo {

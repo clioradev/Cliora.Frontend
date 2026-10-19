@@ -1,7 +1,9 @@
+import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { asyncAction } from '../../../../core/utils/async-action';
 import { AdminService } from '../../data-access/admin.service';
-import { EstadisticaAventuraAdmin } from '../../models/admin.model';
+import { ColaboradorAdmin, EstadisticaAventuraAdmin } from '../../models/admin.model';
 import { escribirImporte } from '../../utils/importe';
 
 type Agrupacion = 'universo' | 'campana' | 'aventura';
@@ -44,6 +46,7 @@ export const AGRUPACIONES: { valor: Agrupacion; etiqueta: string }[] = [
 
 @Component({
   selector: 'app-estadisticas',
+  imports: [DatePipe],
   templateUrl: './estadisticas.component.html',
   styleUrl: './estadisticas.component.scss',
 })
@@ -61,6 +64,20 @@ export class EstadisticasComponent {
   protected readonly agrupacion = signal<Agrupacion>('aventura');
   protected readonly columna = signal<Columna | null>(null);
   protected readonly descendente = signal(true);
+
+  /** Colaborador al que se va a quitar el rol, a la espera de confirmar. */
+  protected readonly quitando = signal<number | null>(null);
+  protected readonly quitarAction = asyncAction(
+    (colaborador: ColaboradorAdmin) =>
+      this.adminService.quitarRol(colaborador.idUsuario, this.estadisticas()!.idRolColaborador!),
+    {
+      onSuccess: () => {
+        this.quitando.set(null);
+        this.estadisticasResource.reload();
+      },
+      defaultErrorMessage: 'No se ha podido quitar el rol.',
+    },
+  );
 
   protected readonly porcentajeFinalizacion = computed(() => {
     const e = this.estadisticas();

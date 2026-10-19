@@ -1,4 +1,9 @@
-@if (tieneHijos() && estado(); as e) {
+@if (tieneHijos() && estado()?.esColaborador) {
+  <section class="seccion">
+    <h2>Suscripciones</h2>
+    <p class="nota">Tus hijos tienen desbloqueadas todas las aventuras de su tramo: no necesitas suscribirte.</p>
+  </section>
+} @else if (tieneHijos() && estado(); as e) {
   <section class="seccion">
     <h2>Suscripciones</h2>
     <p class="nota">

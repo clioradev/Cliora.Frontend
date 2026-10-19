@@ -256,4 +256,19 @@ export interface EstadisticasAdmin {
   valoraciones: number;
   mediaValoraciones: number | null;
   aventuras: EstadisticaAventuraAdmin[];
+  /** Para quitar el rol desde el listado; null si el rol no existe. */
+  idRolColaborador: number | null;
+  colaboradores: ColaboradorAdmin[];
+}
+
+/** Usuario con el rol Colaborador y lo que ha jugado (sin contar a sus hijos). */
+export interface ColaboradorAdmin {
+  idUsuario: number;
+  nombre: string;
+  email: string | null;
+  fechaUltimoAcceso: string | null;
+  hijos: number;
+  /** «Universo / Aventura», por orden de inicio. */
+  aventurasEnCurso: string[];
+  aventurasCompletadas: string[];
 }

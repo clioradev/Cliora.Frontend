@@ -68,6 +68,8 @@ export interface Campana {
   descripcion: string | null;
   /** Imagen para el listado infantil. */
   imagenUrl: string | null;
+  /** Sus aventuras se juegan en cualquier orden. */
+  aventurasIndependientes: boolean;
   aventuras: Aventura[];
   puntuacionMedia: number | null;
   ultimaValoracion: UltimaValoracion | null;

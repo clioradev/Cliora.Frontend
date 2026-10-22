@@ -19,3 +19,18 @@ label {
   justify-content: flex-end;
   gap: var(--space-2);
 }
+
+.campana-form-modal__checkbox {
+  flex-direction: row;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.campana-form-modal__ayuda {
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.campana-form-modal__error {
+  white-space: pre-line;
+}

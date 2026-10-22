@@ -70,6 +70,8 @@ export interface CampanaAutor {
   descripcion: string | null;
   /** Imagen para el listado infantil. */
   imagenUrl: string | null;
+  /** Sus aventuras se juegan en cualquier orden: ninguna lee eventos ni hereda características de otra. */
+  aventurasIndependientes: boolean;
   aventuras: AventuraAutor[];
 }
 
@@ -116,6 +118,7 @@ export interface GuardarUniversoRequest {
 export interface GuardarCampanaRequest {
   titulo: string;
   descripcion: string | null;
+  aventurasIndependientes: boolean;
 }
 
 export interface GuardarAventuraRequest {

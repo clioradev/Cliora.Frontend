@@ -12,8 +12,19 @@
       <app-area-texto formControlName="descripcion" [rows]="4" tituloEditor="Descripción de la campaña" />
     </label>
 
+    <div>
+      <label class="campana-form-modal__checkbox">
+        <input type="checkbox" formControlName="aventurasIndependientes" />
+        Aventuras independientes
+      </label>
+      <small class="campana-form-modal__ayuda">
+        Marcado: las aventuras se juegan (y se compran) en cualquier orden. Cada una puede tener sus
+        propios eventos, pero ninguna lee los eventos de otra ni hereda características de otra.
+      </small>
+    </div>
+
     @if (error()) {
-      <p class="status status--error">{{ error() }}</p>
+      <p class="status status--error campana-form-modal__error">{{ error() }}</p>
     }
 
     <div class="campana-form-modal__acciones">

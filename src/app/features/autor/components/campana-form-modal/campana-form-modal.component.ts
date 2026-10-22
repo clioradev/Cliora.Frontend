@@ -5,7 +5,7 @@ import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ImagenListadoComponent } from '../imagen-listado/imagen-listado.component';
 import { AutorService } from '../../data-access/autor.service';
-import { CampanaAutor } from '../../models/autor.model';
+import { CampanaAutor, GuardarCampanaRequest } from '../../models/autor.model';
 
 @Component({
   selector: 'app-campana-form-modal',
@@ -25,27 +25,39 @@ export class CampanaFormModalComponent {
   protected readonly form = this.fb.nonNullable.group({
     titulo: ['', [Validators.required, Validators.maxLength(200)]],
     descripcion: [''],
+    aventurasIndependientes: [false],
   });
 
   constructor() {
     effect(() => {
       const campana = this.campana();
       if (campana) {
-        this.form.patchValue({ titulo: campana.titulo, descripcion: campana.descripcion ?? '' });
+        this.form.patchValue({
+          titulo: campana.titulo,
+          descripcion: campana.descripcion ?? '',
+          aventurasIndependientes: campana.aventurasIndependientes,
+        });
       }
     });
   }
 
   private readonly guardarAction = asyncAction(
-    (titulo: string, descripcion: string | null) => {
+    (dto: GuardarCampanaRequest) => {
       const actual = this.campana();
       return actual
-        ? this.autorService.actualizarCampana(actual.idCampana, { titulo, descripcion })
-        : this.autorService.crearCampana(this.idUniverso(), { titulo, descripcion });
+        ? this.autorService.actualizarCampana(actual.idCampana, dto)
+        : this.autorService.crearCampana(this.idUniverso(), dto);
     },
     {
       onSuccess: (campana) => this.guardado.emit(campana),
-      defaultErrorMessage: 'No se ha podido guardar la campaña.',
+      // Al marcar «aventuras independientes» el servidor puede devolver la lista de referencias
+      // entre aventuras que lo impiden: una por línea.
+      resolveErrorMessage: (err) => {
+        const body = (err as { error?: unknown } | null)?.error;
+        return Array.isArray(body) && body.every((m) => typeof m === 'string')
+          ? body.join('\n')
+          : 'No se ha podido guardar la campaña.';
+      },
     },
   );
   protected readonly guardando = this.guardarAction.loading;
@@ -56,7 +68,7 @@ export class CampanaFormModalComponent {
       return;
     }
 
-    const { titulo, descripcion } = this.form.getRawValue();
-    this.guardarAction.run(titulo, descripcion.trim() || null);
+    const { titulo, descripcion, aventurasIndependientes } = this.form.getRawValue();
+    this.guardarAction.run({ titulo, descripcion: descripcion.trim() || null, aventurasIndependientes });
   }
 }

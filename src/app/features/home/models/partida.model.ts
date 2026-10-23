@@ -86,6 +86,8 @@ export interface Final {
 
 export interface FinalizarAventuraResponse {
   idAventura: number;
+  /** Aventura de un universo infantil: al terminar no se pide valoración. */
+  esInfantil: boolean;
 }
 
 export interface ContinuarInfo {

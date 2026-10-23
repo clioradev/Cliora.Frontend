@@ -101,6 +101,11 @@ export class FinalComponent {
     onSuccess: (respuesta) => {
       if (this.preview) {
         this.previsualizacionTerminada.set(true);
+      } else if (respuesta.esInfantil) {
+        // En los universos infantiles no se pide valoración: se vuelve directamente al inicio.
+        this.pararLectura();
+        void this.router.navigate(['/']);
+        return;
       } else {
         this.idAventuraFinalizada.set(respuesta.idAventura);
       }

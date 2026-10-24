@@ -95,83 +95,93 @@
     <p class="nodo__escena">{{ n.escenaDescripcion }}</p>
   }
 
-  <div class="nodo__contenidos">
-    @for (contenido of n.contenidos; track contenido.idContenidoNodo) {
-      @if (contenido.imagenUrl) {
-        <img
-          class="nodo__imagen"
-          [class.nodo__imagen--flotante]="imagenesFlotantes().has(contenido.idContenidoNodo)"
-          [src]="contenido.imagenUrl"
-          alt=""
-          (load)="onImagenCargada($event, contenido.idContenidoNodo)"
-        />
-      }
-      @if (contenido.texto) {
-        <p class="nodo__texto">{{ contenido.texto }}</p>
-      }
-      @if (contenido.audioUrl) {
-        <audio class="nodo__audio" [src]="contenido.audioUrl" controls></audio>
-      }
+  <div class="nodo__lectura" [class.nodo__lectura--imagen-fija]="imagenFija() !== null">
+    @if (imagenFija(); as fija) {
+      <div class="nodo__imagen-fija">
+        <img [src]="fija.imagenUrl" alt="" />
+      </div>
     }
-  </div>
 
-  @if (n.esLibro) {
-    <div class="nodo__navegacion-libro">
-      <button
-        type="button"
-        class="nodo__pagina nodo__pagina--atras"
-        (click)="volverAtras()"
-        [disabled]="!n.puedeVolverAtras || idAventura() === null || volviendoAtras() || eligiendo()"
-        aria-label="Página anterior"
-      >
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z" fill="currentColor" /></svg>
-      </button>
-      @if (n.opciones[0]; as opcionUnica) {
-        <button
-          type="button"
-          class="nodo__pagina nodo__pagina--adelante"
-          (click)="elegir(opcionUnica)"
-          [disabled]="eligiendo() || volviendoAtras()"
-          aria-label="Página siguiente"
-        >
-          <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h12.17l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16.17 11H4z" fill="currentColor" /></svg>
-        </button>
-      }
-    </div>
-  } @else {
-    <div class="nodo__opciones">
-      @for (opcion of n.opciones; track opcion.idOpcion; let i = $index) {
-        <button type="button" (click)="elegir(opcion)" [disabled]="eligiendo()">
-          @if (manosLibres() && ordinales[i]) {
-            <span class="opcion__ordinal">{{ ordinales[i] }}</span>
+    <div class="nodo__cuerpo">
+      <div class="nodo__contenidos">
+        @for (contenido of n.contenidos; track contenido.idContenidoNodo) {
+          @if (contenido.imagenUrl && contenido !== imagenFija()) {
+            <img
+              class="nodo__imagen"
+              [class.nodo__imagen--flotante]="imagenesFlotantes().has(contenido.idContenidoNodo)"
+              [src]="contenido.imagenUrl"
+              alt=""
+              (load)="onImagenCargada($event, contenido.idContenidoNodo)"
+            />
           }
-          @if (opcion.nivelDificultad) {
-            <span
-              class="opcion__dificultad"
-              [class.opcion__dificultad--facil]="opcion.nivelDificultad === 'Facil'"
-              [class.opcion__dificultad--normal]="opcion.nivelDificultad === 'Normal'"
-              [class.opcion__dificultad--dificil]="opcion.nivelDificultad === 'Dificil'"
+          @if (contenido.texto) {
+            <p class="nodo__texto">{{ contenido.texto }}</p>
+          }
+          @if (contenido.audioUrl) {
+            <audio class="nodo__audio" [src]="contenido.audioUrl" controls></audio>
+          }
+        }
+      </div>
+
+      @if (n.esLibro) {
+        <div class="nodo__navegacion-libro">
+          <button
+            type="button"
+            class="nodo__pagina nodo__pagina--atras"
+            (click)="volverAtras()"
+            [disabled]="!n.puedeVolverAtras || idAventura() === null || volviendoAtras() || eligiendo()"
+            aria-label="Página anterior"
+          >
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M20 11H7.83l5.59-5.59L12 4l-8 8 8 8 1.41-1.41L7.83 13H20z" fill="currentColor" /></svg>
+          </button>
+          @if (n.opciones[0]; as opcionUnica) {
+            <button
+              type="button"
+              class="nodo__pagina nodo__pagina--adelante"
+              (click)="elegir(opcionUnica)"
+              [disabled]="eligiendo() || volviendoAtras()"
+              aria-label="Página siguiente"
             >
-              {{ opcion.nivelDificultad === 'Facil' ? 'Fácil' : opcion.nivelDificultad === 'Normal' ? 'Normal' : 'Difícil' }}
-            </span>
+              <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 13h12.17l-5.59 5.59L12 20l8-8-8-8-1.41 1.41L16.17 11H4z" fill="currentColor" /></svg>
+            </button>
           }
-          {{ opcion.texto }}
-        </button>
+        </div>
+      } @else {
+        <div class="nodo__opciones">
+          @for (opcion of n.opciones; track opcion.idOpcion; let i = $index) {
+            <button type="button" (click)="elegir(opcion)" [disabled]="eligiendo()">
+              @if (manosLibres() && ordinales[i]) {
+                <span class="opcion__ordinal">{{ ordinales[i] }}</span>
+              }
+              @if (opcion.nivelDificultad) {
+                <span
+                  class="opcion__dificultad"
+                  [class.opcion__dificultad--facil]="opcion.nivelDificultad === 'Facil'"
+                  [class.opcion__dificultad--normal]="opcion.nivelDificultad === 'Normal'"
+                  [class.opcion__dificultad--dificil]="opcion.nivelDificultad === 'Dificil'"
+                >
+                  {{ opcion.nivelDificultad === 'Facil' ? 'Fácil' : opcion.nivelDificultad === 'Normal' ? 'Normal' : 'Difícil' }}
+                </span>
+              }
+              {{ opcion.texto }}
+            </button>
+          }
+        </div>
       }
-    </div>
-  }
 
-  <div class="nodo__stats">
-    <!-- «X lectores han pasado por aquí» (n.jugadoresEnEsteNodo) oculto a propósito mientras haya pocos
-         usuarios: con 0 o 1 queda triste. El servidor lo sigue enviando; basta con volver a pintarlo. -->
-    @if (n.codigoNodo) {
-      <p class="nodo__codigos" title="Nodo anterior / nodo actual (solo administradores)">
-        {{ n.codigoNodoAnterior ?? '—' }} / {{ n.codigoNodo }}
-      </p>
-    }
-    @if (n.porcentajeProgreso !== null) {
-      <p class="nodo__progreso">{{ n.porcentajeProgreso }}% leído</p>
-    }
+      <div class="nodo__stats">
+        <!-- «X lectores han pasado por aquí» (n.jugadoresEnEsteNodo) oculto a propósito mientras haya pocos
+             usuarios: con 0 o 1 queda triste. El servidor lo sigue enviando; basta con volver a pintarlo. -->
+        @if (n.codigoNodo) {
+          <p class="nodo__codigos" title="Nodo anterior / nodo actual (solo administradores)">
+            {{ n.codigoNodoAnterior ?? '—' }} / {{ n.codigoNodo }}
+          </p>
+        }
+        @if (n.porcentajeProgreso !== null) {
+          <p class="nodo__progreso">{{ n.porcentajeProgreso }}% leído</p>
+        }
+      </div>
+    </div>
   </div>
 
   @if (eligiendoError()) {

@@ -112,6 +112,19 @@
     }
   }
 
+  // Primera imagen de un nodo infantil (ver imagenFija en el componente). En pantallas grandes en
+  // horizontal va como una imagen más, encima del texto.
+  &__imagen-fija {
+    margin-bottom: var(--space-4);
+
+    img {
+      display: block;
+      max-width: 100%;
+      height: auto;
+      margin: 0 auto;
+    }
+  }
+
   &__audio {
     display: block;
     width: 100%;
@@ -248,4 +261,45 @@
 .nodo__desbloquear-voz {
   display: block;
   margin: 0 auto var(--space-4);
+}
+
+// Nodo infantil: mientras un adulto lee, el niño sigue viendo la ilustración. En vertical (móvil o
+// tablet) se queda pegada arriba ocupando como mucho un tercio de la pantalla; el fondo opaco tapa el
+// texto que pasa por debajo.
+@media (orientation: portrait) {
+  .nodo__lectura--imagen-fija .nodo__imagen-fija {
+    position: sticky;
+    top: 0;
+    z-index: 1;
+    padding: var(--space-2) 0;
+    background: var(--color-bg);
+
+    img {
+      max-height: 33vh;
+      max-height: 33dvh;
+    }
+  }
+}
+
+// Móvil tumbado: un tercio de alto sería una tira, así que la imagen pasa a una columna a la izquierda
+// y el texto se lee a la derecha sin nada encima.
+@media (orientation: landscape) and (max-height: 600px) {
+  .nodo__lectura--imagen-fija {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: var(--space-6);
+    align-items: start;
+
+    .nodo__imagen-fija {
+      position: sticky;
+      top: var(--space-3);
+      margin-bottom: 0;
+
+      img {
+        // Sin taparse con la barra inferior (4.5rem, ver shell).
+        max-height: calc(100vh - 4.5rem - var(--space-6));
+        max-height: calc(100dvh - 4.5rem - var(--space-6));
+      }
+    }
+  }
 }

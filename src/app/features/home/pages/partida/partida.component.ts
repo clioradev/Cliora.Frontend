@@ -82,6 +82,13 @@ export class PartidaComponent {
   // fluya a su lado en vez de partir el nodo en bloques separados - ver onImagenCargada().
   protected readonly imagenesFlotantes = signal(new Set<number>());
 
+  // En aventuras infantiles el niño mira la ilustración mientras un adulto le lee: la primera imagen
+  // del nodo sale aparte y, en vertical o en un móvil tumbado, se queda siempre a la vista.
+  protected readonly imagenFija = computed(() => {
+    const nodo = this.nodo();
+    return nodo?.esInfantil ? (nodo.contenidos.find((c) => c.imagenUrl) ?? null) : null;
+  });
+
   // Lectura en voz alta. Con la lectura automática (o el modo manos libres) cada nodo empieza a
   // leerse a los 2 s. En manos libres se leen también las opciones y después se escucha el micro.
   protected readonly lector = inject(LectorVozService);

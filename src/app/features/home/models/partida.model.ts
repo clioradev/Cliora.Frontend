@@ -30,6 +30,8 @@ export interface Nodo {
   esLibro: boolean;
   /** Universo de rol: se puede ver el personaje. */
   esRpg: boolean;
+  /** Universo infantil: la primera imagen se queda a la vista mientras se lee. */
+  esInfantil: boolean;
   puedeVolverAtras: boolean;
   escenaDescripcion: string | null;
   porcentajeProgreso: number | null;

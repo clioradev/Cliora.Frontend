@@ -274,6 +274,16 @@ export class AutorService {
     return this.http.delete<void>(`${this.baseUrl}/Autor/Final/${idFinal}`);
   }
 
+  subirImagenFinal(idFinal: number, archivo: File): Observable<FinalAutor> {
+    const formData = new FormData();
+    formData.append('archivo', archivo);
+    return this.http.post<FinalAutor>(`${this.baseUrl}/Autor/Final/${idFinal}/Imagen`, formData);
+  }
+
+  eliminarImagenFinal(idFinal: number): Observable<FinalAutor> {
+    return this.http.delete<FinalAutor>(`${this.baseUrl}/Autor/Final/${idFinal}/Imagen`);
+  }
+
   getCaracteristicas(idAventura: number): Observable<CaracteristicaAutor[]> {
     return this.http.get<CaracteristicaAutor[]>(`${this.baseUrl}/Autor/Aventura/${idAventura}/Caracteristica`);
   }

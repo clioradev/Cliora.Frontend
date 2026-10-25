@@ -12,6 +12,42 @@
       <app-area-texto formControlName="texto" [rows]="6" tituloEditor="Texto del final" />
     </label>
 
+    <div class="final-form-modal__imagen">
+      @if (rutaImagen(); as ruta) {
+        <div class="adjunto-chip">
+          <app-icono nombre="imagen" />
+          <span class="adjunto-chip__ruta">{{ ruta }}</span>
+          <button
+            type="button"
+            class="btn-icono btn-icono--peligro"
+            (click)="eliminarImagen()"
+            aria-label="Quitar imagen"
+            title="Quitar imagen"
+          >
+            <app-icono nombre="eliminar" />
+          </button>
+        </div>
+      }
+
+      <input
+        #imagenInput
+        type="file"
+        accept="image/png,image/jpeg,image/webp"
+        hidden
+        (change)="seleccionarImagen($any($event.target).files); imagenInput.value = ''"
+      />
+      <button
+        type="button"
+        class="btn-icono btn-icono--primary"
+        [class.btn-icono--activo]="rutaImagen()"
+        (click)="imagenInput.click()"
+        [attr.aria-label]="rutaImagen() ? 'Cambiar imagen' : 'Añadir imagen'"
+        [attr.title]="rutaImagen() ? 'Cambiar imagen' : 'Añadir imagen'"
+      >
+        <app-icono nombre="imagen" />
+      </button>
+    </div>
+
     @if (error()) {
       <p class="status status--error">{{ error() }}</p>
     }

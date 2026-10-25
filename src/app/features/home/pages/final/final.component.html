@@ -11,6 +11,10 @@
     <p class="status status--error">{{ errorMicro }}</p>
   }
 
+  @if (f.imagenUrl) {
+    <img class="final__imagen" [src]="f.imagenUrl" alt="" />
+  }
+
   <p class="final__texto">{{ f.texto }}</p>
 
   @if (!previsualizacionTerminada()) {

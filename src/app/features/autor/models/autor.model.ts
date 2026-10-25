@@ -204,6 +204,7 @@ export interface FinalAutor {
   codigo: string;
   titulo: string;
   texto: string;
+  imagenUrl: string | null;
 }
 
 export interface NodoArbol {

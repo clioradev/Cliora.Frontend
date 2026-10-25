@@ -84,6 +84,7 @@ export interface Personaje {
 export interface Final {
   idFinal: number;
   texto: string;
+  imagenUrl: string | null;
 }
 
 export interface FinalizarAventuraResponse {

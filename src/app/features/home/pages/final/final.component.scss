@@ -11,6 +11,13 @@
   }
 }
 
+.final__imagen {
+  display: block;
+  max-width: min(100%, var(--content-width-reading));
+  height: auto;
+  margin-bottom: var(--space-4);
+}
+
 .final__texto {
   font-family: var(--font-reading);
   font-size: var(--text-reading);

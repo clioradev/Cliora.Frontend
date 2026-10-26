@@ -49,11 +49,20 @@
     @for (universo of universos(); track universo.idUniverso) {
       <li>
         <button type="button" class="portada" (click)="abrir(universo)" [attr.aria-label]="universo.titulo">
-          @if (portada(universo); as imagen) {
-            <img class="portada__imagen" [src]="imagen" alt="" />
-          } @else {
-            <span class="portada__sin-imagen">{{ universo.titulo }}</span>
-          }
+          <span class="portada__marco">
+            @if (portada(universo); as imagen) {
+              <img class="portada__imagen" [src]="imagen" alt="" />
+            } @else {
+              <span class="portada__sin-imagen">{{ universo.titulo }}</span>
+            }
+            @if (universo.tipos.length > 0) {
+              <span class="portada__tipos">
+                @for (tipo of universo.tipos; track tipo) {
+                  <span class="portada__tipo">{{ tipo }}</span>
+                }
+              </span>
+            }
+          </span>
           <span class="portada__titulo">{{ universo.titulo }}</span>
         </button>
       </li>

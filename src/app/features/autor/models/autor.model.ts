@@ -61,6 +61,8 @@ export interface AventuraAutor {
   enlaceCompra: string | null;
   estadoVersionEdicion: EnumEstadoPublicacion | null;
   fechaSolicitudPublicacion: string | null;
+  /** Tiene una versión esperando la aprobación del administrador. */
+  solicitudPendiente: boolean;
   actos: ActoAutor[];
 }
 

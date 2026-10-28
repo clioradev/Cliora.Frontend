@@ -55,6 +55,9 @@
                       <li class="aventura-list__item">
                         <span class="aventura-list__orden">#{{ aventura.orden }}</span>
                         <span class="aventura-list__titulo">{{ aventura.titulo }}</span>
+                        @if (aventura.solicitudPendiente) {
+                          <span class="aventura-list__pendiente" title="Pendiente de aprobación del administrador">pend.</span>
+                        }
                         <span class="aventura-list__visible" [class.aventura-list__visible--si]="aventura.visible">
                           {{ aventura.visible ? 'Visible' : 'Oculta' }}
                         </span>

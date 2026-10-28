@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
-import { InformarAlertaResponse, NodoConAlertas } from '../models/alerta.model';
+import { AventuraConAlertas, InformarAlertaResponse, NodoConAlertas } from '../models/alerta.model';
 
 @Injectable({ providedIn: 'root' })
 export class AlertaService {
@@ -12,6 +12,11 @@ export class AlertaService {
   /** Solo para revisores: avisa de un error en el nodo en el que está su partida. */
   informar(idNodo: number, comentario: string | null): Observable<InformarAlertaResponse> {
     return this.http.post<InformarAlertaResponse>(`${this.baseUrl}/Alerta/Nodo/${idNodo}`, { comentario });
+  }
+
+  /** Aventuras del autor con al menos una alerta abierta. */
+  getAventurasConAlertas(): Observable<AventuraConAlertas[]> {
+    return this.http.get<AventuraConAlertas[]>(`${this.baseUrl}/Alerta/Aventuras`);
   }
 
   getDeAventura(idAventura: number): Observable<NodoConAlertas[]> {

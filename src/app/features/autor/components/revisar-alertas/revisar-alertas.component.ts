@@ -23,6 +23,8 @@ export class RevisarAlertasComponent {
 
   readonly idAventura = input.required<number>();
   readonly tituloAventura = input('');
+  /** Adónde vuelve el editor de nodos abierto desde aquí; null, a su sitio de siempre. */
+  readonly volverA = input<string | null>(null);
 
   private readonly alertasResource = rxResource({
     params: () => this.idAventura(),

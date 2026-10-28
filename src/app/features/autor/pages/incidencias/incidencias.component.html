@@ -1,0 +1,37 @@
+<div class="incidencias">
+  <div class="incidencias__cabecera">
+    <a class="btn-icono" routerLink="/autor" aria-label="Volver al panel de autor" title="Volver al panel de autor">
+      <app-icono nombre="volver" />
+    </a>
+    <h1>Incidencias</h1>
+  </div>
+  <p class="incidencias__ayuda">Aventuras con alertas abiertas de los revisores, la más reciente primero.</p>
+
+  @if (cargando() && aventuras().length === 0) {
+    <p>Cargando…</p>
+  } @else if (error()) {
+    <p class="status status--error">No se han podido cargar las incidencias.</p>
+  } @else if (aventuras().length === 0) {
+    <p>No hay incidencias abiertas en tus aventuras.</p>
+  } @else {
+    <ul class="incidencias__lista">
+      @for (aventura of aventuras(); track aventura.idAventura) {
+        <li>
+          <a class="incidencia" [routerLink]="['/autor/incidencias', aventura.idAventura]">
+            <span class="incidencia__texto">
+              <span class="incidencia__ruta">{{ aventura.universoTitulo }} › {{ aventura.campanaTitulo }}</span>
+              <span class="incidencia__titulo">{{ aventura.titulo }}</span>
+              <span class="incidencia__fecha">Última alerta: {{ aventura.fechaUltimaAlerta | date: 'short' }}</span>
+            </span>
+            <span class="incidencia__contador">
+              {{ aventura.numeroAlertas }} {{ aventura.numeroAlertas === 1 ? 'alerta' : 'alertas' }}
+              <span class="incidencia__nodos">
+                en {{ aventura.numeroNodos }} {{ aventura.numeroNodos === 1 ? 'nodo' : 'nodos' }}
+              </span>
+            </span>
+          </a>
+        </li>
+      }
+    </ul>
+  }
+</div>

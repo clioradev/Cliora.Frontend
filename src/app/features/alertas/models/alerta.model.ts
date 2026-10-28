@@ -48,3 +48,17 @@ export interface NodoConAlertas {
   numeroAlertas: number;
   alertas: AlertaNodo[];
 }
+
+/** Aventura del autor con alertas abiertas, para el listado de «Incidencias». */
+export interface AventuraConAlertas {
+  idAventura: number;
+  titulo: string;
+  universoTitulo: string;
+  campanaTitulo: string;
+  /** Alertas abiertas en total (cada revisor cuenta una vez por nodo). */
+  numeroAlertas: number;
+  /** Nodos distintos con alguna alerta abierta. */
+  numeroNodos: number;
+  /** La alerta abierta más reciente; el listado viene ordenado por ella. */
+  fechaUltimaAlerta: string;
+}

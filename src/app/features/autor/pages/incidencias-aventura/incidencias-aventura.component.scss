@@ -1,0 +1,27 @@
+:host {
+  display: block;
+  max-width: var(--content-width-lg);
+  margin: 0 auto;
+  padding: var(--space-4);
+}
+
+.incidencias-aventura__cabecera {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  margin-bottom: var(--space-4);
+}
+
+.incidencias-aventura__titulo {
+  flex: 1;
+  min-width: 0;
+
+  h1 {
+    margin: 0;
+  }
+}
+
+.incidencias-aventura__ruta {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}

@@ -13,7 +13,31 @@
   } @else if (universos().length === 0) {
     <p>Todavía no tienes ningún universo. Empieza añadiendo uno.</p>
   } @else {
-    @for (universo of universos(); track universo.idUniverso) {
+    <div class="panel-autor__filtro" role="search">
+      <input
+        type="search"
+        class="panel-autor__filtro-texto"
+        placeholder="Buscar universo…"
+        aria-label="Buscar universo por nombre"
+        [value]="filtroTexto()"
+        (input)="onFiltroTexto($event)"
+      />
+      <select aria-label="Filtrar por edad" [value]="filtroTramo()" (change)="onFiltroTramo($event)">
+        <option value="todos">Todos</option>
+        <option value="adulto">Adultos</option>
+        <option value="juvenil">Juvenil</option>
+        <option value="infantil">Infantil</option>
+      </select>
+      <button type="button" class="panel-autor__filtro-reset" (click)="restablecerFiltro()" [disabled]="!hayFiltro()">
+        Restablecer
+      </button>
+    </div>
+
+    @if (universosFiltrados().length === 0) {
+      <p>Ningún universo coincide con el filtro.</p>
+    }
+
+    @for (universo of universosFiltrados(); track universo.idUniverso) {
       <section class="universo-card">
         <div class="universo-card__header">
           <h2 class="universo-card__titulo">{{ universo.titulo }}</h2>
@@ -55,6 +79,14 @@
                       <li class="aventura-list__item">
                         <span class="aventura-list__orden">#{{ aventura.orden }}</span>
                         <span class="aventura-list__titulo">{{ aventura.titulo }}</span>
+                        @if (alertasPorAventura().get(aventura.idAventura); as numeroAlertas) {
+                          <a
+                            class="aventura-list__alertas"
+                            [routerLink]="['/autor/incidencias', aventura.idAventura]"
+                            [title]="numeroAlertas + (numeroAlertas === 1 ? ' alerta abierta' : ' alertas abiertas') + ': revisarlas'"
+                            [attr.aria-label]="numeroAlertas + ' alertas abiertas en ' + aventura.titulo"
+                          >! {{ numeroAlertas }}</a>
+                        }
                         @if (aventura.solicitudPendiente) {
                           <span class="aventura-list__pendiente" title="Pendiente de aprobación del administrador">pend.</span>
                         }

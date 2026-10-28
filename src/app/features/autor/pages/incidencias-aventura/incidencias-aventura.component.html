@@ -1,0 +1,24 @@
+<div class="incidencias-aventura">
+  <div class="incidencias-aventura__cabecera">
+    <a class="btn-icono" routerLink="/autor/incidencias" aria-label="Volver a Incidencias" title="Volver a Incidencias">
+      <app-icono nombre="volver" />
+    </a>
+    <div class="incidencias-aventura__titulo">
+      @if (aventura(); as a) {
+        <span class="incidencias-aventura__ruta">{{ a.universoTitulo }} › {{ a.campanaTitulo }}</span>
+      }
+      <h1>{{ aventura()?.titulo ?? 'Incidencias' }}</h1>
+    </div>
+    <a
+      class="btn-icono"
+      [routerLink]="['/autor/aventura', idAventura]"
+      [queryParams]="{ tab: 'alertas' }"
+      aria-label="Abrir la aventura en el editor"
+      title="Abrir la aventura en el editor"
+    >
+      <app-icono nombre="editar" />
+    </a>
+  </div>
+
+  <app-revisar-alertas [idAventura]="idAventura" [tituloAventura]="aventura()?.titulo ?? ''" [volverA]="volverA" />
+</div>

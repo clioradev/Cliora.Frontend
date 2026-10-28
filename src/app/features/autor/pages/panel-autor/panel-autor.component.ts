@@ -1,4 +1,4 @@
-import { Component, computed, inject, signal } from '@angular/core';
+import { Component, computed, effect, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router, RouterLink } from '@angular/router';
 import { Observable } from 'rxjs';
@@ -7,8 +7,40 @@ import { IconoComponent } from '../../../../shared/components/icono/icono.compon
 import { CampanaFormModalComponent } from '../../components/campana-form-modal/campana-form-modal.component';
 import { TipoAventuraModalComponent } from '../../components/tipo-aventura-modal/tipo-aventura-modal.component';
 import { UniversoFormModalComponent } from '../../components/universo-form-modal/universo-form-modal.component';
+import { AlertaService } from '../../../alertas/data-access/alerta.service';
+import { AventuraConAlertas } from '../../../alertas/models/alerta.model';
 import { AutorService } from '../../data-access/autor.service';
-import { AventuraAutor, CampanaAutor, InformeImportacion, UniversoAutor } from '../../models/autor.model';
+import { AventuraAutor, CampanaAutor, CatUniversoEdad, InformeImportacion, UniversoAutor } from '../../models/autor.model';
+
+type TramoFiltro = 'todos' | 'adulto' | 'juvenil' | 'infantil';
+
+interface FiltroPanel {
+  texto: string;
+  tramo: TramoFiltro;
+}
+
+const FILTRO_VACIO: FiltroPanel = { texto: '', tramo: 'todos' };
+// En sessionStorage: se conserva al entrar en una aventura y volver, y se olvida al cerrar la pestaña.
+const CLAVE_FILTRO = 'panelAutor.filtro';
+
+/** Minúsculas y sin tildes, para que «azogue» encuentre «Azogue» y «lagrimas», «lágrimas». */
+function normalizar(texto: string): string {
+  return texto.toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '').trim();
+}
+
+/** Mismo criterio que etiquetaEdadUniverso: el tramo sale de la edad máxima. */
+function tramoDeEdad(edad: CatUniversoEdad): Exclude<TramoFiltro, 'todos'> {
+  return edad.edadMaxima < 8 ? 'infantil' : edad.edadMaxima < 18 ? 'juvenil' : 'adulto';
+}
+
+function leerFiltro(): FiltroPanel {
+  try {
+    const raw = sessionStorage.getItem(CLAVE_FILTRO);
+    return raw ? { ...FILTRO_VACIO, ...(JSON.parse(raw) as Partial<FiltroPanel>) } : FILTRO_VACIO;
+  } catch {
+    return FILTRO_VACIO;
+  }
+}
 
 interface CampanaModalState {
   idUniverso: number;
@@ -36,6 +68,7 @@ interface EliminarModalState {
 })
 export class PanelAutorComponent {
   private readonly autorService = inject(AutorService);
+  private readonly alertaService = inject(AlertaService);
   private readonly router = inject(Router);
 
   private readonly universosResource = rxResource({
@@ -45,6 +78,59 @@ export class PanelAutorComponent {
   protected readonly universos = this.universosResource.value;
   protected readonly loading = this.universosResource.isLoading;
   protected readonly error = computed(() => this.universosResource.error() !== undefined);
+
+  // Alertas abiertas por aventura (solo las del autor), para el «!» de cada fila.
+  private readonly incidenciasResource = rxResource({
+    stream: () => this.alertaService.getAventurasConAlertas(),
+    defaultValue: [] as AventuraConAlertas[],
+  });
+  protected readonly alertasPorAventura = computed(
+    () => new Map(this.incidenciasResource.value().map((a) => [a.idAventura, a.numeroAlertas])),
+  );
+
+  private readonly edadesResource = rxResource({
+    stream: () => this.autorService.getCatalogoEdadesUniverso(),
+    defaultValue: [] as CatUniversoEdad[],
+  });
+
+  protected readonly filtroTexto = signal(leerFiltro().texto);
+  protected readonly filtroTramo = signal<TramoFiltro>(leerFiltro().tramo);
+  protected readonly hayFiltro = computed(() => this.filtroTexto().trim() !== '' || this.filtroTramo() !== 'todos');
+
+  protected readonly universosFiltrados = computed(() => {
+    const texto = normalizar(this.filtroTexto());
+    const tramo = this.filtroTramo();
+    const tramoPorEdad = new Map(this.edadesResource.value().map((e) => [e.idCatUniversoEdad, tramoDeEdad(e)]));
+    return this.universos().filter(
+      (u) =>
+        (texto === '' || normalizar(u.titulo).includes(texto)) &&
+        (tramo === 'todos' || tramoPorEdad.get(u.idCatUniversoEdad) === tramo),
+    );
+  });
+
+  constructor() {
+    effect(() => {
+      const filtro: FiltroPanel = { texto: this.filtroTexto(), tramo: this.filtroTramo() };
+      try {
+        sessionStorage.setItem(CLAVE_FILTRO, JSON.stringify(filtro));
+      } catch {
+        // Sin almacenamiento (modo privado): el filtro funciona igual, solo no se recuerda.
+      }
+    });
+  }
+
+  protected onFiltroTexto(event: Event): void {
+    this.filtroTexto.set((event.target as HTMLInputElement).value);
+  }
+
+  protected onFiltroTramo(event: Event): void {
+    this.filtroTramo.set((event.target as HTMLSelectElement).value as TramoFiltro);
+  }
+
+  protected restablecerFiltro(): void {
+    this.filtroTexto.set(FILTRO_VACIO.texto);
+    this.filtroTramo.set(FILTRO_VACIO.tramo);
+  }
 
   protected readonly universoModal = signal<UniversoAutor | 'nuevo' | null>(null);
   protected readonly campanaModal = signal<CampanaModalState | null>(null);

@@ -765,6 +765,13 @@ export class NodoFormComponent {
   }
 
   protected volver(): void {
+    // Quien abre el nodo puede pedir volver a otro sitio (p. ej. a las alertas desde las que se abrió).
+    // Solo rutas del autor, para que un enlace manipulado no saque de la aplicación.
+    const volverA = this.route.snapshot.queryParamMap.get('volver');
+    if (volverA?.startsWith('/autor/')) {
+      void this.router.navigateByUrl(volverA);
+      return;
+    }
     void this.router.navigate(['/autor/aventura', this.idAventura], { queryParams: { tab: 'contenido' } });
   }
 }

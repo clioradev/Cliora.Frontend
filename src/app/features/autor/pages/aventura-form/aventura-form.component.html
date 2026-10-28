@@ -243,7 +243,11 @@
     @if (tabActiva() === 'contenido') {
       <app-actos-escenas [idAventura]="id" [actos]="aventura()?.actos ?? []" (cambiado)="recargarContenido()" />
     } @else if (tabActiva() === 'alertas') {
-      <app-revisar-alertas [idAventura]="id" [tituloAventura]="aventura()?.titulo ?? ''" />
+      <app-revisar-alertas
+        [idAventura]="id"
+        [tituloAventura]="aventura()?.titulo ?? ''"
+        [volverA]="'/autor/aventura/' + id + '?tab=alertas'"
+      />
     } @else {
       <app-caracteristicas [idAventura]="id" [esLibro]="esLibro()" />
     }

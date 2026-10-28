@@ -3,6 +3,7 @@ import { rxResource, toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive } from '@angular/router';
 import { filter, map } from 'rxjs';
 import { AuthService } from '../../core/auth/auth.service';
+import { AlertaService } from '../../features/alertas/data-access/alerta.service';
 import { PartidaService } from '../../features/home/data-access/partida.service';
 import { CarritoService } from '../../features/tienda/data-access/carrito.service';
 
@@ -32,6 +33,11 @@ const OPCIONES_HIJO: OpcionMas[] = [
 ];
 
 const OPCION_PERFILES: OpcionMas = { texto: 'Cambiar de perfil', ruta: '/perfiles' };
+
+// Bajo el título "Autores": herramientas del autor que no caben en su panel.
+const RUTA_INCIDENCIAS = '/autor/incidencias';
+const OPCIONES_AUTOR: OpcionMas[] = [{ texto: 'Incidencias', ruta: RUTA_INCIDENCIAS }];
+const RUTAS_AUTOR_EN_MAS = OPCIONES_AUTOR.map((o) => o.ruta);
 
 // Van bajo el título "Administración" del desplegable, por eso sin el prefijo "Admin:".
 const OPCIONES_ADMIN: OpcionMas[] = [
@@ -106,13 +112,34 @@ export class BottomNavComponent {
     const usuario = this.authService.currentUser();
     return !usuario?.esHijo || usuario.accesoPropio;
   });
+  protected readonly opcionesAutor = computed(() => (this.authService.tieneRol('Autor') ? OPCIONES_AUTOR : []));
+  protected readonly RUTA_INCIDENCIAS = RUTA_INCIDENCIAS;
+
+  // Alertas abiertas en las aventuras del autor (el back solo devuelve las suyas). Se refresca al navegar,
+  // así que tras cerrar alertas el contador baja en cuanto se cambia de página.
+  private readonly alertaService = inject(AlertaService);
+  private readonly incidenciasResource = rxResource({
+    params: () => (this.authService.tieneRol('Autor') ? { tick: this.navegacion() } : undefined),
+    stream: () => this.alertaService.getAventurasConAlertas(),
+  });
+  protected readonly totalIncidencias = computed(() =>
+    (this.incidenciasResource.value() ?? []).reduce((total, a) => total + a.numeroAlertas, 0),
+  );
   protected readonly opcionesAdmin = computed(() => (this.authService.tieneRol('Administrador') ? OPCIONES_ADMIN : []));
 
   protected readonly menuAbierto = signal(false);
   protected readonly masActivo = computed(() => {
     this.navegacion();
     const url = this.router.url;
-    return ['/cliora', '/escribir', '/configuracion', '/admin', '/perfiles', '/legal'].some((ruta) => url.startsWith(ruta));
+    return ['/cliora', '/escribir', '/configuracion', '/admin', '/perfiles', '/legal', ...RUTAS_AUTOR_EN_MAS].some((ruta) =>
+      url.startsWith(ruta),
+    );
+  });
+  // «Autor» se ilumina en todo /autor salvo en lo que cuelga de «Más» (Incidencias).
+  protected readonly autorActivo = computed(() => {
+    this.navegacion();
+    const url = this.router.url;
+    return url.startsWith('/autor') && !RUTAS_AUTOR_EN_MAS.some((ruta) => url.startsWith(ruta));
   });
 
   constructor() {

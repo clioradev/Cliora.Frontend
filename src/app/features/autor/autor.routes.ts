@@ -17,6 +17,15 @@ export const AUTOR_ROUTES: Routes = [
       import('./pages/aventura-form/aventura-form.component').then((m) => m.AventuraFormComponent),
   },
   {
+    path: 'incidencias',
+    loadComponent: () => import('./pages/incidencias/incidencias.component').then((m) => m.IncidenciasComponent),
+  },
+  {
+    path: 'incidencias/:idAventura',
+    loadComponent: () =>
+      import('./pages/incidencias-aventura/incidencias-aventura.component').then((m) => m.IncidenciasAventuraComponent),
+  },
+  {
     path: 'aventura/:idAventura/nodo/:idNodo',
     loadComponent: () => import('./pages/nodo-form/nodo-form.component').then((m) => m.NodoFormComponent),
   },

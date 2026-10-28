@@ -28,12 +28,21 @@
               {{ item.numeroAlertas }} {{ item.numeroAlertas === 1 ? 'alerta' : 'alertas' }}
             </span>
             @if (item.idNodoEdicion; as idNodoEdicion) {
-              <a [routerLink]="['/autor/aventura', idAventura(), 'nodo', idNodoEdicion]">Abrir en el editor</a>
+              <a
+                [routerLink]="['/autor/aventura', idAventura(), 'nodo', idNodoEdicion]"
+                [queryParams]="volverA() ? { volver: volverA() } : {}"
+              >Abrir en el editor</a>
             }
             <button type="button" class="btn--primary" (click)="cerrar(item.nodo.idNodo)" [disabled]="cerrando()">
               Cerrar alertas
             </button>
           </div>
+          @if (item.idNodoEdicion === null) {
+            <p class="alerta-nodo__aviso" role="note">
+              Este nodo ya no existe en la versión que estás editando (se ha borrado o ha cambiado de código, acto o
+              escena), así que no se puede abrir en el editor. Si el cambio ya resuelve el problema, cierra sus alertas.
+            </p>
+          }
 
           @for (alerta of item.alertas; track alerta.idAlertaNodo) {
             <details class="alerta">

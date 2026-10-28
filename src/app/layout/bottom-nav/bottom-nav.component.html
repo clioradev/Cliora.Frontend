@@ -44,7 +44,7 @@
     }
 
     @if (mostrarAutor()) {
-      <a class="bottom-nav__item" routerLink="/autor" routerLinkActive="bottom-nav__item--active">
+      <a class="bottom-nav__item" routerLink="/autor" [class.bottom-nav__item--active]="autorActivo()">
         <svg viewBox="0 0 24 24" aria-hidden="true">
           <path
             d="M3 21v-3.75L14.81 5.44a1 1 0 0 1 1.41 0l1.34 1.34a1 1 0 0 1 0 1.41L5.75 21H3z"
@@ -59,17 +59,24 @@
       <button
         type="button"
         class="bottom-nav__item"
+        [class.bottom-nav__item--con-badge]="totalIncidencias() > 0"
         [class.bottom-nav__item--active]="masActivo() || menuAbierto()"
         data-tutorial="nav-mas"
         aria-haspopup="menu"
         [attr.aria-expanded]="menuAbierto()"
+        [attr.aria-label]="totalIncidencias() > 0 ? 'Más (' + totalIncidencias() + ' incidencias abiertas)' : null"
         (click)="toggleMenu()"
       >
-        <svg viewBox="0 0 24 24" aria-hidden="true">
-          <circle cx="5" cy="12" r="2" fill="currentColor" />
-          <circle cx="12" cy="12" r="2" fill="currentColor" />
-          <circle cx="19" cy="12" r="2" fill="currentColor" />
-        </svg>
+        <span class="bottom-nav__icono-con-badge">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="5" cy="12" r="2" fill="currentColor" />
+            <circle cx="12" cy="12" r="2" fill="currentColor" />
+            <circle cx="19" cy="12" r="2" fill="currentColor" />
+          </svg>
+          @if (totalIncidencias() > 0) {
+            <span class="bottom-nav__badge" aria-hidden="true">{{ totalIncidencias() }}</span>
+          }
+        </span>
         <span class="bottom-nav__label">Más</span>
       </button>
 
@@ -79,6 +86,19 @@
             <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
               {{ opcion.texto }}
             </a>
+          }
+
+          @if (opcionesAutor().length > 0) {
+            <hr class="mas-menu__separador" />
+            <span class="mas-menu__titulo">Autores</span>
+            @for (opcion of opcionesAutor(); track opcion.ruta) {
+              <a class="mas-menu__item" role="menuitem" [routerLink]="opcion.ruta" routerLinkActive="mas-menu__item--active">
+                {{ opcion.texto }}
+                @if (opcion.ruta === RUTA_INCIDENCIAS && totalIncidencias() > 0) {
+                  <span class="mas-menu__contador" [title]="totalIncidencias() + ' alertas abiertas'">{{ totalIncidencias() }}</span>
+                }
+              </a>
+            }
           }
 
           @if (opcionesAdmin().length > 0) {

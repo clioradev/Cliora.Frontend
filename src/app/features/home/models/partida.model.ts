@@ -85,6 +85,8 @@ export interface Final {
   idFinal: number;
   texto: string;
   imagenUrl: string | null;
+  /** Aventura de un universo infantil: la imagen se queda fija arriba, como en sus nodos. */
+  esInfantil: boolean;
 }
 
 export interface FinalizarAventuraResponse {

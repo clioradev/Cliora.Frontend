@@ -20,7 +20,9 @@ const LONGITUD_MAXIMA_COMENTARIO = 2000;
 export class InformarErrorModalComponent {
   private readonly alertaService = inject(AlertaService);
 
-  readonly idNodo = input.required<number>();
+  /** El nodo en el que está la partida, o el final (uno de los dos). */
+  readonly idNodo = input<number | null>(null);
+  readonly idFinal = input<number | null>(null);
   /** Emite cuántos revisores tienen ya la alerta abierta en el nodo. */
   readonly informado = output<number>();
   readonly cerrado = output<void>();
@@ -30,7 +32,13 @@ export class InformarErrorModalComponent {
   protected readonly demasiadoLargo = computed(() => this.comentario().length > LONGITUD_MAXIMA_COMENTARIO);
 
   private readonly enviarAction = asyncAction(
-    () => this.alertaService.informar(this.idNodo(), this.comentario().trim() || null),
+    () => {
+      const comentario = this.comentario().trim() || null;
+      const idFinal = this.idFinal();
+      return idFinal !== null
+        ? this.alertaService.informarEnFinal(idFinal, comentario)
+        : this.alertaService.informar(this.idNodo()!, comentario);
+    },
     {
       onSuccess: (respuesta) => this.informado.emit(respuesta.numeroAlertas),
       defaultErrorMessage: 'No se ha podido informar del error.',

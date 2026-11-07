@@ -2,7 +2,11 @@
   <h3>Informar de error</h3>
 
   <p class="informar-error__ayuda">
-    Se guardará este nodo, el anterior y tus características y eventos actuales para que el autor pueda reproducirlo.
+    @if (idFinal() !== null) {
+      Se guardará este final, el nodo desde el que has llegado y tus características y eventos actuales para que el autor pueda reproducirlo.
+    } @else {
+      Se guardará este nodo, el anterior y tus características y eventos actuales para que el autor pueda reproducirlo.
+    }
   </p>
 
   <app-area-texto

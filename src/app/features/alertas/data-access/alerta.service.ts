@@ -14,6 +14,14 @@ export class AlertaService {
     return this.http.post<InformarAlertaResponse>(`${this.baseUrl}/Alerta/Nodo/${idNodo}`, { comentario });
   }
 
+  /**
+   * Solo para revisores: avisa de un error en el final al que ha llegado. Se guarda en el nodo desde el
+   * que se llegó, con el final indicado en el comentario.
+   */
+  informarEnFinal(idFinal: number, comentario: string | null): Observable<InformarAlertaResponse> {
+    return this.http.post<InformarAlertaResponse>(`${this.baseUrl}/Alerta/Final/${idFinal}`, { comentario });
+  }
+
   /** Aventuras del autor con al menos una alerta abierta. */
   getAventurasConAlertas(): Observable<AventuraConAlertas[]> {
     return this.http.get<AventuraConAlertas[]>(`${this.baseUrl}/Alerta/Aventuras`);

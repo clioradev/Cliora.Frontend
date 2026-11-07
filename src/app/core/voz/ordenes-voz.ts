@@ -1,5 +1,6 @@
-// Órdenes del modo manos libres. Para elegir hace falta decir «elijo» delante del ordinal («elijo la
-// primera»): así ni la respiración ni el ruido ni una frase suelta eligen nada por error.
+// Órdenes del modo manos libres. Para elegir se dice «elijo» delante del ordinal («elijo la primera»);
+// también vale una frase muy corta que acabe en el ordinal («la primera», «opción dos»), porque el
+// reconocedor a veces entiende mal el verbo. Así ni el ruido ni una frase suelta eligen nada por error.
 
 export type OrdenVoz =
   | { tipo: 'opcion'; numero: number }
@@ -22,6 +23,11 @@ const NUMERO_POR_PALABRA: Record<string, number> = {
   octava: 8, octavo: 8, ocho: 8,
 };
 
+// «Elijo» y lo que el reconocedor suele entender en su lugar («hijo», «eligió», «exijo»…).
+const VERBO_ELEGIR = '(?:elijo|eligo|elijio|eligio|elige|escojo|escoge|hijo|exijo|elio)';
+// Palabras de relleno entre el verbo y el ordinal: «elijo a la opción número uno».
+const RELLENO = '(?:\\s+(?:a|la|el|opcion|numero))*';
+
 /** Interpreta la frase oída (con sus alternativas); null si no es una orden. */
 export function interpretarOrden(alternativas: string[]): OrdenVoz | null {
   let resultado: OrdenVoz | null = null;
@@ -29,19 +35,25 @@ export function interpretarOrden(alternativas: string[]): OrdenVoz | null {
   for (const alternativa of alternativas) {
     const texto = normalizar(alternativa);
 
-    const eleccion = texto.match(/\b(?:elijo|eligo)\b(?:\s+(?:la|el|opcion))*\s*(\S*)/);
+    const eleccion = texto.match(new RegExp(`\\b${VERBO_ELEGIR}\\b${RELLENO}\\s*(\\S*)`));
     if (eleccion) {
-      // «1ª», «1.ª», «2a»… se quedan en el número.
-      const palabra = eleccion[1].replace(/^(\d+)\.?[ao]?$/, '$1');
-      const numero = NUMERO_POR_PALABRA[palabra] ?? (/^\d+$/.test(palabra) ? Number(palabra) : null);
+      const numero = numeroDe(eleccion[1]);
       if (numero) {
         return { tipo: 'opcion', numero };
       }
-      if (/^(continuar|siguiente)$/.test(palabra)) {
+      if (/^(continuar|siguiente)$/.test(eleccion[1])) {
         return { tipo: 'continuar' };
       }
       resultado ??= { tipo: 'no-entendida' };
       continue;
+    }
+
+    // Frase corta que acaba en un ordinal con artículo o «opción» delante («la primera», «opción dos»,
+    // o el verbo mal entendido: «hijo la primera»). Al ser tan corta, no la dispara una frase suelta.
+    const corta = texto.match(/^(?:\S+\s+)?(?:la|el|opcion|numero)(?:\s+(?:opcion|numero))?\s+(\S+)$/);
+    const numeroCorta = corta ? numeroDe(corta[1]) : null;
+    if (numeroCorta) {
+      return { tipo: 'opcion', numero: numeroCorta };
     }
 
     if (/\b(continuar|continua|siguiente)\b/.test(texto)) {
@@ -56,6 +68,12 @@ export function interpretarOrden(alternativas: string[]): OrdenVoz | null {
   }
 
   return resultado;
+}
+
+function numeroDe(palabra: string): number | null {
+  // «1ª», «1.ª», «2a»… se quedan en el número.
+  const limpia = palabra.replace(/^(\d+)\.?[ao]?$/, '$1');
+  return NUMERO_POR_PALABRA[limpia] ?? (/^\d+$/.test(limpia) ? Number(limpia) : null);
 }
 
 function normalizar(texto: string): string {

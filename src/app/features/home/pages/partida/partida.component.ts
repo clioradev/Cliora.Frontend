@@ -16,6 +16,9 @@ import { ResultadoTiradaModalComponent } from '../../components/resultado-tirada
 import { PartidaService } from '../../data-access/partida.service';
 import { NivelDificultad, Opcion, TiradaResultado } from '../../models/partida.model';
 
+// Pausa entre el final de la voz y la apertura del micro (en Android el micro sigue ocupado un momento).
+const RETRASO_MICRO_MS = 400;
+
 const DIFICULTAD_HABLADA: Record<NivelDificultad, string> = {
   Facil: ', fácil',
   Normal: ', normal',
@@ -118,6 +121,17 @@ export class PartidaComponent {
       });
     });
 
+    // Si el micro se rinde en manos libres, se dice en voz alta: con la pantalla apagada el aviso
+    // escrito no lo ve nadie. No se vuelve a escuchar solo, para no entrar en un bucle.
+    effect(() => {
+      const errorMicro = this.reconocimiento.error();
+      untracked(() => {
+        if (errorMicro && this.manosLibres() && this.lector.estado() === 'parado') {
+          this.lector.leer([errorMicro.replace('▶', 'el botón de reproducir')]);
+        }
+      });
+    });
+
     inject(DestroyRef).onDestroy(() => this.pararLectura());
   }
 
@@ -171,7 +185,7 @@ export class PartidaComponent {
 
   private escucharSiManosLibres(): void {
     if (this.manosLibres()) {
-      this.reconocimiento.escuchar((alternativas) => this.onOrdenVoz(interpretarOrden(alternativas)));
+      this.reconocimiento.escuchar((alternativas) => this.onOrdenVoz(interpretarOrden(alternativas)), RETRASO_MICRO_MS);
     }
   }
 

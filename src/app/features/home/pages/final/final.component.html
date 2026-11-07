@@ -3,34 +3,115 @@
 } @else if (error()) {
   <p class="status status--error">No se ha podido cargar el final.</p>
 } @else if (final(); as f) {
+  <div class="final__cabecera">
+    <div class="final__cabecera-izquierda">
+      @if (esRevisor() && !preview) {
+        <button
+          type="button"
+          class="btn-icono btn-icono--peligro"
+          [class.final__boton-alerta--informada]="alertasEnFinal() !== null"
+          (click)="informarErrorAbierto.set(true)"
+          aria-label="Informar de error"
+          title="Informar de error"
+        >
+          <app-icono nombre="alerta" />
+        </button>
+      }
+    </div>
+    <div class="final__lector">
+      @if (lector.disponible) {
+        <button
+          type="button"
+          class="btn-icono"
+          [disabled]="lector.estado() === 'leyendo'"
+          (click)="reproducirLectura()"
+          [attr.aria-label]="lector.estado() === 'pausado' ? 'Seguir leyendo' : 'Leer en voz alta'"
+          [title]="lector.estado() === 'pausado' ? 'Seguir leyendo' : 'Leer en voz alta'"
+        >
+          <app-icono nombre="play" />
+        </button>
+        <button
+          type="button"
+          class="btn-icono"
+          [disabled]="lector.estado() !== 'leyendo'"
+          (click)="pausarLectura()"
+          aria-label="Pausar la lectura"
+          title="Pausar la lectura"
+        >
+          <app-icono nombre="pausa" />
+        </button>
+        <button
+          type="button"
+          class="btn-icono"
+          [disabled]="lector.estado() === 'parado' && !reconocimiento.escuchando()"
+          (click)="pararLectura()"
+          aria-label="Parar la lectura"
+          title="Parar la lectura"
+        >
+          <app-icono nombre="parar" />
+        </button>
+      }
+      @if (reconocimiento.escuchando()) {
+        <span class="final__microfono" role="status" title="Escuchando: di «Finalizar»…">
+          <app-icono nombre="microfono" />
+        </span>
+      }
+    </div>
+    <div></div>
+  </div>
+
   @if (lector.bloqueado()) {
-    <button type="button" class="btn--primary final__desbloquear-voz" (click)="leerFinal()">🔊 Toca para escuchar</button>
+    <button type="button" class="btn--primary final__desbloquear-voz" (click)="reproducirLectura()">🔊 Toca para escuchar</button>
   }
 
   @if (reconocimiento.error(); as errorMicro) {
     <p class="status status--error">{{ errorMicro }}</p>
   }
 
-  @if (f.imagenUrl) {
-    <img class="final__imagen" [src]="f.imagenUrl" alt="" />
+  @if (alertasEnFinal(); as total) {
+    <p class="status">
+      Error informado. {{ total === 1 ? 'Eres el primer revisor que avisa aquí.' : total + ' revisores han avisado aquí.' }}
+    </p>
   }
 
-  <p class="final__texto">{{ f.texto }}</p>
-
-  @if (!previsualizacionTerminada()) {
-    <button type="button" class="btn--primary" (click)="finalizarAventura()" [disabled]="finalizando()">
-      Finalizar
-    </button>
+  @if (informarErrorAbierto()) {
+    <app-informar-error-modal
+      [idFinal]="f.idFinal"
+      (informado)="onErrorInformado($event)"
+      (cerrado)="informarErrorAbierto.set(false)"
+    />
   }
 
-  @if (finalizarError()) {
-    <p class="status status--error">{{ finalizarError() }}</p>
-  }
+  <div class="final__lectura" [class.final__lectura--imagen-fija]="imagenFija() !== null">
+    @if (imagenFija(); as fija) {
+      <div class="final__imagen-fija">
+        <img [src]="fija" alt="" />
+      </div>
+    }
 
-  @if (previsualizacionTerminada()) {
-    <p class="status">Previsualización terminada.</p>
-    <button type="button" class="btn--primary" (click)="volverAlEditor()">← Volver al editor</button>
-  }
+    <div class="final__cuerpo">
+      @if (f.imagenUrl && !imagenFija()) {
+        <img class="final__imagen" [src]="f.imagenUrl" alt="" />
+      }
+
+      <p class="final__texto">{{ f.texto }}</p>
+
+      @if (!previsualizacionTerminada()) {
+        <button type="button" class="btn--primary" (click)="finalizarAventura()" [disabled]="finalizando()">
+          Finalizar
+        </button>
+      }
+
+      @if (finalizarError()) {
+        <p class="status status--error">{{ finalizarError() }}</p>
+      }
+
+      @if (previsualizacionTerminada()) {
+        <p class="status">Previsualización terminada.</p>
+        <button type="button" class="btn--primary" (click)="volverAlEditor()">← Volver al editor</button>
+      }
+    </div>
+  </div>
 
   @if (idAventuraFinalizada(); as idAventura) {
     <app-valoracion-modal [idAventura]="idAventura" (cerrado)="onValoracionCerrada()" />

@@ -26,10 +26,13 @@ interface Reconocimiento {
 
 type ClaseReconocimiento = new () => Reconocimiento;
 
-// Si el reconocimiento se cierra nada más abrirse varias veces seguidas (sin red, micro ocupado…),
-// se deja de reintentar para no entrar en un bucle.
-const MAXIMO_CIERRES_RAPIDOS = 3;
-const CIERRE_RAPIDO_MS = 1000;
+// Si el reconocimiento se cierra nada más abrirse (sin red un momento, micro aún ocupado por la voz
+// que acaba de hablar, Android que corta…), se reintenta esperando cada vez más; solo se rinde tras
+// muchos cierres seguidos, para no entrar en un bucle.
+const MAXIMO_CIERRES_RAPIDOS = 8;
+const CIERRE_RAPIDO_MS = 1500;
+const ESPERA_REINTENTO_MS = 400;
+const ESPERA_REINTENTO_MAXIMA_MS = 5000;
 
 /**
  * Escucha el micro con el reconocimiento de voz del navegador (Chrome y Edge lo resuelven en sus
@@ -52,8 +55,13 @@ export class ReconocimientoVozService {
   private reconocimiento: Reconocimiento | null = null;
   private inicio = 0;
   private cierresRapidos = 0;
+  private temporizador: ReturnType<typeof setTimeout> | undefined;
 
-  escuchar(alOir: (alternativas: string[]) => void): void {
+  /**
+   * `retrasoMs`: espera antes de abrir el micro. Justo después de que hable la síntesis de voz, el
+   * micro puede seguir ocupado (sobre todo en Android) y el reconocimiento se cerraría al instante.
+   */
+  escuchar(alOir: (alternativas: string[]) => void, retrasoMs = 0): void {
     this.detener();
     if (!this.Clase) {
       return;
@@ -86,27 +94,33 @@ export class ReconocimientoVozService {
         this.error.set('No se encuentra ningún micrófono.');
         this.detener();
       }
-      // 'no-speech', 'network'…: se cierra y onend lo reabre.
+      // 'no-speech', 'network', 'aborted'…: se cierra y onend lo reabre.
     };
 
     reconocimiento.onend = () => {
       if (this.reconocimiento !== reconocimiento) {
         return;
       }
-      this.cierresRapidos = Date.now() - this.inicio < CIERRE_RAPIDO_MS ? this.cierresRapidos + 1 : 0;
+      if (Date.now() - this.inicio >= CIERRE_RAPIDO_MS) {
+        this.cierresRapidos = 0;
+        this.arrancar(reconocimiento);
+        return;
+      }
+      this.cierresRapidos++;
       if (this.cierresRapidos >= MAXIMO_CIERRES_RAPIDOS) {
         this.error.set('El micrófono se ha cerrado. Pulsa ▶ para volver a intentarlo.');
         this.detener();
         return;
       }
-      this.arrancar(reconocimiento);
+      const espera = Math.min(ESPERA_REINTENTO_MS * 2 ** (this.cierresRapidos - 1), ESPERA_REINTENTO_MAXIMA_MS);
+      this.programar(reconocimiento, espera);
     };
 
     this.reconocimiento = reconocimiento;
     this.error.set(null);
     this.cierresRapidos = 0;
     this.escuchando.set(true);
-    this.arrancar(reconocimiento);
+    this.programar(reconocimiento, retrasoMs);
   }
 
   /**
@@ -127,10 +141,24 @@ export class ReconocimientoVozService {
   }
 
   detener(): void {
+    clearTimeout(this.temporizador);
     const reconocimiento = this.reconocimiento;
     this.reconocimiento = null;
     this.escuchando.set(false);
     reconocimiento?.abort();
+  }
+
+  private programar(reconocimiento: Reconocimiento, esperaMs: number): void {
+    clearTimeout(this.temporizador);
+    if (esperaMs <= 0) {
+      this.arrancar(reconocimiento);
+      return;
+    }
+    this.temporizador = setTimeout(() => {
+      if (this.reconocimiento === reconocimiento) {
+        this.arrancar(reconocimiento);
+      }
+    }, esperaMs);
   }
 
   private arrancar(reconocimiento: Reconocimiento): void {
@@ -138,7 +166,9 @@ export class ReconocimientoVozService {
     try {
       reconocimiento.start();
     } catch {
-      this.detener();
+      // Chrome lanza si la sesión anterior aún no ha terminado de cerrarse: se reintenta como un cierre
+      // rápido en lugar de abandonar sin avisar.
+      reconocimiento.onend?.();
     }
   }
 }

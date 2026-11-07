@@ -1,19 +1,25 @@
 import { Component, DestroyRef, computed, effect, inject, signal, untracked } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router } from '@angular/router';
+import { AuthService } from '../../../../core/auth/auth.service';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { LectorVozService } from '../../../../core/voz/lector-voz.service';
 import { interpretarOrden } from '../../../../core/voz/ordenes-voz';
 import { ReconocimientoVozService } from '../../../../core/voz/reconocimiento-voz.service';
+import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { PreferenciasAplicadasService } from '../../../configuracion/data-access/preferencias-aplicadas.service';
 import { AdminService } from '../../../admin/data-access/admin.service';
 import { AutorService } from '../../../autor/data-access/autor.service';
+import { InformarErrorModalComponent } from '../../components/informar-error-modal/informar-error-modal.component';
 import { ValoracionModalComponent } from '../../components/valoracion-modal/valoracion-modal.component';
 import { PartidaService } from '../../data-access/partida.service';
 
+// Pausa entre el final de la voz y la apertura del micro (en Android el micro sigue ocupado un momento).
+const RETRASO_MICRO_MS = 400;
+
 @Component({
   selector: 'app-final',
-  imports: [ValoracionModalComponent],
+  imports: [ValoracionModalComponent, InformarErrorModalComponent, IconoComponent],
   templateUrl: './final.component.html',
   styleUrl: './final.component.scss',
 })
@@ -23,6 +29,7 @@ export class FinalComponent {
   private readonly partidaService = inject(PartidaService);
   private readonly autorService = inject(AutorService);
   private readonly adminService = inject(AdminService);
+  private readonly authService = inject(AuthService);
 
   private readonly idFinal = Number(this.route.snapshot.paramMap.get('idFinal'));
 
@@ -37,6 +44,17 @@ export class FinalComponent {
   protected readonly final = this.finalResource.value;
   protected readonly loading = this.finalResource.isLoading;
   protected readonly error = computed(() => this.finalResource.error() !== undefined);
+
+  // Como en los nodos infantiles: la imagen se queda fija arriba mientras se lee el texto.
+  protected readonly imagenFija = computed(() => {
+    const final = this.final();
+    return final?.esInfantil && final.imagenUrl ? final.imagenUrl : null;
+  });
+
+  // Informar de error (solo revisores), igual que en los nodos.
+  protected readonly esRevisor = computed(() => this.authService.tieneRol('Revisor'));
+  protected readonly informarErrorAbierto = signal(false);
+  protected readonly alertasEnFinal = signal<number | null>(null);
 
   protected readonly idAventuraFinalizada = signal<number | null>(null);
   protected readonly previsualizacionTerminada = signal(false);
@@ -65,6 +83,24 @@ export class FinalComponent {
     inject(DestroyRef).onDestroy(() => this.pararLectura());
   }
 
+  protected onErrorInformado(numeroAlertas: number): void {
+    this.informarErrorAbierto.set(false);
+    this.alertasEnFinal.set(numeroAlertas);
+  }
+
+  protected reproducirLectura(): void {
+    if (this.lector.estado() === 'pausado') {
+      this.reconocimiento.detener();
+      this.lector.reanudar();
+    } else {
+      this.leerFinal();
+    }
+  }
+
+  protected pausarLectura(): void {
+    this.lector.pausar();
+  }
+
   protected leerFinal(): void {
     this.pararLectura();
     const final = this.final();
@@ -86,12 +122,12 @@ export class FinalComponent {
           } else if (orden?.tipo === 'repetir') {
             this.leerFinal();
           }
-        });
+        }, RETRASO_MICRO_MS);
       }
     });
   }
 
-  private pararLectura(): void {
+  protected pararLectura(): void {
     clearTimeout(this.temporizadorLectura);
     this.lector.parar();
     this.reconocimiento.detener();

@@ -74,6 +74,8 @@ export interface CampanaAutor {
   imagenUrl: string | null;
   /** Sus aventuras se juegan en cualquier orden: ninguna lee eventos ni hereda características de otra. */
   aventurasIndependientes: boolean;
+  /** Texto de la alerta de spoiler; null si la campaña no la lleva. */
+  alertaSpoiler: string | null;
   aventuras: AventuraAutor[];
 }
 
@@ -121,6 +123,8 @@ export interface GuardarCampanaRequest {
   titulo: string;
   descripcion: string | null;
   aventurasIndependientes: boolean;
+  /** Con texto, el lector solo ve el título y este aviso hasta que desbloquea la campaña. */
+  alertaSpoiler: string | null;
 }
 
 export interface GuardarAventuraRequest {

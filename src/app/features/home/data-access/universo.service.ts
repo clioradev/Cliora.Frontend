@@ -17,4 +17,9 @@ export class UniversoService {
     const url = `${this.baseUrl}/Universo/${idUniverso}/Favorito`;
     return esFavorito ? this.http.put<void>(url, {}) : this.http.delete<void>(url);
   }
+
+  /** Abre para siempre una campaña con alerta de spoiler. */
+  desbloquearSpoiler(idCampana: number): Observable<void> {
+    return this.http.put<void>(`${this.baseUrl}/Universo/Campana/${idCampana}/Spoiler`, {});
+  }
 }

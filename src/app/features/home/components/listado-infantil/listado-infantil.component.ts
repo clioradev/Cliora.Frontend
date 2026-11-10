@@ -5,6 +5,7 @@ import { asyncAction } from '../../../../core/utils/async-action';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { PartidaService } from '../../data-access/partida.service';
 import { Aventura, Universo } from '../../models/universo.model';
+import { AlertaSpoilerComponent } from '../alerta-spoiler/alerta-spoiler.component';
 import { DesbloquearModalComponent } from '../desbloquear-modal/desbloquear-modal.component';
 
 /** Aventura terminada que se quiere volver a leer. */
@@ -23,7 +24,7 @@ type EstadoInfantil = 'jugable' | 'terminada' | 'candado' | 'espera';
  */
 @Component({
   selector: 'app-listado-infantil',
-  imports: [DesbloquearModalComponent, ModalComponent],
+  imports: [AlertaSpoilerComponent, DesbloquearModalComponent, ModalComponent],
   templateUrl: './listado-infantil.component.html',
   styleUrl: './listado-infantil.component.scss',
 })

@@ -79,6 +79,11 @@ export interface Campana {
   precioCampana: number | null;
   /** Lo que costarían esas mismas aventuras sueltas. */
   precioCampanaSinDescuento: number | null;
+  /**
+   * Alerta de spoiler aún sin abrir: su texto. Entonces solo llegan id y título, sin descripción,
+   * imagen ni aventuras.
+   */
+  alertaSpoiler: string | null;
 }
 
 export interface Universo {

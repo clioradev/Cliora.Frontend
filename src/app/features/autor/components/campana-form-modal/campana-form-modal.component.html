@@ -23,13 +23,28 @@
       </small>
     </div>
 
+    <div>
+      <label class="campana-form-modal__checkbox">
+        <input type="checkbox" formControlName="conSpoiler" />
+        Alerta de spoiler
+      </label>
+      <small class="campana-form-modal__ayuda">
+        Marcado: el lector solo ve el título y «Alerta de spoiler» con este texto. Al pulsarlo se le
+        pide confirmación y, si acepta, la campaña queda abierta para él para siempre.
+      </small>
+      @if (form.controls.conSpoiler.value) {
+        <textarea formControlName="alertaSpoiler" rows="3" maxlength="1000"
+          placeholder="Por ejemplo: revela el final de «Las lágrimas de los Aroth»."></textarea>
+      }
+    </div>
+
     @if (error()) {
       <p class="status status--error campana-form-modal__error">{{ error() }}</p>
     }
 
     <div class="campana-form-modal__acciones">
       <button type="button" (click)="cerrado.emit()">Cancelar</button>
-      <button type="submit" class="btn--primary" [disabled]="form.invalid || guardando()">
+      <button type="submit" class="btn--primary" [disabled]="form.invalid || spoilerSinTexto() || guardando()">
         {{ guardando() ? 'Guardando…' : 'Guardar' }}
       </button>
     </div>

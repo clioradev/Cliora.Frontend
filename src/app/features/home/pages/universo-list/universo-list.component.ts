@@ -11,6 +11,7 @@ import { AuthService } from '../../../../core/auth/auth.service';
 import { CarritoService } from '../../../tienda/data-access/carrito.service';
 import { DesbloquearModalComponent } from '../../components/desbloquear-modal/desbloquear-modal.component';
 import { ListadoInfantilComponent } from '../../components/listado-infantil/listado-infantil.component';
+import { AlertaSpoilerComponent } from '../../components/alerta-spoiler/alerta-spoiler.component';
 import { AventuraDetalleComponent } from '../../components/aventura-detalle/aventura-detalle.component';
 import { ReiniciarAventuraModalComponent } from '../../components/reiniciar-aventura-modal/reiniciar-aventura-modal.component';
 import { NivelValoracion, ResenasModalComponent } from '../../components/resenas-modal/resenas-modal.component';
@@ -58,6 +59,7 @@ interface ContextoAventura {
     AnchoObservadoDirective,
     PrecioPipe,
     ListadoInfantilComponent,
+    AlertaSpoilerComponent,
     DesbloquearModalComponent,
   ],
   templateUrl: './universo-list.component.html',

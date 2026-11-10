@@ -190,6 +190,14 @@
                 }
               </header>
 
+              @if (campana.alertaSpoiler) {
+                <app-alerta-spoiler
+                  [idCampana]="campana.idCampana"
+                  [texto]="campana.alertaSpoiler"
+                  (desbloqueada)="recargarUniversos()"
+                />
+              }
+
               @if (campana.descripcion) {
                 <app-texto-recortado
                   class="campana-card__descripcion"

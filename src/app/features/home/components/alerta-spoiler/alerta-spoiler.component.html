@@ -1,0 +1,26 @@
+<button type="button" class="alerta-spoiler" (click)="confirmando.set(true)">
+  <span class="alerta-spoiler__titulo">⚠ Alerta de spoiler</span>
+  <span class="alerta-spoiler__texto">{{ texto() }}</span>
+</button>
+
+@if (confirmando()) {
+  <app-modal (cerrar)="confirmando.set(false)">
+    <h3>Alerta de spoiler</h3>
+    <p class="alerta-spoiler__modal-texto">{{ texto() }}</p>
+    <p>
+      ¿Quieres desbloquear esta campaña? <strong>Una vez desbloqueada quedará abierta para siempre</strong>; no se
+      puede volver a ocultar.
+    </p>
+
+    @if (error()) {
+      <p class="status status--error">{{ error() }}</p>
+    }
+
+    <div class="alerta-spoiler__acciones">
+      <button type="button" (click)="confirmando.set(false)">No</button>
+      <button type="button" class="btn--primary" [disabled]="desbloqueando()" (click)="confirmar()">
+        {{ desbloqueando() ? 'Desbloqueando…' : 'Sí, desbloquear' }}
+      </button>
+    </div>
+  </app-modal>
+}

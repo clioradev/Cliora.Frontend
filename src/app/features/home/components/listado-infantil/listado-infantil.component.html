@@ -12,6 +12,10 @@
         <h2 class="campana__titulo">{{ campana.titulo }}</h2>
       </header>
 
+      @if (campana.alertaSpoiler) {
+        <app-alerta-spoiler [idCampana]="campana.idCampana" [texto]="campana.alertaSpoiler" (desbloqueada)="cambiado.emit()" />
+      }
+
       <ul class="aventuras">
         @for (aventura of campana.aventuras; track aventura.idAventura) {
           <li>

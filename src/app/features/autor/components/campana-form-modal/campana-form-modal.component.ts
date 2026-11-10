@@ -26,6 +26,8 @@ export class CampanaFormModalComponent {
     titulo: ['', [Validators.required, Validators.maxLength(200)]],
     descripcion: [''],
     aventurasIndependientes: [false],
+    conSpoiler: [false],
+    alertaSpoiler: ['', [Validators.maxLength(1000)]],
   });
 
   constructor() {
@@ -36,6 +38,8 @@ export class CampanaFormModalComponent {
           titulo: campana.titulo,
           descripcion: campana.descripcion ?? '',
           aventurasIndependientes: campana.aventurasIndependientes,
+          conSpoiler: !!campana.alertaSpoiler,
+          alertaSpoiler: campana.alertaSpoiler ?? '',
         });
       }
     });
@@ -63,12 +67,23 @@ export class CampanaFormModalComponent {
   protected readonly guardando = this.guardarAction.loading;
   protected readonly error = this.guardarAction.error;
 
+  /** Marcada la alerta de spoiler sin texto: no se puede guardar. */
+  protected spoilerSinTexto(): boolean {
+    const { conSpoiler, alertaSpoiler } = this.form.getRawValue();
+    return conSpoiler && !alertaSpoiler.trim();
+  }
+
   protected guardar(): void {
-    if (this.form.invalid) {
+    if (this.form.invalid || this.spoilerSinTexto()) {
       return;
     }
 
-    const { titulo, descripcion, aventurasIndependientes } = this.form.getRawValue();
-    this.guardarAction.run({ titulo, descripcion: descripcion.trim() || null, aventurasIndependientes });
+    const { titulo, descripcion, aventurasIndependientes, conSpoiler, alertaSpoiler } = this.form.getRawValue();
+    this.guardarAction.run({
+      titulo,
+      descripcion: descripcion.trim() || null,
+      aventurasIndependientes,
+      alertaSpoiler: conSpoiler ? alertaSpoiler.trim() : null,
+    });
   }
 }

@@ -446,6 +446,19 @@ export class UniversoListComponent {
   private filtrarUniverso(universo: Universo, termino: string, cantidadDecision: number | null): Universo | null {
     const campanas: Campana[] = [];
     for (const campana of universo.campanas) {
+      // Con alerta de spoiler sin abrir no llegan sus aventuras: se ve si no se filtra por número
+      // de decisiones y el término (si lo hay) coincide con el título del universo o de la campaña.
+      if (campana.alertaSpoiler) {
+        const coincide =
+          !termino ||
+          universo.titulo.toLocaleLowerCase().includes(termino) ||
+          campana.titulo.toLocaleLowerCase().includes(termino);
+        if (cantidadDecision === null && coincide) {
+          campanas.push(campana);
+        }
+        continue;
+      }
+
       const aventuras = campana.aventuras.filter((aventura) =>
         this.aventuraVisible(universo, campana, aventura, termino, cantidadDecision),
       );

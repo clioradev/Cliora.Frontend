@@ -156,7 +156,7 @@
 
         <div class="campanas">
           @for (campana of universo.campanas; track campana.idCampana) {
-            <article class="campana-card">
+            <article class="campana-card" [class.campana-card--spoiler]="campana.alertaSpoiler">
               <header class="campana-card__header">
                 <h3>{{ campana.titulo }}</h3>
                 @if (campana.bloqueada && !esHijo()) {

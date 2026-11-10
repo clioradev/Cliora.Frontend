@@ -111,6 +111,10 @@
   display: flex;
   flex-direction: column;
 
+  &--spoiler h3 {
+    color: var(--color-text-secondary);
+  }
+
   &__header {
     display: flex;
     flex-wrap: wrap;

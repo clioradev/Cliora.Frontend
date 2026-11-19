@@ -10,13 +10,13 @@ export const DATOS_LEGALES = {
   /** Persona física o empresa responsable de Cliora. */
   titular: 'Artur Ochandorena Blanch',
   /** NIF del titular (el DNI con letra, si es persona física). */
-  nif: '[NIF pendiente]',
+  nif: '43459271N',
   /** Domicilio a efectos de notificaciones: puede ser profesional, no tiene por qué ser el de casa. */
-  domicilio: '[Domicilio pendiente]',
+  domicilio: 'Av. Erripagaña 14, 1.º B, 31016 Pamplona (Navarra)',
   /** Inscripción en el Registro Mercantil; solo si el titular es una sociedad. */
   registroMercantil: null as string | null,
   /** Buzón al que pueden escribir los usuarios (debe coincidir con Contacto:EmailSoporte del back). */
-  email: 'soporte@cliora.es',
+  email: 'cliora.dev@gmail.com',
   web: 'cliora.es',
   /** Proveedor que aloja la web, la base de datos y los archivos. */
   alojamiento: 'Microsoft Azure (Microsoft Ireland Operations Ltd.), con servidores en España (región Spain Central)',

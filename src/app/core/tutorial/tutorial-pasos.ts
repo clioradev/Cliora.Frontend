@@ -40,13 +40,13 @@ export const PASOS_TUTORIAL: PasoTutorial[] = [
     alinear: 'end',
     titulo: 'Los colores de las aventuras',
     texto:
-      'Verde: puedes jugarla. Azul: ya la terminaste. Rojo: aún no está disponible (es de pago o te falta terminar la anterior). Las doradas son libros: se leen pasando página.',
+      'Verde: puedes leerla. Azul: ya la terminaste. Rojo: aún no está disponible (es de pago o te falta terminar la anterior). Las doradas son libros: se leen pasando página.',
   },
   {
     objetivos: [tutorial('precio'), tutorial('campana-precio'), tutorial('aventura')],
     titulo: 'Comprar aventuras',
     texto:
-      'La primera aventura de cada campaña es gratis. Las demás llevan candado: añádelas al carrito con su botón, o la campaña entera, más barata, desde su título. Y valorando aventuras ganas aventuras gratis.',
+      'La primera aventura de cada campaña es gratis. Las demás llevan candado: añádelas al carrito con su botón, o la campaña entera, más barata, desde su título. Y valorando aventuras consigues aventuras gratis.',
   },
   {
     objetivos: [tutorial('buscador')],
@@ -56,7 +56,7 @@ export const PASOS_TUTORIAL: PasoTutorial[] = [
   {
     objetivos: [tutorial('nav-continuar')],
     titulo: 'Continuar',
-    texto: 'Te devuelve a la última aventura que estabas jugando, justo donde la dejaste.',
+    texto: 'Te devuelve a la última aventura que estabas leyendo, justo donde la dejaste.',
   },
   {
     objetivos: [tutorial('nav-universos')],

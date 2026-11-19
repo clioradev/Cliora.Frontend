@@ -51,7 +51,7 @@ export class AventuraDetalleComponent {
         queryParams: { idAventura: aventura.idAventura },
       });
     },
-    defaultErrorMessage: 'No se ha podido empezar la partida.',
+    defaultErrorMessage: 'No se ha podido empezar la aventura.',
   });
   protected readonly starting = this.empezarAction.loading;
   protected readonly startError = this.empezarAction.error;

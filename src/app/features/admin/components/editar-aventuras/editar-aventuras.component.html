@@ -5,7 +5,7 @@
   estructura.
 </p>
 <p class="editar-aventuras__aviso">
-  «Eliminar por completo» borra una aventura y todo su rastro: versiones, contenido, partidas de los jugadores y
+  «Eliminar por completo» borra una aventura y todo su rastro: versiones, contenido, progreso de los lectores y
   valoraciones. No se puede deshacer.
 </p>
 
@@ -36,7 +36,7 @@
           <span class="aventura-list__detalle">{{ aventura.emailAutor ?? 'Sin autor' }}</span>
           <span class="aventura-list__detalle">{{ estados(aventura) || 'Sin versiones' }}</span>
           <span class="aventura-list__detalle">
-            {{ aventura.cantidadPartidas }} partidas · {{ aventura.cantidadValoraciones }} valoraciones
+            {{ aventura.cantidadPartidas }} lecturas · {{ aventura.cantidadValoraciones }} valoraciones
           </span>
         </div>
 

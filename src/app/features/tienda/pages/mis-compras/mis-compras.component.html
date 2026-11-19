@@ -3,7 +3,7 @@
 <p class="ayuda">
   Puedes devolver una aventura o un libro mientras no hayas pasado del progreso que te indicamos al comprar ni lo hayas
   terminado; si ya no se puede, te decimos por qué. Una campaña comprada entera se devuelve entera. Al devolverla
-  dejarás de poder jugarla y se borrará su progreso.
+  dejarás de poder leerla y se borrará su progreso.
 </p>
 
 @if (devuelto(); as d) {
@@ -95,7 +95,7 @@
       @if (elemento.aventurasGratis > 0) {
         Recuperarás {{ textoAventurasGratis(elemento.aventurasGratis) }}.
       }
-      Dejarás de poder jugar y se borrará el progreso. Podrás volver a comprar cuando quieras.
+      Dejarás de tener acceso y se borrará el progreso. Podrás volver a comprar cuando quieras.
     </p>
     @if (errorDevolver()) {
       <p class="mensaje mensaje--error">{{ errorDevolver() }}</p>

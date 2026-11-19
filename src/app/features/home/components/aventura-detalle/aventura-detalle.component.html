@@ -67,11 +67,11 @@
       <div class="detalle__acciones-fila">
         @if (a.estadoPartida === 'En curso' && a.idNodoActual) {
           <a class="btn--primary" [routerLink]="['/partida', a.idNodoActual]" [queryParams]="{ idAventura: a.idAventura }">
-            Continuar partida
+            Continuar
           </a>
         } @else if (a.puedeEmpezarPartida) {
           <button type="button" class="btn--primary" (click)="empezarPartida()" [disabled]="starting() || !a.idVersionAventura">
-            {{ starting() ? 'Empezando…' : 'Empezar partida' }}
+            {{ starting() ? 'Empezando…' : 'Empezar' }}
           </button>
         } @else if (a.requiereSuscripcion) {
           <button type="button" class="btn--primary" (click)="desbloqueando.set(true)">Desbloquear</button>

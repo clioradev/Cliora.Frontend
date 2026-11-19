@@ -27,5 +27,5 @@ export const DATOS_LEGALES = {
   /** Días de la prueba gratuita de las suscripciones infantil y juvenil. */
   diasPrueba: 9,
   /** Fecha de la última revisión de los textos: cambiarla al modificarlos. */
-  fechaActualizacion: '19 de octubre de 2026',
+  fechaActualizacion: '20 de noviembre de 2026',
 };

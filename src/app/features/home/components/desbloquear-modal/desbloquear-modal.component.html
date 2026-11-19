@@ -4,7 +4,7 @@
 
     @if (activada()) {
       <h2>¡Desbloqueado!</h2>
-      <p>Ya puedes jugar todas las aventuras durante {{ dias() }} días.</p>
+      <p>Ya puedes vivir todas las aventuras durante {{ dias() }} días.</p>
       <button type="button" class="btn--primary" (click)="cerrar()">Seguir</button>
     } @else if (cargando()) {
       <p class="desbloquear__texto">Cargando…</p>

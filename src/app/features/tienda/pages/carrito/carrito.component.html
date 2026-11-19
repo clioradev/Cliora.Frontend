@@ -4,9 +4,9 @@
   <div class="compra-ok" role="status">
     <h2>¡Compra completada!</h2>
     @if (compra.total === 0) {
-      <p>No has pagado nada: te las has llevado con tus aventuras gratis. Ya puedes jugarlas.</p>
+      <p>No has pagado nada: te las has llevado con tus aventuras gratis. Ya puedes leerlas.</p>
     } @else {
-      <p>Has pagado {{ compra.total | precio }}. Ya puedes jugar tus aventuras.</p>
+      <p>Has pagado {{ compra.total | precio }}. Ya puedes vivir tus aventuras.</p>
     }
     <a class="btn--primary" routerLink="/">Ir a los universos</a>
   </div>
@@ -127,7 +127,7 @@
     <div class="devoluciones">
       <h2>Devoluciones</h2>
       <p>
-        Puedes devolver cada aventura desde «Mis compras» y recuperar lo que pagaste por ella mientras no hayas jugado
+        Puedes devolver cada aventura desde «Mis compras» y recuperar lo que pagaste por ella mientras no hayas leído
         más del {{ p.umbralDevolucion }}&nbsp;% ni la hayas terminado. En cuanto pase eso deja de poder devolverse,
         aunque luego la reinicies.
       </p>
@@ -142,7 +142,7 @@
     <label class="condiciones">
       <input type="checkbox" [checked]="aceptaCondiciones()" (change)="onAceptaCondiciones($event)" />
       <span>
-        Quiero empezar a jugar en cuanto pague, así que renuncio al derecho de desistimiento de 14 días, y entiendo que
+        Quiero empezar a leer en cuanto pague, así que renuncio al derecho de desistimiento de 14 días, y entiendo que
         podré devolver cada aventura mientras no haya superado el {{ p.umbralDevolucion }}&nbsp;% de ella ni la haya
         terminado (<a href="/legal/condiciones" target="_blank" rel="noopener">condiciones</a>).
       </span>

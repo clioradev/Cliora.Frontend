@@ -4,7 +4,7 @@
   <p class="status status--error">No se han podido cargar los perfiles de tus hijos.</p>
 } @else {
   <p class="nota">
-    Cada hijo tiene su propio perfil, con sus partidas. No pueden comprar ni verán publicidad, y todos los correos te
+    Cada hijo tiene su propio perfil, con su progreso. No pueden comprar ni verán publicidad, y todos los correos te
     llegan a ti. Son gratis las dos primeras aventuras de cada campaña infantil y la primera de cada campaña juvenil;
     para las demás hace falta una suscripción, que puedes probar 9 días gratis, sin tarjeta y sin renovación automática.
   </p>
@@ -82,7 +82,7 @@
               </div>
             } @else if (e.tipo === 'baja' && e.hijo.idUsuario === hijo.idUsuario) {
               <div class="formulario">
-                <p class="nota">Se perderán sus partidas. Para confirmarlo, escribe tu contraseña.</p>
+                <p class="nota">Se perderá su progreso. Para confirmarlo, escribe tu contraseña.</p>
                 <label>
                   Tu contraseña
                   <input type="password" autocomplete="current-password" [value]="password()" (input)="onPasswordInput($event)" />

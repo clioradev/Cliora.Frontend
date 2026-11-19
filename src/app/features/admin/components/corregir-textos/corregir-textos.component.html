@@ -12,7 +12,7 @@
     <p class="status status--error">No se han podido cargar los textos. ¿Tiene la aventura una versión publicada?</p>
   } @else if (textos(); as t) {
     <p class="corregir__aviso">
-      Estás corrigiendo la versión publicada (v{{ t.version }}). Al guardar, los jugadores verán el texto corregido
+      Estás corrigiendo la versión publicada (v{{ t.version }}). Al guardar, los lectores verán el texto corregido
       al momento; no se crea una versión nueva y la estructura no se toca.
     </p>
     @if (t.tieneVersionEnEdicion) {

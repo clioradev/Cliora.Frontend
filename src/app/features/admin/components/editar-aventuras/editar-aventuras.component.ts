@@ -60,7 +60,7 @@ export class EditarAventurasComponent {
   protected mensajeConfirmacion(aventura: AventuraAdmin): string {
     return (
       `Se borrará «${aventura.tituloAventura}» por completo: todas sus versiones y su contenido, ` +
-      `${aventura.cantidadPartidas} partida(s) jugada(s), ${aventura.cantidadValoraciones} valoración(es), ` +
+      `${aventura.cantidadPartidas} lectura(s) empezada(s), ${aventura.cantidadValoraciones} valoración(es), ` +
       `sus imágenes y audios, y cualquier condición o efecto de otras aventuras de la campaña que dependa de ella.`
     );
   }

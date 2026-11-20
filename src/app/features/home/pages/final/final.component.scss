@@ -60,7 +60,7 @@
 
 .final__imagen {
   display: block;
-  max-width: min(100%, var(--content-width-reading));
+  max-width: 100%;
   height: auto;
   margin-bottom: var(--space-4);
 }
@@ -69,9 +69,9 @@
   font-family: var(--font-reading);
   font-size: var(--text-reading);
   line-height: var(--line-height-reading);
+  text-align: justify;
   white-space: pre-line;
   margin-bottom: var(--space-6);
-  max-width: var(--content-width-reading);
 }
 
 .final__desbloquear-voz {

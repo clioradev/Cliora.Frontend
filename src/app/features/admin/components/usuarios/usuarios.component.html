@@ -26,6 +26,7 @@
         <div class="usuario-list__acciones">
           <button type="button" (click)="editarRoles(usuario)">Editar roles</button>
           <button type="button" (click)="editarAventurasGratis(usuario)">Aventuras gratis</button>
+          <button type="button" (click)="imprimirModal.set(usuario)">Imprimir</button>
         </div>
       </li>
     }
@@ -42,4 +43,8 @@
     (cerrado)="cerrarAventurasGratisModal()"
     (guardado)="onUsuarioActualizado()"
   />
+}
+
+@if (imprimirModal(); as usuario) {
+  <app-imprimir-modal [usuario]="usuario" (cerrado)="imprimirModal.set(null)" />
 }

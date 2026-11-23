@@ -5,12 +5,13 @@ import { AdminService } from '../../data-access/admin.service';
 import { UsuarioAdmin } from '../../models/admin.model';
 import { AventurasGratisModalComponent } from '../aventuras-gratis-modal/aventuras-gratis-modal.component';
 import { EditarRolesModalComponent } from '../editar-roles-modal/editar-roles-modal.component';
+import { ImprimirModalComponent } from '../imprimir-modal/imprimir-modal.component';
 
 const LONGITUD_MINIMA_BUSQUEDA = 2;
 
 @Component({
   selector: 'app-usuarios',
-  imports: [AventurasGratisModalComponent, EditarRolesModalComponent],
+  imports: [AventurasGratisModalComponent, EditarRolesModalComponent, ImprimirModalComponent],
   templateUrl: './usuarios.component.html',
   styleUrl: './usuarios.component.scss',
 })
@@ -36,6 +37,7 @@ export class UsuariosComponent {
 
   protected readonly rolesModal = signal<UsuarioAdmin | null>(null);
   protected readonly aventurasGratisModal = signal<UsuarioAdmin | null>(null);
+  protected readonly imprimirModal = signal<UsuarioAdmin | null>(null);
 
   protected onQueryInput(evento: Event): void {
     this.query.set((evento.target as HTMLInputElement).value);

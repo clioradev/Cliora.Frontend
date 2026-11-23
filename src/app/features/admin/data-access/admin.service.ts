@@ -1,4 +1,4 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpResponse } from '@angular/common/http';
 import { inject, Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
@@ -14,6 +14,7 @@ import {
   PrecioAventuraAdmin,
   AjustarAventurasGratisRequest,
   MovimientoAventuraGratis,
+  PerfilImpresion,
   Rol,
   SolicitudPublicacionAdmin,
   TextosAventura,
@@ -35,6 +36,18 @@ export class AdminService {
 
   ajustarAventurasGratis(idUsuario: number, dto: AjustarAventurasGratisRequest): Observable<UsuarioAdmin> {
     return this.http.post<UsuarioAdmin>(`${this.baseUrl}/Admin/Usuario/${idUsuario}/AventurasGratis`, dto);
+  }
+
+  obtenerPerfilesImpresion(idUsuario: number): Observable<PerfilImpresion[]> {
+    return this.http.get<PerfilImpresion[]>(`${this.baseUrl}/Admin/Usuario/${idUsuario}/Impresion`);
+  }
+
+  /** PDF de una aventura terminada por ese usuario (o hijo), tal como la vivió. */
+  imprimirAventura(idUsuario: number, idAventura: number): Observable<HttpResponse<Blob>> {
+    return this.http.get(`${this.baseUrl}/Admin/Usuario/${idUsuario}/Aventura/${idAventura}/Pdf`, {
+      responseType: 'blob',
+      observe: 'response',
+    });
   }
 
   obtenerRoles(): Observable<Rol[]> {

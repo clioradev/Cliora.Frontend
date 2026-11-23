@@ -1,0 +1,74 @@
+:host {
+  display: block;
+}
+
+.status {
+  color: var(--color-text-secondary);
+
+  &--error {
+    color: var(--color-danger);
+  }
+}
+
+.imprimir__perfil {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.imprimir__cambiar {
+  font-size: var(--text-sm);
+}
+
+.imprimir__perfiles,
+.imprimir__lista {
+  list-style: none;
+  padding: 0;
+  margin: 0 0 var(--space-3);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+}
+
+.imprimir__perfiles button {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--space-1);
+  text-align: left;
+}
+
+.imprimir__lista {
+  max-height: 22rem;
+  overflow-y: auto;
+
+  li {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+}
+
+.imprimir__aventura {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.imprimir__titulo {
+  font-weight: 600;
+  overflow-wrap: anywhere;
+}
+
+.imprimir__detalle {
+  font-size: var(--text-xs);
+  color: var(--color-text-secondary);
+}
+
+.imprimir__acciones {
+  display: flex;
+  justify-content: flex-end;
+}

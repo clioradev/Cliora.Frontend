@@ -1,0 +1,69 @@
+<app-modal (cerrar)="cerrado.emit()">
+  <h3>Imprimir aventuras de {{ usuario().email ?? usuario().nombre }}</h3>
+
+  @if (cargando()) {
+    <p class="status">Cargando…</p>
+  } @else if (errorCarga()) {
+    <p class="status status--error">{{ errorCarga() }}</p>
+  } @else if (perfil(); as perfil) {
+    @if (variosPerfiles()) {
+      <p class="imprimir__perfil">
+        Aventuras de <strong>{{ perfil.nombre }}</strong>
+        <button type="button" class="imprimir__cambiar" (click)="volverAPerfiles()">Cambiar de perfil</button>
+      </p>
+    }
+
+    @if (perfil.aventuras.length === 0) {
+      <p class="status">{{ perfil.nombre }} todavía no ha terminado ninguna aventura.</p>
+    } @else {
+      <ul class="imprimir__lista">
+        @for (aventura of perfil.aventuras; track aventura.idAventura) {
+          <li>
+            <div class="imprimir__aventura">
+              <span class="imprimir__titulo">{{ aventura.titulo }}</span>
+              <span class="imprimir__detalle">
+                {{ aventura.tituloUniverso }} · {{ aventura.tituloCampana }}
+                @if (aventura.esLibro) {
+                  · Libro
+                }
+                @if (aventura.fechaFin) {
+                  · terminada el {{ aventura.fechaFin | date: 'dd/MM/yyyy' }}
+                }
+              </span>
+            </div>
+            <button
+              type="button"
+              class="btn--primary"
+              (click)="imprimir(perfil, aventura)"
+              [disabled]="imprimiendo() !== null"
+            >
+              {{ imprimiendo() === aventura.idAventura ? 'Generando…' : 'Imprimir' }}
+            </button>
+          </li>
+        }
+      </ul>
+    }
+
+    @if (errorImprimir()) {
+      <p class="status status--error">{{ errorImprimir() }}</p>
+    }
+  } @else {
+    <p>Este usuario tiene hijos. ¿De quién quieres imprimir una aventura?</p>
+    <ul class="imprimir__perfiles">
+      @for (opcion of perfiles(); track opcion.idUsuario) {
+        <li>
+          <button type="button" (click)="elegirPerfil(opcion)">
+            {{ opcion.nombre }}{{ opcion.esHijo ? '' : ' (titular)' }}
+            <span class="imprimir__detalle">
+              {{ opcion.aventuras.length }} {{ opcion.aventuras.length === 1 ? 'aventura terminada' : 'aventuras terminadas' }}
+            </span>
+          </button>
+        </li>
+      }
+    </ul>
+  }
+
+  <div class="imprimir__acciones">
+    <button type="button" (click)="cerrado.emit()">Cerrar</button>
+  </div>
+</app-modal>

@@ -7,7 +7,7 @@ import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { of } from 'rxjs';
 import { CANTIDAD_DECISION_OPCIONES } from '../../../home/models/universo.model';
 import { asyncAction } from '../../../../core/utils/async-action';
-import { descargar } from '../../../../core/utils/descargar';
+import { descargar, nombreArchivoDescarga } from '../../../../core/utils/descargar';
 import { IconoComponent } from '../../../../shared/components/icono/icono.component';
 import { ModalComponent } from '../../../../shared/components/modal/modal.component';
 import { ActosEscenasComponent } from '../../components/actos-escenas/actos-escenas.component';
@@ -307,13 +307,4 @@ export class AventuraFormComponent {
 
 function tabInicial(tab: string | null): 'datos' | 'contenido' | 'alertas' {
   return tab === 'contenido' || tab === 'alertas' ? tab : 'datos';
-}
-
-/** Nombre del archivo de una cabecera Content-Disposition (filename*=UTF-8''… o filename=…). */
-function nombreArchivoDescarga(cabecera: string | null): string | null {
-  const codificado = cabecera?.match(/filename\*=UTF-8''([^;]+)/i)?.[1];
-  if (codificado) {
-    return decodeURIComponent(codificado);
-  }
-  return cabecera?.match(/filename="?([^";]+)"?/i)?.[1] ?? null;
 }

@@ -193,6 +193,23 @@ export const TIPOS_MOVIMIENTO_AVENTURA_GRATIS: Record<TipoMovimientoAventuraGrat
   4: 'Devolución',
 };
 
+/** El usuario o uno de sus hijos, con las aventuras que ha terminado (para imprimirlas en PDF). */
+export interface PerfilImpresion {
+  idUsuario: number;
+  nombre: string;
+  esHijo: boolean;
+  aventuras: AventuraTerminada[];
+}
+
+export interface AventuraTerminada {
+  idAventura: number;
+  titulo: string;
+  tituloCampana: string;
+  tituloUniverso: string;
+  esLibro: boolean;
+  fechaFin: string | null;
+}
+
 export interface MovimientoAventuraGratis {
   tipo: TipoMovimientoAventuraGratis;
   cantidad: number;

@@ -78,6 +78,18 @@ export interface PrecioAventuraAdmin {
   cantidadCompras: number;
 }
 
+/** Respuesta de publicar: si los cambios pasaron a la versión ya publicada y qué versión queda. */
+export interface PublicacionAdmin {
+  fusionada: boolean;
+  version: number;
+}
+
+/** Cuerpo del 409 al publicar: la versión cambia los eventos y hay que confirmar una versión nueva. */
+export interface ConfirmarNuevaVersion {
+  requiereConfirmacion: true;
+  motivos: string[];
+}
+
 export interface GuardarPrecioRequest {
   /** € con IVA; null o 0 = gratis. */
   precio: number | null;

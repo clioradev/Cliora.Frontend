@@ -1,5 +1,9 @@
 <h1>Admin: Aventuras</h1>
 
+@if (mensajePublicada()) {
+  <p class="status status--ok">{{ mensajePublicada() }}</p>
+}
+
 @if (cargando()) {
   <p>Cargando…</p>
 } @else if (solicitudes().length === 0) {
@@ -97,6 +101,35 @@
             Rechazar
           </button>
         </div>
+
+        @if (confirmacionPendiente(); as pendiente) {
+          @if (pendiente.solicitud.idVersionAventura === solicitud.idVersionAventura) {
+            <div class="solicitud-list__confirmacion" role="alert">
+              <p>
+                No se puede actualizar la versión publicada conservando el progreso de los lectores; habría
+                que publicarla como versión nueva (v{{ solicitud.version }}) porque:
+              </p>
+              <ul>
+                @for (motivo of pendiente.motivos; track motivo) {
+                  <li>{{ motivo }}</li>
+                }
+              </ul>
+              <div class="solicitud-list__confirmacion-acciones">
+                <button
+                  type="button"
+                  class="btn--primary"
+                  (click)="confirmarNuevaVersion()"
+                  [disabled]="accionEnCurso(solicitud)"
+                >
+                  Publicar como v{{ solicitud.version }}
+                </button>
+                <button type="button" (click)="confirmacionPendiente.set(null)" [disabled]="accionEnCurso(solicitud)">
+                  Cancelar
+                </button>
+              </div>
+            </div>
+          }
+        }
       </li>
     }
   </ul>

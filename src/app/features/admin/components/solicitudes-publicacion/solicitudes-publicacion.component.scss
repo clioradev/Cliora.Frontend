@@ -13,6 +13,7 @@
 
 .solicitud-list__item {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   gap: var(--space-3);
   border: 1px solid var(--border-color, currentColor);
@@ -110,4 +111,24 @@
 .btn--peligro:disabled {
   opacity: 0.5;
   cursor: default;
+}
+
+.status--ok {
+  color: var(--color-success);
+}
+
+.solicitud-list__confirmacion {
+  flex-basis: 100%;
+  border-top: 1px solid var(--border-color, currentColor);
+  padding-top: var(--space-3);
+
+  p,
+  ul {
+    margin: 0 0 var(--space-2);
+  }
+}
+
+.solicitud-list__confirmacion-acciones {
+  display: flex;
+  gap: var(--space-2);
 }

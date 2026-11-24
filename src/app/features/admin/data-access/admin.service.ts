@@ -10,6 +10,7 @@ import {
   EstadisticasAdmin,
   GuardarCatTipoUniversoRequest,
   GuardarPrecioRequest,
+  PublicacionAdmin,
   ParametroAdmin,
   PrecioAventuraAdmin,
   AjustarAventurasGratisRequest,
@@ -82,8 +83,21 @@ export class AdminService {
     return this.http.get<SolicitudPublicacionAdmin[]>(`${this.baseUrl}/Admin/SolicitudPublicacion`);
   }
 
-  publicarVersion(idVersionAventura: number, precio: GuardarPrecioRequest): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Publicar`, precio);
+  /**
+   * Si ya hay una versión publicada y la nueva no cambia los eventos, el back pasa los cambios a la
+   * publicada (fusionada = true). Si los cambia, responde 409 con los motivos y solo se publica como
+   * versión nueva repitiendo la llamada con nuevaVersion = true.
+   */
+  publicarVersion(
+    idVersionAventura: number,
+    precio: GuardarPrecioRequest,
+    nuevaVersion = false,
+  ): Observable<PublicacionAdmin> {
+    return this.http.post<PublicacionAdmin>(
+      `${this.baseUrl}/Admin/VersionAventura/${idVersionAventura}/Publicar`,
+      precio,
+      { params: nuevaVersion ? { nuevaVersion: true } : {} },
+    );
   }
 
   obtenerPrecios(): Observable<PrecioAventuraAdmin[]> {

@@ -1,10 +1,12 @@
 import { DatePipe } from '@angular/common';
+import { HttpErrorResponse } from '@angular/common/http';
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { AdminService } from '../../data-access/admin.service';
 import {
+  ConfirmarNuevaVersion,
   GuardarPrecioRequest,
   PARAMETRO_PRECIO_AVENTURA_INTERACTIVA,
   PARAMETRO_PRECIO_LIBRO,
@@ -77,27 +79,60 @@ export class SolicitudesPublicacionComponent {
     return escribirImporte(solicitud.esLibro ? this.precioPorDefectoLibro() : this.precioPorDefectoInteractiva());
   }
 
+  /** Solicitud cuya publicación cambia los eventos: espera a que se confirme la versión nueva. */
+  protected readonly confirmacionPendiente = signal<{
+    solicitud: SolicitudPublicacionAdmin;
+    precio: GuardarPrecioRequest;
+    motivos: string[];
+  } | null>(null);
+  protected readonly mensajePublicada = signal<string | null>(null);
+
   private readonly publicarAction = asyncAction(
-    (solicitud: SolicitudPublicacionAdmin, precio: GuardarPrecioRequest) =>
-      this.adminService.publicarVersion(solicitud.idVersionAventura, precio),
+    (solicitud: SolicitudPublicacionAdmin, precio: GuardarPrecioRequest, nuevaVersion: boolean) =>
+      this.adminService.publicarVersion(solicitud.idVersionAventura, precio, nuevaVersion),
     {
-      onSuccess: () => {
+      onSuccess: (respuesta, solicitud) => {
         this.filaEnCurso.set(null);
+        this.confirmacionPendiente.set(null);
+        this.mensajePublicada.set(
+          respuesta.fusionada
+            ? `«${solicitud.tituloAventura}» actualizada sin cambiar de versión (v${respuesta.version}): ` +
+                'quien la está leyendo sigue donde estaba.'
+            : `«${solicitud.tituloAventura}» publicada como v${respuesta.version}.`,
+        );
         this.solicitudesResource.reload();
       },
-      onError: () => this.filaEnCurso.set(null),
-      defaultErrorMessage: 'No se ha podido publicar la aventura.',
+      onError: (err, solicitud, precio) => {
+        this.filaEnCurso.set(null);
+        const cuerpo = esConfirmacionNuevaVersion(err);
+        if (cuerpo) {
+          this.confirmacionPendiente.set({ solicitud, precio, motivos: cuerpo.motivos });
+        }
+      },
+      // El 409 no es un error: se pide confirmación en la propia fila.
+      resolveErrorMessage: (err) => {
+        if (esConfirmacionNuevaVersion(err)) {
+          return '';
+        }
+        const cuerpo = (err as { error?: unknown } | null)?.error;
+        return Array.isArray(cuerpo) && cuerpo.every((m) => typeof m === 'string')
+          ? cuerpo.join(' ')
+          : 'No se ha podido publicar la aventura.';
+      },
     },
   );
   protected readonly publicando = this.publicarAction.loading;
   protected readonly errorPublicar = this.publicarAction.error;
 
   protected publicar(solicitud: SolicitudPublicacionAdmin, textoPrecio: string, textoDescuento: string): void {
+    this.mensajePublicada.set(null);
+    this.confirmacionPendiente.set(null);
+
     // Infantil y juvenil no se venden: se guardan a 0 € (el back lo fuerza igualmente).
     if (solicitud.esParaHijos) {
       this.errorPrecio.set(null);
       this.filaEnCurso.set(solicitud.idVersionAventura);
-      this.publicarAction.run(solicitud, { precio: 0, descuento: 0 });
+      this.publicarAction.run(solicitud, { precio: 0, descuento: 0 }, false);
       return;
     }
 
@@ -117,7 +152,16 @@ export class SolicitudesPublicacionComponent {
 
     this.errorPrecio.set(null);
     this.filaEnCurso.set(solicitud.idVersionAventura);
-    this.publicarAction.run(solicitud, { precio, descuento: descuento ?? 0 });
+    this.publicarAction.run(solicitud, { precio, descuento: descuento ?? 0 }, false);
+  }
+
+  protected confirmarNuevaVersion(): void {
+    const pendiente = this.confirmacionPendiente();
+    if (!pendiente) {
+      return;
+    }
+    this.filaEnCurso.set(pendiente.solicitud.idVersionAventura);
+    this.publicarAction.run(pendiente.solicitud, pendiente.precio, true);
   }
 
   private readonly rechazarAction = asyncAction(
@@ -145,4 +189,12 @@ export class SolicitudesPublicacionComponent {
       (this.previsualizando() || this.publicando() || this.rechazando())
     );
   }
+}
+
+function esConfirmacionNuevaVersion(err: unknown): ConfirmarNuevaVersion | null {
+  if (!(err instanceof HttpErrorResponse) || err.status !== 409) {
+    return null;
+  }
+  const cuerpo = err.error as Partial<ConfirmarNuevaVersion> | null;
+  return cuerpo?.requiereConfirmacion && Array.isArray(cuerpo.motivos) ? (cuerpo as ConfirmarNuevaVersion) : null;
 }

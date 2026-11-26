@@ -4,7 +4,7 @@ import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import { EstadoPruebaHijo, EstadoSuscripciones, PlanSuscripcion } from '../models/suscripcion.model';
 
-/** Suscripciones de los perfiles de hijos (pago simulado). */
+/** Suscripciones de los perfiles de hijos (Stripe o pago simulado). */
 @Injectable({ providedIn: 'root' })
 export class SuscripcionService {
   private readonly http = inject(HttpClient);
@@ -14,8 +14,14 @@ export class SuscripcionService {
     return this.http.get<EstadoSuscripciones>(`${this.baseUrl}/Suscripcion`);
   }
 
-  suscribir(plan: PlanSuscripcion): Observable<void> {
-    return this.http.post<void>(`${this.baseUrl}/Suscripcion`, { plan });
+  /** Con Stripe devuelve la página de pago; con pago simulado ya queda activa (urlPago null). */
+  suscribir(plan: PlanSuscripcion): Observable<{ urlPago: string | null }> {
+    return this.http.post<{ urlPago: string | null }>(`${this.baseUrl}/Suscripcion`, { plan });
+  }
+
+  /** Al volver de la página de pago de Stripe. */
+  confirmarPago(idSesion: string): Observable<void> {
+    return this.http.post<void>(`${this.baseUrl}/Suscripcion/Confirmar/${encodeURIComponent(idSesion)}`, {});
   }
 
   cancelarRenovacion(idSuscripcion: number): Observable<void> {

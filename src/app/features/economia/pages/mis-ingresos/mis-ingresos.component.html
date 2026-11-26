@@ -1,0 +1,205 @@
+<a routerLink="/autor" class="volver">← Panel de autor</a>
+<h1>Mis ingresos</h1>
+
+@if (error()) {
+  <p class="status status--error">No se han podido cargar tus ingresos.</p>
+} @else if (cargando() && !panel()) {
+  <p>Cargando…</p>
+} @else if (panel(); as p) {
+  @if (p.esCliora) {
+    <p class="aviso">Tus obras figuran como de Cliora: lo que generan se queda en Cliora y no se te paga aparte.</p>
+  }
+
+  <section class="totales">
+    <div class="total">
+      <span>Este mes (provisional)</span>
+      <strong [class.negativo]="p.remuneracionProvisional < 0">{{ euros(p.remuneracionProvisional) }}</strong>
+    </div>
+    @if (!p.esCliora) {
+      <div class="total">
+        <span>Pendiente de cobro</span>
+        <strong [class.negativo]="p.saldoPendiente < 0">{{ euros(p.saldoPendiente) }}</strong>
+      </div>
+      <div class="total">
+        <span>Cobrado hasta ahora</span>
+        <strong>{{ euros(p.totalPagado) }}</strong>
+      </div>
+    }
+  </section>
+
+  <p class="nota">
+    El importe de este mes es una estimación: lo que cobrarías si el mes se cerrase ahora. Puede subir o bajar con
+    nuevas suscripciones, tus lecturas y las del resto del catálogo, devoluciones, comisiones y validaciones.
+    @if (p.provisionalIncluyeMesesAnteriores) {
+      Incluye también movimientos de meses anteriores que aún no se han cerrado.
+    }
+    @if (!p.esCliora) {
+      Al cerrar cada mes lo ganado pasa a «Pendiente de cobro»; se paga por transferencia a partir de
+      {{ euros(p.pagoMinimo) }} (si no se llega, se acumula para el mes siguiente).
+    }
+  </p>
+
+  @for (c of p.categorias; track c.categoria) {
+    <section class="bloque">
+      <h2>{{ nombreCategoria(c.categoria) }} · {{ euros(c.remuneracionProvisional) }} este mes</h2>
+
+      @if (esSuscripcion(c)) {
+        <p class="nota">
+          Se reparte por suscripciones: de lo que pagan las familias (sin IVA ni comisiones), el {{ porcentaje(100 - p.porcentajePlataformaSuscripcion) }} es el fondo de los
+          autores, que se reparte según los puntos de lectura. Cada {{ numero(p.minutosPorPunto) }} minutos de duración de
+          una aventura terminada son un punto, y cada perfil cuenta como mucho {{ p.lecturasRemuneradasMes }} veces al mes
+          la misma aventura. No cuentan las pruebas gratuitas, las aventuras gratuitas de cada campaña ni las lecturas de
+          tus propios hijos.
+        </p>
+        <dl class="datos">
+          <div><dt>Fondo de autores del mes</dt><dd>{{ euros(c.fondoAutores) }}</dd></div>
+          <div><dt>Puntos de todo el catálogo</dt><dd>{{ numero(c.puntosTotales) }}</dd></div>
+          <div><dt>Valor actual del punto</dt><dd>{{ euros(c.valorPunto) }}</dd></div>
+          <div><dt>Tus puntos</dt><dd>{{ numero(c.misPuntos) }}</dd></div>
+          <div><dt>Tu parte del fondo</dt><dd>{{ porcentaje(c.participacion) }}</dd></div>
+          <div class="destacado"><dt>Te corresponde</dt><dd>{{ euros(c.remuneracionProvisional) }}</dd></div>
+        </dl>
+        <dl class="datos">
+          <div><dt>Lecturas este mes</dt><dd>{{ c.lecturas }}</dd></div>
+          <div><dt>Remuneradas</dt><dd>{{ c.lecturasValidas }}</dd></div>
+          <div><dt>Lectores distintos</dt><dd>{{ c.lectoresUnicos }}</dd></div>
+          <div><dt>Relecturas</dt><dd>{{ c.relecturas }}</dd></div>
+          <div><dt>Lecturas desde siempre</dt><dd>{{ c.lecturasHistoricas }}</dd></div>
+          <div><dt>Lectores desde siempre</dt><dd>{{ c.lectoresHistoricos }}</dd></div>
+        </dl>
+      } @else {
+        <p class="nota">
+          Por ventas: te llevas el {{ porcentaje(c.porcentaje) }} de lo que se cobra por tus aventuras y libros, una vez
+          descontados el IVA, las comisiones de pago y las devoluciones (una devolución de un mes ya cerrado se descuenta
+          en el siguiente).
+        </p>
+        <dl class="datos">
+          <div><dt>Vendidas este mes</dt><dd>{{ c.ventas }}</dd></div>
+          <div><dt>Devueltas</dt><dd>{{ c.devoluciones }}</dd></div>
+          <div><dt>Neto de tus obras</dt><dd>{{ euros(c.baseNeta) }}</dd></div>
+          <div class="destacado"><dt>Te corresponde</dt><dd>{{ euros(c.remuneracionProvisional) }}</dd></div>
+        </dl>
+      }
+
+      @if (c.aventuras.length > 0) {
+        <h3>Por aventura (este mes)</h3>
+        <div class="tabla">
+          <table>
+            <thead>
+              <tr>
+                <th class="texto">Aventura</th>
+                @if (esSuscripcion(c)) {
+                  <th>Lecturas</th>
+                  <th>Remuneradas</th>
+                  <th>Lectores</th>
+                  <th>Relecturas</th>
+                  <th>Desde siempre</th>
+                  <th>Terminan</th>
+                  <th>Puntos</th>
+                } @else {
+                  <th>Vendidas</th>
+                  <th>Devueltas</th>
+                  <th>Neto</th>
+                }
+                <th>Valoración</th>
+                <th>Te corresponde</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (a of c.aventuras; track a.idAventura) {
+                <tr>
+                  <td class="texto">{{ a.titulo }} <span class="secundario">{{ a.campana }}</span></td>
+                  @if (esSuscripcion(c)) {
+                    <td>{{ a.lecturas }}</td>
+                    <td>{{ a.lecturasValidas }}</td>
+                    <td>{{ a.lectoresUnicos }}</td>
+                    <td>{{ a.relecturas }}</td>
+                    <td>{{ a.lecturasHistoricas }}</td>
+                    <td>{{ porcentaje(a.porcentajeFinalizacion) }}</td>
+                    <td>{{ numero(a.puntos) }}</td>
+                  } @else {
+                    <td>{{ a.ventas }}</td>
+                    <td>{{ a.devoluciones }}</td>
+                    <td>{{ euros(a.baseNeta) }}</td>
+                  }
+                  <td>{{ a.valoracionMedia === null ? '—' : numero(a.valoracionMedia) + ' (' + a.valoraciones + ')' }}</td>
+                  <td [class.negativo]="a.remuneracion < 0">{{ euros(a.remuneracion) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      }
+    </section>
+  } @empty {
+    <p class="nota">Aún no tienes aventuras publicadas que generen ingresos.</p>
+  }
+
+  @if (p.historico.length > 0) {
+    <section class="bloque">
+      <h2>Meses cerrados</h2>
+      <div class="tabla">
+        <table>
+          <thead>
+            <tr>
+              <th class="texto">Mes</th>
+              <th class="texto">Bloque</th>
+              <th>Vendidas</th>
+              <th>Devueltas</th>
+              <th>Lecturas</th>
+              <th>Puntos</th>
+              <th>Valor del punto</th>
+              <th>Liquidado</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (h of p.historico; track h.anio * 1000 + h.mes * 10 + h.categoria) {
+              <tr>
+                <td class="texto">{{ nombreMes(h.anio, h.mes) }}</td>
+                <td class="texto">{{ nombreCategoria(h.categoria) }}</td>
+                <td>{{ h.ventas || '—' }}</td>
+                <td>{{ h.devoluciones || '—' }}</td>
+                <td>{{ h.lecturas || '—' }}</td>
+                <td>{{ h.puntos ? numero(h.puntos) : '—' }}</td>
+                <td>{{ h.valorPunto ? euros(h.valorPunto) : '—' }}</td>
+                <td [class.negativo]="h.importe < 0">{{ euros(h.importe) }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+
+  @if (p.pagos.length > 0) {
+    <section class="bloque">
+      <h2>Pagos recibidos</h2>
+      <div class="tabla">
+        <table>
+          <thead>
+            <tr>
+              <th class="texto">Fecha</th>
+              <th>Importe</th>
+              <th>IVA</th>
+              <th>Retención IRPF</th>
+              <th>Transferido</th>
+              <th class="texto">Referencia</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (pago of p.pagos; track pago.idPagoAutor) {
+              <tr>
+                <td class="texto">{{ pago.fecha | date: 'd/M/yyyy' }}</td>
+                <td>{{ euros(pago.importe) }}</td>
+                <td>{{ euros(pago.iva) }}</td>
+                <td>− {{ euros(pago.irpf) }}</td>
+                <td><strong>{{ euros(pago.importeTransferido) }}</strong></td>
+                <td class="texto">{{ pago.referencia }}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  }
+}

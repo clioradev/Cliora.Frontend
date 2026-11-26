@@ -1,0 +1,165 @@
+// Estilos comunes de Admin › Economía y Autor › Mis ingresos (mismo lenguaje que Admin › Estadísticas).
+
+:host {
+  display: block;
+}
+
+.bloque {
+  margin-bottom: var(--space-6);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+
+  h2 {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-md);
+  }
+
+  h3 {
+    margin: var(--space-4) 0 var(--space-2);
+    font-size: var(--text-sm);
+  }
+}
+
+.totales {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(12rem, 1fr));
+  gap: var(--space-3);
+  margin-bottom: var(--space-6);
+}
+
+.total {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+
+  span {
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+  }
+
+  strong {
+    font-size: var(--text-lg, 1.25rem);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.datos {
+  max-width: 32rem;
+  margin: 0 0 var(--space-4);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-2);
+
+  div {
+    display: flex;
+    justify-content: space-between;
+    gap: var(--space-3);
+  }
+
+  .destacado {
+    padding-top: var(--space-2);
+    border-top: 1px solid var(--color-border);
+    font-weight: 600;
+  }
+
+  dt {
+    color: var(--color-text-secondary);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: 600;
+    font-variant-numeric: tabular-nums;
+    text-align: right;
+  }
+}
+
+.nota {
+  margin: 0 0 var(--space-3);
+  font-size: var(--text-sm);
+  color: var(--color-text-secondary);
+}
+
+.aviso {
+  padding: var(--space-2) var(--space-3);
+  border-left: 3px solid var(--color-primary);
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-top: var(--space-2);
+}
+
+// La tabla es ancha: se desplaza dentro de su caja, nunca la página.
+.tabla {
+  overflow-x: auto;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--text-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+th,
+td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  text-align: right;
+  white-space: nowrap;
+}
+
+th {
+  background: var(--color-surface);
+  font-weight: 600;
+}
+
+tbody tr:last-child td {
+  border-bottom: 0;
+}
+
+.texto {
+  text-align: left;
+}
+
+.secundario {
+  margin-left: var(--space-1);
+  color: var(--color-text-secondary);
+  font-size: var(--text-xs, 0.75rem);
+}
+
+.etiqueta {
+  margin-left: var(--space-2);
+  padding: 0 var(--space-2);
+  border-radius: var(--radius-sm, 4px);
+  background: var(--color-primary);
+  color: var(--color-on-primary, #fff);
+  font-size: var(--text-xs, 0.75rem);
+
+  &--suave {
+    background: var(--color-border);
+    color: inherit;
+  }
+}
+
+.negativo {
+  color: var(--color-error, #b3261e);
+}
+
+.acciones-fila {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-2);
+}

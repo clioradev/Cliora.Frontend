@@ -36,10 +36,21 @@ export interface Presupuesto {
   umbralDevolucion: number;
   /** El pago es ficticio (entorno de pruebas sin pasarela). */
   pagoSimulado: boolean;
+  /** Se paga en la página de Stripe. */
+  pagoConPasarela: boolean;
+  /** Stripe en modo de pruebas: no se cobra de verdad. */
+  pasarelaEnPruebas: boolean;
 }
 
 export interface CompraRealizada {
   idCompra: number;
+  total: number;
+  /** Página de pago a la que ir; null si la compra ya está hecha (gratis o simulada). */
+  urlPago: string | null;
+}
+
+export interface EstadoPago {
+  estado: 'Pendiente' | 'Pagada' | 'Fallida' | 'Cancelada';
   total: number;
 }
 

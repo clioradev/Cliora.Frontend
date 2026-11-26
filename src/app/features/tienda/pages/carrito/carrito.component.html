@@ -10,6 +10,21 @@
     }
     <a class="btn--primary" routerLink="/">Ir a los universos</a>
   </div>
+} @else if (vuelta() === 'confirmando') {
+  <p class="status" role="status">Confirmando el pago…</p>
+} @else if (vuelta() === 'esperando') {
+  <div class="compra-ok" role="status">
+    <h2>Pago en camino</h2>
+    <p>
+      Stripe todavía no nos ha confirmado el pago. Si se ha cobrado, la compra aparecerá en «Mis compras» en unos
+      minutos: no vuelvas a pagar.
+    </p>
+    <a class="btn--primary" routerLink="/compras">Ir a Mis compras</a>
+  </div>
+} @else if (vuelta() === 'fallida') {
+  <p class="status status--error" role="alert">
+    El pago no se ha completado. Si se llegó a cobrar algo, se devuelve automáticamente.
+  </p>
 } @else if (carritoService.cantidad() === 0) {
   <p class="status">Tu carrito está vacío. Pulsa el candado de una aventura o de una campaña para añadirla.</p>
   <a routerLink="/">Ir a los universos</a>
@@ -18,6 +33,10 @@
 } @else if (error()) {
   <p class="status status--error">No se ha podido calcular el precio del carrito.</p>
 } @else if (presupuesto(); as p) {
+  @if (vuelta() === 'cancelado') {
+    <p class="status" role="status">Has cancelado el pago: no se ha cobrado nada y tu carrito sigue aquí.</p>
+  }
+
   @if (p.rechazados.length > 0) {
     <ul class="rechazados">
       @for (rechazado of p.rechazados; track $index) {
@@ -162,6 +181,25 @@
       >
         {{ comprando() ? 'Confirmando…' : 'Conseguir gratis' }}
       </button>
+      @if (p.rechazados.length > 0) {
+        <p class="status">Quita del carrito lo que no se puede comprar para continuar.</p>
+      }
+    } @else if (p.pagoConPasarela) {
+      @if (p.pasarelaEnPruebas) {
+        <p class="aviso-simulado">
+          <strong>Modo de pruebas:</strong> no se cobra nada de verdad. Paga con la tarjeta
+          <strong>4242 4242 4242 4242</strong>, cualquier fecha futura y cualquier CVC.
+        </p>
+      }
+      <button
+        type="button"
+        class="btn--primary pagar"
+        [disabled]="!aceptaCondiciones() || comprando() || p.rechazados.length > 0"
+        (click)="comprar()"
+      >
+        {{ comprando() ? 'Abriendo el pago…' : 'Pagar ' + (p.total | precio) }}
+      </button>
+      <p class="status">Pagarás en la página segura de Stripe y volverás aquí al terminar.</p>
       @if (p.rechazados.length > 0) {
         <p class="status">Quita del carrito lo que no se puede comprar para continuar.</p>
       }

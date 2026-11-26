@@ -1,0 +1,7 @@
+@use '../../economia' as *;
+
+.volver {
+  display: inline-block;
+  margin-bottom: var(--space-2);
+  font-size: var(--text-sm);
+}

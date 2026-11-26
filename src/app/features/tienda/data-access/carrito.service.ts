@@ -3,7 +3,7 @@ import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { Observable } from 'rxjs';
 import { API_BASE_URL } from '../../../core/api/api-base-url.token';
 import { AuthService } from '../../../core/auth/auth.service';
-import { Carrito, CompraRealizada, Presupuesto } from '../models/tienda.model';
+import { Carrito, CompraRealizada, EstadoPago, Presupuesto } from '../models/tienda.model';
 
 const CLAVE_ALMACENAMIENTO = 'cliora.carrito';
 
@@ -77,9 +77,22 @@ export class CarritoService {
     return this.http.post<Presupuesto>(`${this.baseUrl}/Tienda/Presupuesto`, carrito);
   }
 
-  /** Pago ficticio (solo en entornos de prueba): el servidor registra la compra sin cobrar. */
-  comprarSimulado(carrito: Carrito, aceptaCondiciones: boolean): Observable<CompraRealizada> {
-    return this.http.post<CompraRealizada>(`${this.baseUrl}/Tienda/ComprarSimulado`, { ...carrito, aceptaCondiciones });
+  /**
+   * Compra el carrito. Con Stripe devuelve la URL de su página de pago (la compra queda pendiente);
+   * si sale gratis o el pago es simulado, la compra ya está hecha.
+   */
+  comprar(carrito: Carrito, aceptaCondiciones: boolean): Observable<CompraRealizada> {
+    return this.http.post<CompraRealizada>(`${this.baseUrl}/Tienda/Comprar`, { ...carrito, aceptaCondiciones });
+  }
+
+  /** Al volver de la página de pago: el servidor pregunta a Stripe y activa la compra si está pagada. */
+  confirmarPago(idCompra: number): Observable<EstadoPago> {
+    return this.http.post<EstadoPago>(`${this.baseUrl}/Tienda/Compras/Pago/${idCompra}/Confirmar`, {});
+  }
+
+  /** Al volver sin pagar: se anula la compra pendiente. */
+  cancelarPago(idCompra: number): Observable<EstadoPago> {
+    return this.http.post<EstadoPago>(`${this.baseUrl}/Tienda/Compras/Pago/${idCompra}/Cancelar`, {});
   }
 
   private guardar(carrito: Carrito): void {

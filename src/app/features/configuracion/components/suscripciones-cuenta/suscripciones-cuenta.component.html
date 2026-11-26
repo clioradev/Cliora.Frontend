@@ -9,7 +9,13 @@
     <p class="nota">
       Tus hijos tienen gratis las dos primeras aventuras de cada campaña infantil y la primera de cada campaña juvenil.
       Con una suscripción pueden leer todas.
-      De momento el pago es simulado: no se cobra nada.
+      @if (!e.pasarelaActiva) {
+        De momento el pago es simulado: no se cobra nada.
+      } @else if (e.pasarelaEnPruebas) {
+        Pago en modo de pruebas: usa la tarjeta 4242 4242 4242 4242 (cualquier fecha futura y CVC); no se cobra nada.
+      } @else {
+        El pago se hace con tarjeta en la página segura de Stripe y se renueva solo cada mes.
+      }
     </p>
 
     @if (e.activas.length > 0) {
@@ -60,7 +66,7 @@
         <div class="acciones">
           <button type="button" (click)="confirmando.set(null)" [disabled]="ocupado()">Cancelar</button>
           <button type="button" class="btn--primary" (click)="confirmar()" [disabled]="ocupado()">
-            {{ ocupado() ? 'Pagando…' : 'Pagar (simulado)' }}
+            {{ ocupado() ? 'Un momento…' : e.pasarelaActiva ? 'Ir al pago' : 'Pagar (simulado)' }}
           </button>
         </div>
       </div>

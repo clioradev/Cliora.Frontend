@@ -1,0 +1,104 @@
+@use '../../economia' as *;
+
+.pestanas {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+
+  button {
+    padding: var(--space-2) var(--space-3);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    background: var(--color-surface);
+    color: inherit;
+    font: inherit;
+    cursor: pointer;
+
+    &.activa {
+      border-color: var(--color-primary);
+      font-weight: 600;
+    }
+  }
+}
+
+.selector-mes {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-4);
+}
+
+.estado {
+  margin-bottom: var(--space-4);
+
+  p {
+    margin: 0 0 var(--space-2);
+  }
+}
+
+.formulario {
+  margin: var(--space-4) 0;
+  padding: var(--space-4);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+
+  h2 {
+    margin: 0 0 var(--space-3);
+    font-size: var(--text-md);
+  }
+}
+
+.campos {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: var(--space-3);
+
+  label {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-1);
+    font-size: var(--text-sm);
+  }
+
+  .ancho {
+    grid-column: 1 / -1;
+  }
+}
+
+.check {
+  display: inline-flex !important;
+  flex-direction: row !important;
+  align-items: center;
+  gap: var(--space-2);
+  margin-bottom: var(--space-3);
+}
+
+.minutos {
+  width: 4rem;
+  text-align: right;
+}
+
+.enlace {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--color-primary);
+  font: inherit;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+tr.pendiente td {
+  background: color-mix(in srgb, var(--color-primary) 8%, transparent);
+}
+
+tr.invalidada td {
+  color: var(--color-text-secondary);
+  text-decoration: line-through;
+}
+
+tr.invalidada td.acciones-fila {
+  text-decoration: none;
+}

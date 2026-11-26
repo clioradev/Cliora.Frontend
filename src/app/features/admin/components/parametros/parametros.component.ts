@@ -11,6 +11,25 @@ const NOMBRES: Record<string, string> = {
   VALORACIONES_POR_AVENTURA_GRATIS: 'Valoraciones para conseguir una aventura gratis',
   [PARAMETRO_PRECIO_AVENTURA_INTERACTIVA]: 'Precio por defecto de una aventura interactiva (€)',
   [PARAMETRO_PRECIO_LIBRO]: 'Precio por defecto de un libro (€)',
+  PRECIO_SUSCRIPCION_INFANTIL: 'Suscripción infantil al mes (€)',
+  PRECIO_SUSCRIPCION_JUVENIL: 'Suscripción juvenil al mes (€)',
+  PRECIO_SUSCRIPCION_AMBAS: 'Suscripción infantil y juvenil al mes (€)',
+  // Economía (Admin › Economía)
+  PORCENTAJE_AUTOR_ADULTO: 'Economía · Adultos: parte del autor sin contrato propio (%)',
+  PORCENTAJE_PLATAFORMA_SUSCRIPCION: 'Economía · Suscripciones: parte de Cliora como plataforma (%)',
+  REPARTO_AMBAS_INFANTIL: 'Economía · Suscripción de ambos tramos: parte del fondo infantil (%)',
+  IVA_VENTAS: 'Economía · IVA incluido en los precios (%)',
+  COMISION_WEB_PORCENTAJE: 'Economía · Comisión estimada de la web (%)',
+  COMISION_WEB_FIJA: 'Economía · Comisión fija estimada de la web por cobro (€)',
+  COMISION_TIENDAS_PORCENTAJE: 'Economía · Comisión estimada de App Store y Google Play (%)',
+  MINUTOS_POR_PUNTO: 'Economía · Minutos por punto de lectura',
+  LECTURAS_REMUNERADAS_MES: 'Economía · Lecturas remuneradas por perfil, aventura y mes',
+  PAGO_MINIMO_AUTOR: 'Economía · Pago mínimo a un autor (€)',
+  TIEMPO_MINIMO_LECTURA: 'Economía · Lectura imposible por debajo de (% de la duración)',
+  SEGUNDOS_POR_IMAGEN: 'Economía · Duración: segundos por ilustración',
+  SEGUNDOS_POR_DECISION: 'Economía · Duración: segundos por decisión',
+  PALABRAS_MINUTO_INFANTIL: 'Economía · Duración: palabras por minuto en infantil',
+  PALABRAS_MINUTO_JUVENIL: 'Economía · Duración: palabras por minuto en juvenil',
 };
 
 @Component({

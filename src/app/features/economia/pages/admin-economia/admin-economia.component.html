@@ -1,0 +1,497 @@
+<h1>Admin: Economía</h1>
+
+<nav class="pestanas" aria-label="Apartados de economía">
+  @for (p of pestanas; track p.valor) {
+    <button type="button" [class.activa]="pestana() === p.valor" (click)="pestana.set(p.valor)">{{ p.etiqueta }}</button>
+  }
+</nav>
+
+@if (pestana() === 'resumen' || pestana() === 'lecturas') {
+  <label class="selector-mes">
+    Mes
+    <input type="month" [value]="valorMes()" (change)="onMesChange($event)" />
+  </label>
+}
+
+@if (errorFormulario()) {
+  <p class="status status--error">{{ errorFormulario() }}</p>
+}
+
+<!-- ============================================================ Resumen -->
+@if (pestana() === 'resumen') {
+  @if (errorResumen()) {
+    <p class="status status--error">No se ha podido cargar el resumen.</p>
+  } @else if (cargandoResumen() && !resumen()) {
+    <p>Cargando…</p>
+  } @else if (resumen(); as r) {
+    <section class="estado">
+      @if (r.cerrado) {
+        <p><strong>{{ nombreMes(r.anio, r.mes) }}</strong> está cerrado ({{ r.fechaCierre | date: 'd/M/yyyy HH:mm' }}). Estos importes ya no cambian.</p>
+      } @else {
+        <p>
+          <strong>{{ nombreMes(r.anio, r.mes) }}</strong>: cálculo <strong>provisional</strong> (lo que saldría si se cerrase
+          ahora). Puede cambiar con nuevos cobros, lecturas, devoluciones o validaciones.
+        </p>
+        @if (r.incluyeMesesAnteriores) {
+          <p class="aviso">Incluye movimientos de meses anteriores que aún no se han cerrado.</p>
+        }
+        @if (r.sePuedeCerrar) {
+          @if (confirmandoCierre()) {
+            <p class="aviso">
+              Al cerrar se liquida todo lo pendiente hasta el final del mes y ya no se puede deshacer.
+              <button type="button" class="btn--primary" (click)="cerrarAction.run()" [disabled]="cerrarAction.loading()">
+                Sí, cerrar {{ nombreMes(r.anio, r.mes) }}
+              </button>
+              <button type="button" (click)="confirmandoCierre.set(false)">Cancelar</button>
+            </p>
+          } @else {
+            <button type="button" class="btn--primary" (click)="confirmandoCierre.set(true)">Cerrar el mes</button>
+          }
+        } @else if (r.motivoNoSePuedeCerrar) {
+          <p class="nota">No se puede cerrar todavía: {{ r.motivoNoSePuedeCerrar }}</p>
+        }
+        @if (cerrarAction.error()) {
+          <p class="status status--error">{{ cerrarAction.error() }}</p>
+        }
+      }
+      <div class="acciones">
+        <button type="button" (click)="exportarAction.run('Movimientos')" [disabled]="exportarAction.loading()">
+          Exportar movimientos (CSV)
+        </button>
+        <button type="button" (click)="exportarAction.run('Liquidacion')" [disabled]="exportarAction.loading()">
+          Exportar liquidación (CSV)
+        </button>
+      </div>
+      @if (exportarAction.error()) {
+        <p class="status status--error">{{ exportarAction.error() }}</p>
+      }
+    </section>
+
+    <section class="totales">
+      <div class="total"><span>Para Cliora</span><strong>{{ euros(r.totalCliora) }}</strong></div>
+      <div class="total"><span>Para autores externos</span><strong>{{ euros(r.totalAutoresExternos) }}</strong></div>
+    </section>
+
+    @for (c of r.categorias; track c.categoria) {
+      <section class="bloque">
+        <h2>{{ nombreCategoria(c.categoria) }}</h2>
+        @if (esSuscripcion(c)) {
+          <p class="nota">
+            Suscripciones (las de «ambos tramos» repartidas entre infantil y juvenil). Cliora se queda el
+            {{ porcentaje(c.porcentajePlataforma) }} como plataforma y el resto se reparte entre autores por puntos.
+          </p>
+        } @else {
+          <p class="nota">Ventas de aventuras y libros: cada autor cobra su porcentaje de lo neto de sus obras.</p>
+        }
+        <dl class="datos">
+          <div><dt>Ingresos brutos</dt><dd>{{ euros(c.ingresosBrutos) }}</dd></div>
+          <div><dt>Devoluciones</dt><dd>− {{ euros(c.devoluciones) }}</dd></div>
+          <div><dt>IVA</dt><dd>− {{ euros(c.iva) }}</dd></div>
+          <div><dt>Comisiones</dt><dd>− {{ euros(c.comisiones) }}</dd></div>
+          <div class="destacado"><dt>Ingresos netos</dt><dd>{{ euros(c.ingresosNetos) }}</dd></div>
+          @if (esSuscripcion(c)) {
+            <div><dt>Cliora como plataforma</dt><dd>{{ euros(c.importePlataforma) }}</dd></div>
+            <div><dt>Fondo de autores</dt><dd>{{ euros(c.importeAutores) }}</dd></div>
+            <div><dt>Puntos válidos</dt><dd>{{ numero(c.puntosTotales) }}</dd></div>
+            <div><dt>Valor del punto</dt><dd>{{ euros(c.valorPunto) }}</dd></div>
+            <div><dt>Sin repartir (para Cliora)</dt><dd>{{ euros(c.importeSinRepartir) }}</dd></div>
+          } @else {
+            <div><dt>Para autores (incluida Cliora)</dt><dd>{{ euros(c.importeAutores) }}</dd></div>
+            <div><dt>Aventuras gratis canjeadas (paga Cliora)</dt><dd>{{ euros(c.costePromocion) }}</dd></div>
+          }
+          <div class="destacado"><dt>Total para Cliora</dt><dd>{{ euros(c.totalCliora) }}</dd></div>
+          <div><dt>Total para autores externos</dt><dd>{{ euros(c.totalAutoresExternos) }}</dd></div>
+        </dl>
+
+        @if (c.autores.length > 0) {
+          <div class="tabla">
+            <table>
+              <thead>
+                <tr>
+                  <th class="texto">Autor</th>
+                  @if (esSuscripcion(c)) {
+                    <th>Lecturas</th>
+                    <th>Puntos</th>
+                    <th>Parte del fondo</th>
+                  } @else {
+                    <th>Ventas</th>
+                    <th>Devoluciones</th>
+                    <th>Neto de sus obras</th>
+                    <th>%</th>
+                  }
+                  <th>Le corresponde</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (a of c.autores; track a.idAutor) {
+                  <tr>
+                    <td class="texto">
+                      {{ a.nombre }}
+                      @if (a.esCliora) {
+                        <span class="etiqueta">Cliora</span>
+                      }
+                    </td>
+                    @if (esSuscripcion(c)) {
+                      <td>{{ a.lecturas }}</td>
+                      <td>{{ numero(a.puntos) }}</td>
+                      <td>{{ porcentaje(a.participacion) }}</td>
+                    } @else {
+                      <td>{{ a.ventas }}</td>
+                      <td>{{ a.devoluciones }}</td>
+                      <td>{{ euros(a.baseNeta) }}</td>
+                      <td>{{ porcentaje(a.porcentaje) }}</td>
+                    }
+                    <td [class.negativo]="a.importe < 0">{{ euros(a.importe) }}</td>
+                  </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        } @else {
+          <p class="nota">Ningún autor ha generado nada en este bloque.</p>
+        }
+      </section>
+    }
+  }
+
+  @if (periodos(); as lista) {
+    @if (lista.length > 0) {
+      <section class="bloque">
+        <h2>Meses cerrados</h2>
+        <div class="tabla">
+          <table>
+            <thead>
+              <tr>
+                <th class="texto">Mes</th>
+                <th>Cerrado</th>
+                <th>Ingresos netos</th>
+                <th>Para Cliora</th>
+                <th>Para autores externos</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of lista; track p.anio * 100 + p.mes) {
+                <tr>
+                  <td class="texto">
+                    <button type="button" class="enlace" (click)="irAMes(p.anio, p.mes)">{{ nombreMes(p.anio, p.mes) }}</button>
+                  </td>
+                  <td>{{ p.fechaCierre | date: 'd/M/yyyy' }}</td>
+                  <td>{{ euros(p.ingresosNetos) }}</td>
+                  <td>{{ euros(p.totalCliora) }}</td>
+                  <td>{{ euros(p.totalAutoresExternos) }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
+}
+
+<!-- ============================================================ Autores y pagos -->
+@if (pestana() === 'autores') {
+  <p class="nota">
+    Saldo = lo liquidado en meses cerrados menos lo pagado. Las obras marcadas como de Cliora no se pagan. Las
+    transferencias se hacen a mano y aquí se registran; el IVA y el IRPF salen del contrato de cada autor.
+  </p>
+  @if (autores(); as lista) {
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th class="texto">Autor</th>
+            <th>% adultos</th>
+            <th>IVA</th>
+            <th>IRPF</th>
+            <th>Liquidado</th>
+            <th>Pagado</th>
+            <th>Saldo</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of lista; track a.idAutor) {
+            <tr [class.pendiente]="a.pendienteDePago">
+              <td class="texto">
+                {{ a.nombre }} <span class="secundario">{{ a.email }}</span>
+                @if (a.esCliora) {
+                  <span class="etiqueta">Cliora</span>
+                }
+                @if (!a.tieneContrato) {
+                  <span class="etiqueta etiqueta--suave">Sin contrato</span>
+                }
+              </td>
+              <td>{{ porcentaje(a.porcentajeAdulto) }}</td>
+              <td>{{ porcentaje(a.porcentajeIva) }}</td>
+              <td>{{ porcentaje(a.porcentajeIrpf) }}</td>
+              <td>{{ euros(a.totalLiquidado) }}</td>
+              <td>{{ euros(a.totalPagado) }}</td>
+              <td [class.negativo]="a.saldoPendiente < 0"><strong>{{ euros(a.saldoPendiente) }}</strong></td>
+              <td class="acciones-fila">
+                <button type="button" (click)="abrirContrato(a)">Contrato</button>
+                @if (!a.esCliora && a.saldoPendiente > 0) {
+                  <button type="button" class="btn--primary" (click)="abrirPago(a)">Registrar pago</button>
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  } @else {
+    <p>Cargando…</p>
+  }
+
+  @if (editandoContrato(); as a) {
+    <section class="formulario">
+      <h2>Contrato de {{ a.nombre }}</h2>
+      <div class="campos">
+        <label>% de sus ventas en adultos <input #adulto type="text" inputmode="decimal" [value]="numero(a.porcentajeAdulto)" /></label>
+        <label>IVA que repercute (%) <input #iva type="text" inputmode="decimal" [value]="numero(a.porcentajeIva)" /></label>
+        <label>Retención de IRPF (%) <input #irpf type="text" inputmode="decimal" [value]="numero(a.porcentajeIrpf)" /></label>
+        <label>Nombre fiscal <input #nombreFiscal type="text" [value]="a.nombreFiscal ?? ''" maxlength="200" /></label>
+        <label>NIF <input #nif type="text" [value]="a.nif ?? ''" maxlength="20" /></label>
+        <label class="check"><input #esCliora type="checkbox" [checked]="a.esCliora" /> Sus obras son de Cliora (no se le paga)</label>
+        <label class="ancho">Notas <textarea #notas rows="2" maxlength="1000">{{ a.notas ?? '' }}</textarea></label>
+      </div>
+      <p class="nota">El cambio afecta a los meses que aún no se han cerrado; lo cerrado no cambia.</p>
+      @if (guardarContratoAction.error()) {
+        <p class="status status--error">{{ guardarContratoAction.error() }}</p>
+      }
+      <div class="acciones">
+        <button
+          type="button"
+          class="btn--primary"
+          [disabled]="guardarContratoAction.loading()"
+          (click)="guardarContrato(a, adulto.value, iva.value, irpf.value, esCliora.checked, nombreFiscal.value, nif.value, notas.value)"
+        >
+          Guardar contrato
+        </button>
+        <button type="button" (click)="editandoContrato.set(null)">Cancelar</button>
+      </div>
+    </section>
+  }
+
+  @if (pagando(); as a) {
+    <section class="formulario">
+      <h2>Pago a {{ a.nombre }}</h2>
+      <p>Saldo pendiente: <strong>{{ euros(a.saldoPendiente) }}</strong></p>
+      <div class="campos">
+        <label>Importe (base) <input #importe type="text" inputmode="decimal" [value]="numero(a.saldoPendiente)" (input)="0" /></label>
+        <label>Fecha de la transferencia <input #fecha type="date" /></label>
+        <label>Referencia <input #referencia type="text" maxlength="200" /></label>
+        <label class="ancho">Notas <textarea #notasPago rows="2" maxlength="1000"></textarea></label>
+      </div>
+      <p class="nota">{{ previsionPago(a, importe.value) }}</p>
+      @if (registrarPagoAction.error()) {
+        <p class="status status--error">{{ registrarPagoAction.error() }}</p>
+      }
+      <div class="acciones">
+        <button
+          type="button"
+          class="btn--primary"
+          [disabled]="registrarPagoAction.loading()"
+          (click)="registrarPago(a, importe.value, fecha.value, referencia.value, notasPago.value)"
+        >
+          Registrar pago
+        </button>
+        <button type="button" (click)="pagando.set(null)">Cancelar</button>
+      </div>
+    </section>
+  }
+
+  @if (pagos(); as lista) {
+    @if (lista.length > 0) {
+      <section class="bloque">
+        <h2>Pagos registrados</h2>
+        <div class="tabla">
+          <table>
+            <thead>
+              <tr>
+                <th class="texto">Fecha</th>
+                <th class="texto">Autor</th>
+                <th>Importe</th>
+                <th>IVA</th>
+                <th>IRPF</th>
+                <th>Transferido</th>
+                <th class="texto">Referencia</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of lista; track p.idPagoAutor) {
+                <tr>
+                  <td class="texto">{{ p.fecha | date: 'd/M/yyyy' }}</td>
+                  <td class="texto">{{ p.nombreAutor }}</td>
+                  <td>{{ euros(p.importe) }}</td>
+                  <td>{{ euros(p.iva) }}</td>
+                  <td>− {{ euros(p.irpf) }}</td>
+                  <td><strong>{{ euros(p.importeTransferido) }}</strong></td>
+                  <td class="texto">{{ p.referencia }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </section>
+    }
+  }
+}
+
+<!-- ============================================================ Lecturas -->
+@if (pestana() === 'lecturas') {
+  <p class="nota">
+    Cada aventura infantil o juvenil terminada. Solo las válidas reparten el fondo. Se marcan como sospechosas las
+    terminadas en un tiempo imposible y los perfiles con muchas lecturas válidas el mismo día. Lo ya liquidado no se
+    puede cambiar.
+  </p>
+  <label class="check">
+    <input type="checkbox" [checked]="soloSospechosas()" (change)="onSoloSospechosas($event)" /> Solo sospechosas e invalidadas
+  </label>
+  @if (invalidarAction.error()) {
+    <p class="status status--error">{{ invalidarAction.error() }}</p>
+  }
+  @if (revalidarAction.error()) {
+    <p class="status status--error">{{ revalidarAction.error() }}</p>
+  }
+  @if (cargandoLecturas() && !lecturas()) {
+    <p>Cargando…</p>
+  } @else if (lecturas(); as lista) {
+    @if (lista.length === 0) {
+      <p class="nota">No hay lecturas en este mes.</p>
+    } @else {
+      <div class="tabla">
+        <table>
+          <thead>
+            <tr>
+              <th class="texto">Fecha</th>
+              <th class="texto">Lector</th>
+              <th class="texto">Aventura</th>
+              <th class="texto">Autor</th>
+              <th>Tardó</th>
+              <th>Remunerados</th>
+              <th>Puntos</th>
+              <th>Válidas ese día</th>
+              <th class="texto">Estado</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of lista; track l.idLectura) {
+              <tr [class.invalidada]="l.estado === EstadoLectura.Invalidada">
+                <td class="texto">{{ l.fecha | date: 'd/M HH:mm' }}</td>
+                <td class="texto">{{ l.lector }} <span class="secundario">{{ l.emailPagador }}</span></td>
+                <td class="texto">{{ l.aventura }} <span class="secundario">{{ nombreCategoria(l.categoria) }}</span></td>
+                <td class="texto">{{ l.autor }}</td>
+                <td>{{ duracion(l.segundosReales) }}</td>
+                <td>{{ l.minutosRemunerados }} min</td>
+                <td>{{ numero(l.puntos) }}</td>
+                <td>{{ l.validasDelPerfilEseDia }}</td>
+                <td class="texto">{{ nombreMotivo(l) }}</td>
+                <td class="acciones-fila">
+                  @if (!l.liquidada) {
+                    @if (l.estado === EstadoLectura.Invalidada) {
+                      <button type="button" (click)="revalidarAction.run(l)" [disabled]="revalidarAction.loading()">Revalidar</button>
+                    } @else if (invalidando() === l.idLectura) {
+                      <input #motivo type="text" placeholder="Motivo" maxlength="500" />
+                      <button type="button" class="btn--primary" (click)="invalidarAction.run(l, motivo.value)" [disabled]="invalidarAction.loading()">
+                        Invalidar
+                      </button>
+                      <button type="button" (click)="invalidando.set(null)">Cancelar</button>
+                    } @else {
+                      <button type="button" (click)="invalidando.set(l.idLectura)">Invalidar</button>
+                    }
+                  } @else {
+                    <span class="secundario">Liquidada</span>
+                  }
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  }
+}
+
+<!-- ============================================================ Duraciones -->
+@if (pestana() === 'duraciones') {
+  <p class="nota">
+    Duración remunerada de las aventuras infantiles y juveniles: cuántos minutos cuenta cada lectura terminada
+    (10 minutos = 1 punto). Mientras no se valide se usa la duración estimada. «Proponer» la calcula con el texto, las
+    ilustraciones y las decisiones del recorrido medio; los valores se cambian en Parámetros. Cambiarla solo afecta a las
+    lecturas que se terminen después.
+  </p>
+  @if (proponerAction.error()) {
+    <p class="status status--error">{{ proponerAction.error() }}</p>
+  }
+  @if (guardarDuracionAction.error()) {
+    <p class="status status--error">{{ guardarDuracionAction.error() }}</p>
+  }
+  @if (cargandoDuraciones() && !duraciones()) {
+    <p>Cargando…</p>
+  } @else if (duraciones(); as lista) {
+    <div class="tabla">
+      <table>
+        <thead>
+          <tr>
+            <th class="texto">Aventura</th>
+            <th class="texto">Tramo</th>
+            <th>Estimada</th>
+            <th>Remunerada</th>
+            <th>Puntos</th>
+            <th class="texto">Propuesta</th>
+            <th></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (a of lista; track a.idAventura) {
+            <tr [class.pendiente]="a.minutosRemunerados === null && a.visible">
+              <td class="texto">
+                {{ a.titulo }} <span class="secundario">{{ a.universo }} · {{ a.campana }}</span>
+                @if (!a.visible) {
+                  <span class="etiqueta etiqueta--suave">Oculta</span>
+                }
+              </td>
+              <td class="texto">{{ nombreCategoria(a.categoria) }}</td>
+              <td>{{ a.duracion === null ? '—' : a.duracion + ' min' }}</td>
+              <td>
+                <input
+                  #minutos
+                  class="minutos"
+                  type="text"
+                  inputmode="numeric"
+                  [value]="a.minutosRemunerados ?? propuestas()[a.idAventura]?.minutos ?? a.duracion ?? ''"
+                />
+                min
+                @if (a.minutosRemunerados === null) {
+                  <span class="etiqueta etiqueta--suave">Sin validar</span>
+                }
+              </td>
+              <td>{{ numero(a.puntos) }}</td>
+              <td class="texto">
+                @if (propuestas()[a.idAventura]; as p) {
+                  <strong>{{ p.minutos }} min</strong>
+                  <span class="secundario">
+                    ({{ p.minutosLectura }} de texto, {{ numero(p.imagenes) }} ilustraciones, {{ numero(p.decisiones) }} decisiones)
+                  </span>
+                }
+              </td>
+              <td class="acciones-fila">
+                <button type="button" (click)="proponerAction.run(a)" [disabled]="proponerAction.loading()">Proponer</button>
+                <button type="button" class="btn--primary" (click)="guardarDuracion(a, minutos.value)" [disabled]="guardarDuracionAction.loading()">
+                  Validar
+                </button>
+                @if (guardadaDuracion() === a.idAventura) {
+                  <span class="secundario">Guardada.</span>
+                }
+              </td>
+            </tr>
+          } @empty {
+            <tr><td colspan="7" class="texto">No hay aventuras infantiles ni juveniles.</td></tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  }
+}

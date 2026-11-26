@@ -45,4 +45,9 @@ export const ADMIN_ROUTES: Routes = [
     path: 'parametros',
     loadComponent: () => import('./components/parametros/parametros.component').then((m) => m.ParametrosComponent),
   },
+  {
+    path: 'economia',
+    loadComponent: () =>
+      import('../economia/pages/admin-economia/admin-economia.component').then((m) => m.AdminEconomiaComponent),
+  },
 ];

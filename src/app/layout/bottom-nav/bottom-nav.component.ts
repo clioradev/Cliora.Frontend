@@ -36,7 +36,10 @@ const OPCION_PERFILES: OpcionMas = { texto: 'Cambiar de perfil', ruta: '/perfile
 
 // Bajo el título "Autores": herramientas del autor que no caben en su panel.
 const RUTA_INCIDENCIAS = '/autor/incidencias';
-const OPCIONES_AUTOR: OpcionMas[] = [{ texto: 'Incidencias', ruta: RUTA_INCIDENCIAS }];
+const OPCIONES_AUTOR: OpcionMas[] = [
+  { texto: 'Incidencias', ruta: RUTA_INCIDENCIAS },
+  { texto: 'Mis ingresos', ruta: '/autor/ingresos' },
+];
 const RUTAS_AUTOR_EN_MAS = OPCIONES_AUTOR.map((o) => o.ruta);
 
 // Van bajo el título "Administración" del desplegable, por eso sin el prefijo "Admin:".
@@ -48,6 +51,7 @@ const OPCIONES_ADMIN: OpcionMas[] = [
   { texto: 'Precios', ruta: '/admin/precios' },
   { texto: 'Parámetros', ruta: '/admin/parametros' },
   { texto: 'Estadísticas', ruta: '/admin/estadisticas' },
+  { texto: 'Economía', ruta: '/admin/economia' },
 ];
 
 @Component({

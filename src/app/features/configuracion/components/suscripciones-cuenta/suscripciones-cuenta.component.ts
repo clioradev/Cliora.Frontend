@@ -1,12 +1,13 @@
 import { DatePipe } from '@angular/common';
 import { Component, computed, inject, signal } from '@angular/core';
 import { rxResource } from '@angular/core/rxjs-interop';
+import { ActivatedRoute, Router } from '@angular/router';
 import { asyncAction } from '../../../../core/utils/async-action';
 import { PrecioPipe } from '../../../../shared/pipes/precio.pipe';
 import { SuscripcionService } from '../../../tienda/data-access/suscripcion.service';
 import { NOMBRE_PLAN, PlanSuscripcion, Suscripcion } from '../../../tienda/models/suscripcion.model';
 
-/** Sección «Suscripciones» de Mi cuenta: solo aparece si el usuario tiene hijos. Pago simulado. */
+/** Sección «Suscripciones» de Mi cuenta: solo aparece si el usuario tiene hijos. Stripe o pago simulado. */
 @Component({
   selector: 'app-suscripciones-cuenta',
   imports: [DatePipe, PrecioPipe],
@@ -15,6 +16,8 @@ import { NOMBRE_PLAN, PlanSuscripcion, Suscripcion } from '../../../tienda/model
 })
 export class SuscripcionesCuentaComponent {
   private readonly suscripcionService = inject(SuscripcionService);
+  private readonly route = inject(ActivatedRoute);
+  private readonly router = inject(Router);
 
   private readonly estadoResource = rxResource({ stream: () => this.suscripcionService.obtenerEstado() });
   protected readonly estado = this.estadoResource.value;
@@ -26,8 +29,19 @@ export class SuscripcionesCuentaComponent {
   protected readonly mensaje = signal<string | null>(null);
 
   private readonly suscribirAction = asyncAction((plan: PlanSuscripcion) => this.suscripcionService.suscribir(plan), {
-    onSuccess: (_r, plan) => this.terminar(`Suscripción ${NOMBRE_PLAN[plan].toLowerCase()} activada.`),
+    onSuccess: (respuesta, plan) => {
+      if (respuesta.urlPago) {
+        // Stripe: se paga en su página y se vuelve a Mi cuenta (?suscripcion=ok&sesion=…).
+        window.location.href = respuesta.urlPago;
+        return;
+      }
+      this.terminar(`Suscripción ${NOMBRE_PLAN[plan].toLowerCase()} activada.`);
+    },
     defaultErrorMessage: 'No se ha podido activar la suscripción.',
+  });
+  private readonly confirmarPagoAction = asyncAction((idSesion: string) => this.suscripcionService.confirmarPago(idSesion), {
+    onSuccess: () => this.terminar('¡Suscripción activada! Tus hijos ya pueden leer todas las aventuras de su tramo.'),
+    defaultErrorMessage: 'No se ha podido comprobar el pago. Si se ha cobrado, la suscripción aparecerá en unos minutos.',
   });
   private readonly cancelarAction = asyncAction(
     (suscripcion: Suscripcion) => this.suscripcionService.cancelarRenovacion(suscripcion.idSuscripcion),
@@ -36,8 +50,27 @@ export class SuscripcionesCuentaComponent {
       defaultErrorMessage: 'No se ha podido cancelar.',
     },
   );
-  protected readonly ocupado = computed(() => this.suscribirAction.loading() || this.cancelarAction.loading());
-  protected readonly error = computed(() => this.suscribirAction.error() ?? this.cancelarAction.error());
+  protected readonly ocupado = computed(
+    () => this.suscribirAction.loading() || this.cancelarAction.loading() || this.confirmarPagoAction.loading(),
+  );
+  protected readonly error = computed(
+    () => this.suscribirAction.error() ?? this.cancelarAction.error() ?? this.confirmarPagoAction.error(),
+  );
+
+  constructor() {
+    // Vuelta de la página de pago de Stripe.
+    const parametros = this.route.snapshot.queryParamMap;
+    const resultado = parametros.get('suscripcion');
+    if (resultado) {
+      const idSesion = parametros.get('sesion');
+      if (resultado === 'ok' && idSesion) {
+        this.confirmarPagoAction.run(idSesion);
+      } else if (resultado === 'cancelada') {
+        this.mensaje.set('No se ha completado el pago: no se ha cobrado nada.');
+      }
+      void this.router.navigate([], { relativeTo: this.route, queryParams: {}, replaceUrl: true });
+    }
+  }
 
   /** Recarga el estado (p. ej. tras añadir o dar de baja un hijo). */
   recargar(): void {

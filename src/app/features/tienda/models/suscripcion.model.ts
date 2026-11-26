@@ -28,6 +28,9 @@ export interface EstadoSuscripciones {
   tramosHijos: TipoUsuario[];
   /** Padre colaborador: sus hijos lo tienen todo abierto y no se le ofrecen planes. */
   esColaborador: boolean;
+  /** Se paga con Stripe (en pruebas: tarjetas de prueba, no se cobra). */
+  pasarelaActiva: boolean;
+  pasarelaEnPruebas: boolean;
 }
 
 export interface EstadoPruebaHijo {
